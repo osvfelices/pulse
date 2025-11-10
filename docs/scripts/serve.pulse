@@ -22,7 +22,7 @@ const PORT = 8080
 const BUILD_DIR = join(__dirname, '../build')
 
 const server = createServer((req, res) => {
-  let filePath = req.url === '/' ? '/index.html' : req.url
+  let filePath = req.url == '/' ? '/index.html' : req.url
   filePath = join(BUILD_DIR, filePath)
 
   try {
@@ -41,7 +41,7 @@ const server = createServer((req, res) => {
       res.end('404 Not Found')
     }
   } catch (error) {
-    if (error.code === 'ENOENT') {
+    if (error.code == 'ENOENT') {
       res.writeHead(404, { 'Content-Type': 'text/plain' })
       res.end('404 Not Found')
     } else {
@@ -52,7 +52,7 @@ const server = createServer((req, res) => {
 })
 
 server.listen(PORT, () => {
-  console.log(`Pulse Documentation Server`)
-  console.log(`Running at: http://localhost:${PORT}`)
-  console.log(`Press Ctrl+C to stop`)
+  print('Pulse Documentation Server')
+  print('Running at: http://localhost:' + PORT)
+  print('Press Ctrl+C to stop')
 })
