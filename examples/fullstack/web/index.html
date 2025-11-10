@@ -1,0 +1,47 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Pulse Full-Stack Starter</title>
+<style>
+  body {
+    font: 14px/1.6 Inter, system-ui, -apple-system, sans-serif;
+    background: #101317;
+    color: #e6e9ef;
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+  }
+  h1 {
+    color: #4a6bff;
+  }
+  button {
+    padding: 0.5rem 1rem;
+    background: #4a6bff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font: inherit;
+    font-weight: 600;
+  }
+  button:hover {
+    background: #5B7AFF;
+  }
+  #count {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #4a6bff;
+  }
+</style>
+<body>
+  <h1>Pulse Full-Stack Starter</h1>
+  <p>This demonstrates a minimal full-stack app built with Pulse:</p>
+  <ul>
+    <li>Server: Node.js HTTP server with reactive signals</li>
+    <li>Client: Reactive UI with vanilla DOM</li>
+    <li>Build: .pulse → .mjs compilation</li>
+  </ul>
+  <hr>
+  <p>Counter: <span id="count">0</span></p>
+  <button onclick="import('./main.mjs').then(m=>m.inc())">Increment</button>
+  <script type="module" src="./main.mjs"></script>
+</body>
