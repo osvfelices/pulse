@@ -49,11 +49,11 @@ echo "  Scanning for eval(), Function(), and other unsafe patterns..."
 # Exclude debug.mjs (debug tooling is allowed)
 SAST_RESULTS=$(rg "eval\(|new Function\(" lib src --glob '!**/debug.mjs' --glob '!**/debug.js' 2>/dev/null || true)
 if [ -n "$SAST_RESULTS" ]; then
-  echo "  ✗ FAIL: Found unsafe patterns in production code:"
+  echo "  FAIL: Found unsafe patterns in production code:"
   echo "$SAST_RESULTS"
   FAILED=1
 else
-  echo "  ✓ PASS: No eval() or new Function() in production code (debug.mjs excluded)"
+  echo "  PASS: No eval() or new Function() in production code (debug.mjs excluded)"
 fi
 
 echo ""
@@ -67,11 +67,11 @@ echo "  Scanning for it.skip(), describe.skip(), it.only(), describe.only()..."
 # Exclude test-harness.js (where skip/only are DEFINED, not USED)
 SKIP_RESULTS=$(rg "(^\s+it\.skip\(|^\s+describe\.skip\(|^\s+it\.only\(|^\s+describe\.only\()" tests --glob '!**/test-harness.js' 2>/dev/null || true)
 if [ -n "$SKIP_RESULTS" ]; then
-  echo "  ✗ FAIL: Found forbidden patterns in tests:"
+  echo "  FAIL: Found forbidden patterns in tests:"
   echo "$SKIP_RESULTS"
   FAILED=1
 else
-  echo "  ✓ PASS: No skip/only patterns found in test files"
+  echo "  PASS: No skip/only patterns found in test files"
 fi
 
 echo ""
@@ -98,10 +98,10 @@ for test in $CORE_TEST_FILES; do
 
   if [ $TEST_EXIT -eq 0 ]; then
     TEST_PASSED=$((TEST_PASSED + 1))
-    echo "  ✓ $TEST_NAME"
+    echo "  PASS: $TEST_NAME"
   else
     TEST_FAILED=$((TEST_FAILED + 1))
-    echo "  ✗ $TEST_NAME FAILED (exit code: $TEST_EXIT)"
+    echo "  FAIL: $TEST_NAME (exit code: $TEST_EXIT)"
     echo "$TEST_OUTPUT" | head -20
     FAILED=1
   fi
@@ -119,10 +119,10 @@ for test in $ASYNC_TEST_FILES; do
 
   if [ $TEST_EXIT -eq 0 ]; then
     TEST_PASSED=$((TEST_PASSED + 1))
-    echo "  ✓ $TEST_NAME"
+    echo "  PASS: $TEST_NAME"
   else
     TEST_FAILED=$((TEST_FAILED + 1))
-    echo "  ✗ $TEST_NAME FAILED (exit code: $TEST_EXIT)"
+    echo "  FAIL: $TEST_NAME (exit code: $TEST_EXIT)"
     echo "$TEST_OUTPUT" | head -20
     FAILED=1
   fi
@@ -140,10 +140,10 @@ for test in $PARSER_TEST_FILES; do
 
   if [ $TEST_EXIT -eq 0 ]; then
     TEST_PASSED=$((TEST_PASSED + 1))
-    echo "  ✓ $TEST_NAME"
+    echo "  PASS: $TEST_NAME"
   else
     TEST_FAILED=$((TEST_FAILED + 1))
-    echo "  ✗ $TEST_NAME FAILED (exit code: $TEST_EXIT)"
+    echo "  FAIL: $TEST_NAME (exit code: $TEST_EXIT)"
     echo "$TEST_OUTPUT" | head -20
     FAILED=1
   fi
@@ -152,9 +152,9 @@ done
 echo "  Tests: $TEST_PASSED passed, $TEST_FAILED failed, $TEST_COUNT total"
 
 if [ $TEST_FAILED -eq 0 ]; then
-  echo "  ✓ PASS: All core tests passed (100%)"
+  echo "  PASS: All core tests passed (100%)"
 else
-  echo "  ✗ FAIL: Some tests failed"
+  echo "  FAIL: Some tests failed"
 fi
 
 # Note: Arrow function tests (tests/arrow/) are excluded as they are experimental features
@@ -178,9 +178,9 @@ if [ -f "pre_release_audit/parser-fuzzer.js" ]; then
   echo "$FUZZ_OUTPUT" | tail -10
 
   if [ "$CRASHES" = "0" ] && [ "$TIMEOUTS" = "0" ]; then
-    echo "  ✓ PASS: Fuzzing passed (0 crashes, 0 timeouts)"
+    echo "  PASS: Fuzzing passed (0 crashes, 0 timeouts)"
   else
-    echo "  ✗ FAIL: Fuzzing detected issues (crashes: $CRASHES, timeouts: $TIMEOUTS)"
+    echo "  FAIL: Fuzzing detected issues (crashes: $CRASHES, timeouts: $TIMEOUTS)"
     FAILED=1
   fi
 elif [ -f "tests/parser-fuzzer.js" ]; then
@@ -189,13 +189,13 @@ elif [ -f "tests/parser-fuzzer.js" ]; then
 
   CRASHES=$(echo "$FUZZ_OUTPUT" | grep -oE "Crashed: [0-9]+" | grep -oE "[0-9]+" || echo "0")
   if [ "$CRASHES" = "0" ]; then
-    echo "  ✓ PASS: Fuzzing passed"
+    echo "  PASS: Fuzzing passed"
   else
-    echo "  ✗ FAIL: Fuzzing failed"
+    echo "  FAIL: Fuzzing failed"
     FAILED=1
   fi
 else
-  echo "  ⚠ SKIP: Fuzzer not found"
+  echo "  SKIP: Fuzzer not found"
 fi
 
 echo ""
@@ -221,18 +221,18 @@ COVERAGE_OK=1
 for file in "${CORE_FILES[@]}"; do
   if [ -f "$file" ]; then
     LOC=$(wc -l < "$file")
-    echo "  ✓ $file ($LOC LOC)"
+    echo "  OK: $file ($LOC LOC)"
   else
-    echo "  ✗ $file - FILE NOT FOUND"
+    echo "  FAIL: $file - FILE NOT FOUND"
     COVERAGE_OK=0
   fi
 done
 
 if [ $COVERAGE_OK -eq 1 ]; then
-  echo "  ✓ PASS: All core files exist (manual coverage verification required)"
+  echo "  PASS: All core files exist (manual coverage verification required)"
   echo "  NOTE: Run 'npm run coverage' for detailed metrics"
 else
-  echo "  ✗ FAIL: Missing core files"
+  echo "  FAIL: Missing core files"
   FAILED=1
 fi
 
@@ -248,15 +248,15 @@ if [ -f "tests/stress.test.js" ]; then
   STRESS_OUTPUT=$(run_with_timeout 30 node tests/stress.test.js 2>&1 || true)
 
   if echo "$STRESS_OUTPUT" | grep -q "production-ready"; then
-    echo "  ✓ PASS: Stress tests passed"
+    echo "  PASS: Stress tests passed"
     # Extract key metrics
     echo "$STRESS_OUTPUT" | grep -E "updates/sec|ms|Memory" | head -5 || true
   else
-    echo "  ⚠ WARNING: Stress tests may have issues"
+    echo "  WARNING: Stress tests may have issues"
     echo "$STRESS_OUTPUT" | tail -10
   fi
 else
-  echo "  ⚠ SKIP: Stress tests not found"
+  echo "  SKIP: Stress tests not found"
 fi
 
 echo ""
@@ -266,11 +266,11 @@ echo ""
 # ============================================================================
 echo "╔════════════════════════════════════════════════════════════════╗"
 if [ $FAILED -eq 0 ]; then
-  echo "║  ✓ RELEASE VERIFIED - Ready for Pulse 1.0                     ║"
+  echo "║  RELEASE VERIFIED - Ready for Pulse 1.0                       ║"
   echo "╚════════════════════════════════════════════════════════════════╝"
   exit 0
 else
-  echo "║  ✗ RELEASE BLOCKED - Fix issues above before release          ║"
+  echo "║  RELEASE BLOCKED - Fix issues above before release            ║"
   echo "╚════════════════════════════════════════════════════════════════╝"
   exit 1
 fi

@@ -84,7 +84,7 @@ function runTestSuite() {
 
       if (result.success) {
         results.passed++;
-        console.log(`  ✓ ${testName} (${duration}ms)`);
+        console.log(`  PASS: ${testName} (${duration}ms)`);
         results.tests.push({
           name: testName,
           status: 'PASSED',
@@ -92,7 +92,7 @@ function runTestSuite() {
         });
       } else {
         results.failed++;
-        console.log(`  ✗ ${testName} (${duration}ms)`);
+        console.log(`  FAIL: ${testName} (${duration}ms)`);
         results.tests.push({
           name: testName,
           status: 'FAILED',
@@ -111,11 +111,11 @@ function runTestSuite() {
  * Run parser fuzzing
  */
 function runFuzzing() {
-  console.log('🔀 Running Parser Fuzzing...\n');
+  console.log('Running Parser Fuzzing...\n');
 
   const fuzzerPath = path.join(ROOT, 'pre_release_audit/parser-fuzzer.js');
   if (!fs.existsSync(fuzzerPath)) {
-    console.log('  ⚠️  Fuzzer not found, skipping\n');
+    console.log('  WARNING: Fuzzer not found, skipping\n');
     return { skipped: true };
   }
 
@@ -140,7 +140,7 @@ function runFuzzing() {
   console.log(`  Iterations: ${fuzzerResult.iterations}`);
   console.log(`  Crashes: ${fuzzerResult.crashes}`);
   console.log(`  Timeouts: ${fuzzerResult.timeouts}`);
-  console.log(`  ${fuzzerResult.passed ? '✅ PASS' : '❌ FAIL'}\n`);
+  console.log(`  ${fuzzerResult.passed ? 'PASS' : 'FAIL'}\n`);
 
   return fuzzerResult;
 }
@@ -149,7 +149,7 @@ function runFuzzing() {
  * Run mutation testing
  */
 function runMutation() {
-  console.log('🧬 Running Mutation Testing...\n');
+  console.log('Running Mutation Testing...\n');
   console.log('  (This may take several minutes...)\n');
 
   const mutationScript = path.join(ROOT, 'scripts/release/mutation-test.js');
@@ -166,9 +166,9 @@ function runMutation() {
     console.log(`  Total: ${mutationData.total}`);
     console.log(`  Killed: ${mutationData.killed}`);
     console.log(`  Survived: ${mutationData.survived}`);
-    console.log(`  ${result.success ? '✅ PASS' : '❌ FAIL'}\n`);
+    console.log(`  ${result.success ? 'PASS' : 'FAIL'}\n`);
   } else {
-    console.log('  ⚠️  Mutation report not found\n');
+    console.log('  WARNING: Mutation report not found\n');
   }
 
   return {
