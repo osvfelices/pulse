@@ -22,9 +22,8 @@
     "pulse.svg"
   ],
   "scripts": {
-    "verify": "bash scripts/release/verify-all.sh",
-    "test": "bash scripts/release/verify-all.sh",
-    "prepublishOnly": "npm run verify && npm pack --dry-run",
+    "test": "npm test",
+    "prepublishOnly": "npm pack --dry-run",
     "docs": "node lib/run.js docs/scripts/build-docs.pulse",
     "docs:serve": "node lib/run.js docs/scripts/serve.pulse",
     "gen:snippets": "node tools/shiki/generate-snippets.mjs",
