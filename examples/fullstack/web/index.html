@@ -1,47 +1,221 @@
 <!doctype html>
-<meta charset="utf-8">
-<title>Pulse Full-Stack Starter</title>
-<style>
-  body {
-    font: 14px/1.6 Inter, system-ui, -apple-system, sans-serif;
-    background: #101317;
-    color: #e6e9ef;
-    max-width: 600px;
-    margin: 2rem auto;
-    padding: 0 1rem;
-  }
-  h1 {
-    color: #4a6bff;
-  }
-  button {
-    padding: 0.5rem 1rem;
-    background: #4a6bff;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font: inherit;
-    font-weight: 600;
-  }
-  button:hover {
-    background: #5B7AFF;
-  }
-  #count {
-    font-size: 2rem;
-    font-weight: bold;
-    color: #4a6bff;
-  }
-</style>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pulse Full-Stack Starter</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+      background: linear-gradient(135deg, #0a0e1a 0%, #1a1f35 100%);
+      color: #f5f5f7;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 680px;
+      width: 100%;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+
+    h1 {
+      font-size: 3.5rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 1rem;
+    }
+
+    .subtitle {
+      font-size: 1.25rem;
+      color: #a1a1aa;
+      font-weight: 400;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 24px;
+      padding: 3rem;
+      margin-bottom: 2rem;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .card:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.12);
+      transform: translateY(-2px);
+    }
+
+    .features {
+      display: grid;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .feature {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem;
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: 12px;
+      font-size: 0.95rem;
+      color: #d4d4d8;
+    }
+
+    .feature-icon {
+      width: 8px;
+      height: 8px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .counter-section {
+      text-align: center;
+      padding: 3rem 0;
+    }
+
+    .counter-label {
+      font-size: 0.875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #71717a;
+      margin-bottom: 1rem;
+    }
+
+    #count {
+      font-size: 6rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+      margin-bottom: 2rem;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    button {
+      position: relative;
+      padding: 1rem 3rem;
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: white;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: none;
+      border-radius: 16px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      overflow: hidden;
+      box-shadow: 0 4px 24px rgba(102, 126, 234, 0.3);
+    }
+
+    button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+      opacity: 0;
+      transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    button:hover::before {
+      opacity: 1;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(102, 126, 234, 0.4);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    button span {
+      position: relative;
+      z-index: 1;
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.05);
+      }
+    }
+
+    .count-animate {
+      animation: pulse 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+  </style>
+</head>
 <body>
-  <h1>Pulse Full-Stack Starter</h1>
-  <p>This demonstrates a minimal full-stack app built with Pulse:</p>
-  <ul>
-    <li>Server: Node.js HTTP server with reactive signals</li>
-    <li>Client: Reactive UI with vanilla DOM</li>
-    <li>Build: .pulse → .mjs compilation</li>
-  </ul>
-  <hr>
-  <p>Counter: <span id="count">0</span></p>
-  <button onclick="import('./main.mjs').then(m=>m.inc())">Increment</button>
+  <div class="container">
+    <header>
+      <h1>Pulse</h1>
+      <p class="subtitle">Full-Stack Reactive Framework</p>
+    </header>
+
+    <div class="card">
+      <div class="features">
+        <div class="feature">
+          <div class="feature-icon"></div>
+          <span>Server: Node.js HTTP server with reactive signals</span>
+        </div>
+        <div class="feature">
+          <div class="feature-icon"></div>
+          <span>Client: Reactive UI with vanilla DOM</span>
+        </div>
+        <div class="feature">
+          <div class="feature-icon"></div>
+          <span>Build: .pulse → .mjs compilation</span>
+        </div>
+      </div>
+
+      <div class="counter-section">
+        <div class="counter-label">Counter</div>
+        <div id="count">0</div>
+        <button onclick="import('./main.mjs').then(m=>m.inc())">
+          <span>Increment</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
   <script type="module" src="./main.mjs"></script>
+  <script>
+    const countEl = document.getElementById('count');
+    const observer = new MutationObserver(() => {
+      countEl.classList.add('count-animate');
+      setTimeout(() => countEl.classList.remove('count-animate'), 300);
+    });
+    observer.observe(countEl, { childList: true, characterData: true, subtree: true });
+  </script>
 </body>
+</html>
