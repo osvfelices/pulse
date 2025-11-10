@@ -1,32 +1,18 @@
-/**
- * Cryptography module for Pulse (JavaScript target)
- * Ed25519 signatures and SHA-256 hashing
- */
+// Crypto utilities for Pulse
 
 import { createHash, randomBytes as nodeRandomBytes, webcrypto } from 'node:crypto';
 
-/**
- * Generate random bytes
- * @param {number} size - Number of bytes
- * @returns {Buffer}
- */
+// Generate random bytes
 function randomBytes(size) {
   return nodeRandomBytes(size);
 }
 
-/**
- * Calculate SHA-256 hash
- * @param {Buffer|string} data - Data to hash
- * @returns {Buffer}
- */
+// Calculate SHA-256 hash
 function sha256(data) {
   return createHash('sha256').update(data).digest();
 }
 
-/**
- * Generate Ed25519 keypair
- * @returns {Promise<{publicKey: Buffer, privateKey: Buffer}>}
- */
+// Generate Ed25519 keypair
 async function generateEd25519KeyPair() {
   const ed = await import('@noble/ed25519');
   const privateKey = ed.utils.randomPrivateKey();
@@ -100,7 +86,7 @@ function bufferToString(buffer) {
 }
 
 /**
- * Encrypt data using XOR (simple, TODO: upgrade to AES-256-GCM)
+ * Encrypt data using XOR (simple implementation)
  * @param {any} data - Data to encrypt
  * @returns {{algorithm: string, key: string, data: string}}
  */

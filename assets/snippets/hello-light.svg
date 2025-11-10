@@ -1,0 +1,5 @@
+<svg width="600" height="92" xmlns="http://www.w3.org/2000/svg">
+<rect width="600" height="92" fill="#ffffff" rx="8"/>
+<g font-family="JetBrains Mono, monospace" font-size="14">
+<text x="16" y="32" fill="#558B2F">fn</text><text x="32.8" y="32" fill="#1A1D23"> </text><text x="41.199999999999996" y="32" fill="#1976D2">main</text><text x="74.8" y="32" fill="#546E7A">()</text><text x="91.6" y="32" fill="#1A1D23"> </text><text x="100" y="32" fill="#546E7A">{</text><text x="16" y="52" fill="#1A1D23">  </text><text x="32.8" y="52" fill="#1976D2">print</text><text x="74.8" y="52" fill="#546E7A">(</text><text x="83.2" y="52" fill="#546E7A">'</text><text x="91.60000000000001" y="52" fill="#F57C00">Hello, Pulse!</text><text x="200.8" y="52" fill="#546E7A">'</text><text x="209.20000000000002" y="52" fill="#546E7A">)</text><text x="16" y="72" fill="#546E7A">}</text></g>
+</svg>

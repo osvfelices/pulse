@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Playground - Pulse Language</title>
+  <link rel="stylesheet" href="./style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css">
+</head>
+<body>
+  <nav class="top-nav">
+    <div class="top-nav-container">
+      <div class="top-nav-left">
+        <a href="index.html" class="top-nav-logo">
+          <img src="./pulse.svg" alt="Pulse Logo" class="top-nav-logo-img">
+          <span class="top-nav-logo-text">Pulse</span>
+        </a>
+        <div class="top-nav-links">
+          <a href="index.html" class="top-nav-link">Docs</a>
+          <a href="playground.html" class="top-nav-link">Playground</a>
+          <a href="https://github.com/osvfelices/pulse" class="top-nav-link" target="_blank">GitHub</a>
+        </div>
+      </div>
+      <div class="top-nav-right">
+        <a href="https://www.npmjs.com/package/pulselang" class="top-nav-button" target="_blank">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          Download
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="docs-container">
+    <aside class="sidebar-left">
+      <nav class="sidebar-nav">
+        <div class="nav-group">
+          <div class="nav-group-title">Getting Started</div>
+          <a href="index.html" class="nav-item">Overview</a>
+          <a href="guide.html" class="nav-item">Installation</a>
+        </div>
+        <div class="nav-group">
+          <div class="nav-group-title">Documentation</div>
+          <a href="api.html" class="nav-item">API Reference</a>
+          <a href="playground.html" class="nav-item">Playground</a>
+        </div>
+      </nav>
+    </aside>
+
+    <main class="main-content">
+      <article class="article">
+        <h1>Playground</h1>
+
+<p>Try Pulse in your browser (coming soon).</p>
+
+<h2>Interactive Examples</h2>
+
+<p>The Pulse playground will allow you to write and execute Pulse code directly in your browser without any installation.</p>
+
+<h3>Features (Coming Soon)</h3>
+
+<ul>
+<li><strong>Live Editor</strong>: Syntax highlighting and autocomplete</li>
+<li><strong>Instant Execution</strong>: Run code with a single click</li>
+<li><strong>Example Library</strong>: Pre-loaded examples demonstrating key features</li>
+<li><strong>REPL Mode</strong>: Interactive read-eval-print loop</li>
+<li><strong>Sharing</strong>: Share your code with others via URL</li>
+</ul>
+
+<h2>Example Programs</h2>
+
+<p>While we build the interactive playground, here are some examples you can try locally:</p>
+
+<h3>Reactive Counter</h3>
+
+<pre><code class="language-javascript">import { signal, effect } from 'std/reactive'
+
+const [count, setCount] = signal(0)
+
+effect(() =&gt; {
+  print('Count is now:', count())
+})
+
+setCount(1)
+setCount(2)
+setCount(3)
+</code></pre>
+
+<h3>Concurrent Data Processing</h3>
+
+<pre><code class="language-javascript">import { channel, parallel } from 'std/async'
+
+async fn processData(data) {
+  print('Processing:', data)
+  await sleep(100)
+  return data * 2
+}
+
+async fn main() {
+  const inputs = [1, 2, 3, 4, 5]
+  const results = await parallel(
+    inputs.map(x =&gt; () =&gt; processData(x))
+  )
+  print('Results:', results)
+}
+
+await main()
+</code></pre>
+
+<h3>File System Operations</h3>
+
+<pre><code class="language-javascript">import fs from 'std/fs'
+import path from 'std/path'
+
+async fn listFiles(dir) {
+  const files = await fs.readDir(dir)
+
+  for (const file of files) {
+    const fullPath = path.join(dir, file)
+    const stats = await fs.stat(fullPath)
+
+    if (stats.isFile) {
+      print(`File: ${file} (${stats.size} bytes)`)
+    } else {
+      print(`Dir: ${file}`)
+    }
+  }
+}
+
+await listFiles('./')
+</code></pre>
+
+<h3>Building a CLI Tool</h3>
+
+<pre><code class="language-javascript">import cli from 'std/cli'
+import fs from 'std/fs'
+
+async fn main() {
+  const args = cli.parseArgs(process.argv, {
+    flags: ['verbose', 'help'],
+    options: ['output']
+  })
+
+  if (args.help) {
+    print('Usage: pulse run tool.pulse [options]')
+    print('Options:')
+    print('  --verbose    Enable verbose output')
+    print('  --output     Output file path')
+    print('  --help       Show this help')
+    return
+  }
+
+  const spinner = cli.spinner('Processing...')
+  spinner.start()
+
+  await sleep(2000)
+
+  spinner.stop()
+  print(cli.colors.green('Done!'))
+}
+
+await main()
+</code></pre>
+
+<h2>Try It Locally</h2>
+
+<p>To run these examples locally:</p>
+
+<p>1. Save the code to a <code>.pulse</code> file</p>
+<p>2. Run it with: <code>node lib/parser.js your-file.pulse</code></p>
+
+<p>Or use the NPM scripts:</p>
+
+<pre><code class="language-bash">npm run parse examples/hello.pulse
+</code></pre>
+
+<h2>Community Examples</h2>
+
+<p>Want to share your Pulse creations? Submit them to our <a href="https://github.com/osvfelices/pulse/tree/main/examples">GitHub repository</a>.</p>
+
+<h2>Next Steps</h2>
+
+<ul>
+<li>Check out the <a href="api.html">API Reference</a> for complete documentation</li>
+<li>Read the <a href="guide.html">Getting Started Guide</a> to learn more</li>
+<li>Star us on <a href="https://github.com/osvfelices/pulse">GitHub</a></li>
+</ul>
+
+      </article>
+    </main>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-left">
+        <a href="https://github.com/osvfelices/pulse" target="_blank">GitHub</a>
+        <a href="https://www.npmjs.com/package/pulselang" target="_blank">npm</a>
+        <a href="https://github.com/osvfelices/pulse/blob/main/LICENSE">License</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+  <script>
+    // Add IDs to headings for direct linking
+    document.addEventListener('DOMContentLoaded', function() {
+      const article = document.querySelector('.article');
+      const headings = article.querySelectorAll('h2, h3');
+
+      headings.forEach((heading, index) => {
+        if (!heading.id) {
+          heading.id = heading.textContent.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '');
+        }
+      });
+
+      // Highlight code blocks
+      Prism.highlightAll();
+    });
+  </script>
+</body>
+</html>
