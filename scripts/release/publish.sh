@@ -20,7 +20,7 @@ echo ""
 # Check authentication
 echo "→ Checking npm authentication..."
 if ! npm whoami > /dev/null 2>&1; then
-  echo "❌ Not logged in to npm"
+  echo "ERROR: Not logged in to npm"
   echo ""
   echo "Please run: npm login"
   echo "Then re-run this script."
@@ -28,25 +28,25 @@ if ! npm whoami > /dev/null 2>&1; then
 fi
 
 LOGGED_IN_AS=$(npm whoami)
-echo "✓ Logged in as: $LOGGED_IN_AS"
+echo "OK: Logged in as: $LOGGED_IN_AS"
 echo ""
 
 # Pre-publish verification
 echo "→ Running pre-publish verification..."
 if ! npm run verify > /dev/null 2>&1; then
-  echo "❌ Verification failed"
+  echo "ERROR: Verification failed"
   echo ""
   echo "Run 'npm run verify' to see details."
   exit 1
 fi
-echo "✓ All tests passed"
+echo "OK: All tests passed"
 echo ""
 
 # Check if "pulse" is available
 echo "→ Checking package name availability..."
 if npm view pulse version > /dev/null 2>&1; then
   EXISTING_VERSION=$(npm view pulse version)
-  echo "⚠️  Package 'pulse' already exists (v$EXISTING_VERSION)"
+  echo "WARNING: Package 'pulse' already exists (v$EXISTING_VERSION)"
   echo ""
   echo "Options:"
   echo "  1. Use scoped name: @osvfelices/pulse"
@@ -57,7 +57,7 @@ if npm view pulse version > /dev/null 2>&1; then
   if [[ $REPLY =~ ^[Yy]$ ]]; then
     # Update package.json
     sed -i 's/"name": "pulse"/"name": "@osvfelices\/pulse"/' package.json
-    echo "✓ Updated to @osvfelices/pulse"
+    echo "OK: Updated to @osvfelices/pulse"
     git add package.json
     git commit -m "chore(npm): switch to scoped name @osvfelices/pulse"
     PACKAGE_NAME="@osvfelices/pulse"
@@ -66,7 +66,7 @@ if npm view pulse version > /dev/null 2>&1; then
     exit 1
   fi
 else
-  echo "✓ Package name 'pulse' is available"
+  echo "OK: Package name 'pulse' is available"
   PACKAGE_NAME="pulse"
 fi
 echo ""
@@ -96,7 +96,7 @@ echo "→ Publishing to npm..."
 if npm publish --access public --provenance; then
   echo ""
   echo "╔═══════════════════════════════════════════════════════════════╗"
-  echo "║  ✓ Successfully published $PACKAGE_NAME@1.0.0!"
+  echo "║  SUCCESS: Published $PACKAGE_NAME@1.0.0!"
   echo "╚═══════════════════════════════════════════════════════════════╝"
   echo ""
   echo "Next steps:"
@@ -107,7 +107,7 @@ if npm publish --access public --provenance; then
   echo ""
 else
   echo ""
-  echo "❌ Publish failed"
+  echo "ERROR: Publish failed"
   echo ""
   echo "Check the error above and try again."
   exit 1

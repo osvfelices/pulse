@@ -97,12 +97,12 @@ If you were using `it.skip()` or `describe.skip()`, you must now:
 
 Avoid mutating arrays during `for...of` iteration:
 ```javascript
-// ❌ BAD: Undefined behavior
+// BAD: Undefined behavior
 for (const x of arr) {
   arr.push(x + 10);  // May cause infinite loop or unexpected results
 }
 
-// ✅ GOOD: Iterate over original, modify different array
+// GOOD: Iterate over original, modify different array
 const newArr = [];
 for (const x of arr) {
   newArr.push(x + 10);
