@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pulse Playground</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=JetBrains+Mono:wght@400;600&display=swap">
+  <link rel="stylesheet" href="../styles/playground.css">
+</head>
+<body>
+  <div class="playground-container">
+    <header class="playground-header">
+      <div class="header-left">
+        <img src="../pulse.svg" alt="Pulse" class="logo">
+        <h1>Pulse Playground</h1>
+      </div>
+      <div class="header-right">
+        <button id="theme-toggle" class="btn btn-icon" title="Toggle theme">
+          <svg width="16" height="16" fill="currentColor">
+            <path d="M8 12a4 4 0 110-8 4 4 0 010 8zm0-10a1 1 0 110-2 1 1 0 010 2zm0 12a1 1 0 110 2 1 1 0 010-2zM2 7a1 1 0 110 2 1 1 0 010-2zm12 0a1 1 0 110 2 1 1 0 010-2zM3.636 3.636a1 1 0 111.414-1.414 1 1 0 01-1.414 1.414zm8.486 8.486a1 1 0 111.414-1.414 1 1 0 01-1.414 1.414z"/>
+          </svg>
+        </button>
+        <button id="copy-btn" class="btn" title="Copy code">
+          <svg width="16" height="16" fill="currentColor">
+            <path d="M0 2a2 2 0 012-2h8a2 2 0 012 2v2h2a2 2 0 012 2v8a2 2 0 01-2 2H6a2 2 0 01-2-2v-2H2a2 2 0 01-2-2V2zm2 0v8h8V2H2zm6 10v2h8V6h-2v6a2 2 0 01-2 2H8z"/>
+          </svg>
+          Copy
+        </button>
+        <button id="download-btn" class="btn" title="Download .pulse file">
+          <svg width="16" height="16" fill="currentColor">
+            <path d="M8 12l-4-4h2.5V4h3v4H12l-4 4zm5-9v10a1 1 0 01-1 1H4a1 1 0 01-1-1V3a1 1 0 011-1h8a1 1 0 011 1z"/>
+          </svg>
+          Download
+        </button>
+      </div>
+    </header>
+
+    <div class="playground-main">
+      <aside class="sidebar">
+        <h3>Examples</h3>
+        <nav class="examples-nav">
+          <button class="example-btn active" data-example="hello">Hello World</button>
+          <button class="example-btn" data-example="reactivity">Reactivity</button>
+          <button class="example-btn" data-example="channels">Channels</button>
+          <button class="example-btn" data-example="classes">Classes</button>
+        </nav>
+      </aside>
+
+      <div class="editor-container">
+        <div id="editor"></div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="./main.js"></script>
+</body>
+</html>

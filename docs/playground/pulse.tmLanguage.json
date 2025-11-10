@@ -1,0 +1,104 @@
+{
+  "name": "Pulse",
+  "scopeName": "source.pulse",
+  "fileTypes": ["pulse"],
+  "patterns": [
+    { "include": "#comments" },
+    { "include": "#keywords" },
+    { "include": "#strings" },
+    { "include": "#numbers" },
+    { "include": "#functions" },
+    { "include": "#variables" }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.line.double-slash.pulse",
+          "match": "//.*$"
+        }
+      ]
+    },
+    "keywords": {
+      "patterns": [
+        {
+          "name": "keyword.control.pulse",
+          "match": "\\b(if|else|for|while|return|break|continue|switch|case|default|try|catch|finally|throw)\\b"
+        },
+        {
+          "name": "storage.type.pulse",
+          "match": "\\b(fn|let|const|import|from|as|export|class|extends|new|async|await|contract|view)\\b"
+        },
+        {
+          "name": "constant.language.pulse",
+          "match": "\\b(true|false|null|undefined)\\b"
+        },
+        {
+          "name": "keyword.operator.pulse",
+          "match": "(\\+|\\-|\\*|\\/|%|==|!=|<|>|<=|>=|&&|\\|\\||!|\\?|:)"
+        }
+      ]
+    },
+    "strings": {
+      "patterns": [
+        {
+          "name": "string.quoted.double.pulse",
+          "begin": "\"",
+          "end": "\"",
+          "patterns": [
+            {
+              "name": "constant.character.escape.pulse",
+              "match": "\\\\."
+            }
+          ]
+        },
+        {
+          "name": "string.quoted.single.pulse",
+          "begin": "'",
+          "end": "'",
+          "patterns": [
+            {
+              "name": "constant.character.escape.pulse",
+              "match": "\\\\."
+            }
+          ]
+        },
+        {
+          "name": "string.template.pulse",
+          "begin": "`",
+          "end": "`",
+          "patterns": [
+            {
+              "name": "constant.character.escape.pulse",
+              "match": "\\\\."
+            }
+          ]
+        }
+      ]
+    },
+    "numbers": {
+      "patterns": [
+        {
+          "name": "constant.numeric.pulse",
+          "match": "\\b\\d+(\\.\\d+)?\\b"
+        }
+      ]
+    },
+    "functions": {
+      "patterns": [
+        {
+          "name": "entity.name.function.pulse",
+          "match": "\\b([a-zA-Z_][a-zA-Z0-9_]*)\\s*(?=\\()"
+        }
+      ]
+    },
+    "variables": {
+      "patterns": [
+        {
+          "name": "variable.other.pulse",
+          "match": "\\b[a-zA-Z_][a-zA-Z0-9_]*\\b"
+        }
+      ]
+    }
+  }
+}
