@@ -55,4 +55,4 @@ cloud-demo/
 .tmp_pulse_exec_*.mjs
 
 # Local data
-.pulse/
+.pulse/pulse-*.tgz

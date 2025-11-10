@@ -23,8 +23,7 @@ npm notice 479B lib/runtime/globals.js
 npm notice 8.8kB lib/runtime/reactivity.js
 npm notice 8.7kB lib/runtime/router.js
 npm notice 7.5kB lib/view-compiler.js
-npm notice 1.4kB package.json
-npm notice 242.2kB pulse.svg
+npm notice 1.5kB package.json
 npm notice 3.8kB std/async.mjs
 npm notice 4.3kB std/async.pulse
 npm notice 4.4kB std/cli.mjs
@@ -49,10 +48,10 @@ npm notice Tarball Details
 npm notice name: pulse
 npm notice version: 1.0.0
 npm notice filename: pulse-1.0.0.tgz
-npm notice package size: 61.3 kB
-npm notice unpacked size: 426.8 kB
-npm notice shasum: 3ef2e8c7f9835fd3483e16c022f34e153187de75
-npm notice integrity: sha512-SSO0IJnj9QeYg[...]D27LY3OmHxnjw==
-npm notice total files: 44
+npm notice package size: 48.2 kB
+npm notice unpacked size: 184.8 kB
+npm notice shasum: ddecc99aa6cb48b8a400b3fe00126de890731847
+npm notice integrity: sha512-AUK1WzLgzDP8b[...]InguMe9/2+SBg==
+npm notice total files: 43
 npm notice
 pulse-1.0.0.tgz
