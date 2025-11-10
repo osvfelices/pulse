@@ -61,3 +61,6 @@ pulse-*.tgz
 # Release scripts (internal tools)
 scripts/release/
 scripts/verify-lang-release.sh
+
+# NPM config
+.npmrc
