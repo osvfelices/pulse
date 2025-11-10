@@ -1,0 +1,48 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "WhileStmt",
+      "test": {
+        "kind": "BinaryExpr",
+        "op": "<",
+        "left": {
+          "kind": "Identifier",
+          "name": "x"
+        },
+        "right": {
+          "kind": "NumberLiteral",
+          "value": 50
+        }
+      },
+      "body": {
+        "kind": "Block",
+        "statements": [
+          {
+            "kind": "ExprStmt",
+            "expr": {
+              "kind": "BinaryExpr",
+              "op": "=",
+              "left": {
+                "kind": "Identifier",
+                "name": "x"
+              },
+              "right": {
+                "kind": "BinaryExpr",
+                "op": "+",
+                "left": {
+                  "kind": "Identifier",
+                  "name": "x"
+                },
+                "right": {
+                  "kind": "NumberLiteral",
+                  "value": 1
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

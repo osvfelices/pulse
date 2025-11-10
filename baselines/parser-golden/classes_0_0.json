@@ -1,0 +1,60 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "ClassDecl",
+      "name": "Person",
+      "superClass": null,
+      "methods": [
+        {
+          "name": "constructor",
+          "params": [
+            {
+              "name": "name"
+            }
+          ],
+          "body": {
+            "kind": "Block",
+            "statements": [
+              {
+                "kind": "ExprStmt",
+                "expr": {
+                  "kind": "BinaryExpr",
+                  "op": "=",
+                  "left": {
+                    "kind": "MemberExpr",
+                    "object": {
+                      "kind": "Identifier",
+                      "name": "this"
+                    },
+                    "property": "name"
+                  },
+                  "right": {
+                    "kind": "Identifier",
+                    "name": "name"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "name": "greet",
+          "params": [],
+          "body": {
+            "kind": "Block",
+            "statements": [
+              {
+                "kind": "ReturnStmt",
+                "expr": {
+                  "kind": "StringLiteral",
+                  "value": "Hello"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

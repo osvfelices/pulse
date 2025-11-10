@@ -1,0 +1,18 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "VarDecl",
+      "constant": true,
+      "name": "x",
+      "init": {
+        "kind": "UnaryExpr",
+        "op": "-",
+        "argument": {
+          "kind": "NumberLiteral",
+          "value": 1
+        }
+      }
+    }
+  ]
+}

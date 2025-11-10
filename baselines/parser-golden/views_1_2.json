@@ -1,0 +1,26 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "ViewDecl",
+      "name": "Button",
+      "params": [
+        {
+          "name": "props"
+        }
+      ],
+      "body": {
+        "kind": "Block",
+        "statements": [
+          {
+            "kind": "ReturnStmt",
+            "expr": {
+              "kind": "TemplateLiteral",
+              "value": "`<button  data-handler=\"onClick\">Click</button>`"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "ExprStmt",
+      "expr": {
+        "kind": "BinaryExpr",
+        "op": "!=",
+        "left": {
+          "kind": "NumberLiteral",
+          "value": 20
+        },
+        "right": {
+          "kind": "NumberLiteral",
+          "value": 50
+        }
+      }
+    }
+  ]
+}

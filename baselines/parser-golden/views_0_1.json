@@ -1,0 +1,69 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "ViewDecl",
+      "name": "Counter",
+      "params": [
+        {
+          "name": "props"
+        }
+      ],
+      "body": {
+        "kind": "Block",
+        "statements": [
+          {
+            "kind": "VarDecl",
+            "constant": false,
+            "name": "count",
+            "init": {
+              "kind": "NumberLiteral",
+              "value": 0
+            }
+          },
+          {
+            "kind": "FnDecl",
+            "name": "increment",
+            "params": [],
+            "body": {
+              "kind": "Block",
+              "statements": [
+                {
+                  "kind": "ExprStmt",
+                  "expr": {
+                    "kind": "BinaryExpr",
+                    "op": "=",
+                    "left": {
+                      "kind": "Identifier",
+                      "name": "count"
+                    },
+                    "right": {
+                      "kind": "BinaryExpr",
+                      "op": "+",
+                      "left": {
+                        "kind": "Identifier",
+                        "name": "count"
+                      },
+                      "right": {
+                        "kind": "NumberLiteral",
+                        "value": 1
+                      }
+                    }
+                  }
+                }
+              ]
+            },
+            "async": false
+          },
+          {
+            "kind": "ReturnStmt",
+            "expr": {
+              "kind": "TemplateLiteral",
+              "value": "`<div>{{count}}</div>`"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

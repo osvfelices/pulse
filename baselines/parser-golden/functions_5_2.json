@@ -1,0 +1,28 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "FnDecl",
+      "name": "withRest",
+      "params": [
+        {
+          "name": "args",
+          "rest": true
+        }
+      ],
+      "body": {
+        "kind": "Block",
+        "statements": [
+          {
+            "kind": "ReturnStmt",
+            "expr": {
+              "kind": "Identifier",
+              "name": "args"
+            }
+          }
+        ]
+      },
+      "async": false
+    }
+  ]
+}

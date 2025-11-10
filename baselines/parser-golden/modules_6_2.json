@@ -1,0 +1,17 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "ExportDecl",
+      "declaration": {
+        "kind": "VarDecl",
+        "constant": true,
+        "name": "PI",
+        "init": {
+          "kind": "NumberLiteral",
+          "value": 3.14159
+        }
+      }
+    }
+  ]
+}

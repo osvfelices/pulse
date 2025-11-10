@@ -1,0 +1,16 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "ExprStmt",
+      "expr": {
+        "kind": "UnaryExpr",
+        "op": "typeof",
+        "argument": {
+          "kind": "BooleanLiteral",
+          "value": true
+        }
+      }
+    }
+  ]
+}

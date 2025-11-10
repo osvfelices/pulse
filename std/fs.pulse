@@ -1,0 +1,140 @@
+// Pulse Standard Library - FileSystem Module
+// Week 9 - Pure Pulse Implementation
+// Async file system operations
+
+// Import Node.js fs/promises and path modules
+import fsPromises from 'node:fs/promises'
+import nodePath from 'node:path'
+
+async fn readText(filePath) {
+  try {
+    return await fsPromises.readFile(filePath, 'utf8')
+  } catch (e) {
+    throw 'Failed to read file ' + filePath + ': ' + e.message
+  }
+}
+
+async fn writeText(filePath, content) {
+  try {
+    const dir = nodePath.dirname(filePath)
+    await fsPromises.mkdir(dir, { recursive: true })
+    await fsPromises.writeFile(filePath, content, 'utf8')
+  } catch (e) {
+    throw 'Failed to write file ' + filePath + ': ' + e.message
+  }
+}
+
+async fn exists(path) {
+  try {
+    await fsPromises.access(path)
+    return true
+  } catch (e) {
+    return false
+  }
+}
+
+async fn readDir(dirPath) {
+  try {
+    return await fsPromises.readdir(dirPath)
+  } catch (e) {
+    throw 'Failed to read directory ' + dirPath + ': ' + e.message
+  }
+}
+
+async fn createDir(dirPath) {
+  try {
+    await fsPromises.mkdir(dirPath, { recursive: true })
+  } catch (e) {
+    throw 'Failed to create directory ' + dirPath + ': ' + e.message
+  }
+}
+
+async fn removeFile(filePath) {
+  try {
+    await fsPromises.unlink(filePath)
+  } catch (e) {
+    throw 'Failed to remove file ' + filePath + ': ' + e.message
+  }
+}
+
+async fn removeDir(dirPath) {
+  try {
+    await fsPromises.rm(dirPath, { recursive: true, force: true })
+  } catch (e) {
+    throw 'Failed to remove directory ' + dirPath + ': ' + e.message
+  }
+}
+
+async fn readJson(filePath) {
+  try {
+    const content = await readText(filePath)
+    return JSON.parse(content)
+  } catch (e) {
+    throw 'Failed to read JSON file ' + filePath + ': ' + e.message
+  }
+}
+
+async fn writeJson(filePath, data) {
+  try {
+    const content = JSON.stringify(data, null, 2)
+    await writeText(filePath, content)
+  } catch (e) {
+    throw 'Failed to write JSON file ' + filePath + ': ' + e.message
+  }
+}
+
+async fn copyFile(source, dest) {
+  try {
+    await fsPromises.copyFile(source, dest)
+  } catch (e) {
+    throw 'Failed to copy file from ' + source + ' to ' + dest + ': ' + e.message
+  }
+}
+
+async fn stat(path) {
+  try {
+    const stats = await fsPromises.stat(path)
+    return {
+      isFile: stats.isFile(),
+      isDirectory: stats.isDirectory(),
+      size: stats.size,
+      created: stats.birthtime,
+      modified: stats.mtime
+    }
+  } catch (e) {
+    throw 'Failed to stat ' + path + ': ' + e.message
+  }
+}
+
+async fn appendText(filePath, content) {
+  try {
+    await fsPromises.appendFile(filePath, content, 'utf8')
+  } catch (e) {
+    throw 'Failed to append to file ' + filePath + ': ' + e.message
+  }
+}
+
+async fn rename(oldPath, newPath) {
+  try {
+    await fsPromises.rename(oldPath, newPath)
+  } catch (e) {
+    throw 'Failed to rename ' + oldPath + ' to ' + newPath + ': ' + e.message
+  }
+}
+
+// Export all functions
+export default {
+  readText: readText,
+  writeText: writeText,
+  exists: exists,
+  readDir: readDir,
+  createDir: createDir,
+  removeFile: removeFile,
+  removeDir: removeDir,
+  readJson: readJson,
+  writeJson: writeJson,
+  copyFile: copyFile,
+  stat: stat,
+  appendText: appendText,
+  rename: rename
+}

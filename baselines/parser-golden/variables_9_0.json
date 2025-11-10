@@ -1,0 +1,22 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "VarDecl",
+      "constant": true,
+      "pattern": {
+        "kind": "ObjectPattern",
+        "properties": [
+          {
+            "key": "key",
+            "value": "renamed"
+          }
+        ]
+      },
+      "init": {
+        "kind": "Identifier",
+        "name": "obj"
+      }
+    }
+  ]
+}

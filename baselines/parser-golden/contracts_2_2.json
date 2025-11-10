@@ -1,0 +1,25 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "ExprStmt",
+      "expr": {
+        "kind": "CallExpr",
+        "callee": {
+          "kind": "MemberExpr",
+          "object": {
+            "kind": "Identifier",
+            "name": "User"
+          },
+          "property": "validate"
+        },
+        "args": [
+          {
+            "kind": "Identifier",
+            "name": "data"
+          }
+        ]
+      }
+    }
+  ]
+}

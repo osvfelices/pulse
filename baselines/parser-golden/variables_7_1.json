@@ -1,0 +1,26 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "VarDecl",
+      "constant": true,
+      "pattern": {
+        "kind": "ObjectPattern",
+        "properties": [
+          {
+            "key": "x",
+            "value": "x"
+          },
+          {
+            "key": "y",
+            "value": "y"
+          }
+        ]
+      },
+      "init": {
+        "kind": "Identifier",
+        "name": "obj"
+      }
+    }
+  ]
+}

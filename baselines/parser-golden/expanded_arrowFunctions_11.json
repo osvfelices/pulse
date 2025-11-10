@@ -1,0 +1,59 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "VarDecl",
+      "constant": true,
+      "name": "f",
+      "init": {
+        "kind": "ArrowFn",
+        "params": [
+          {
+            "name": "x",
+            "default": null
+          },
+          {
+            "name": "y",
+            "default": null
+          }
+        ],
+        "body": {
+          "kind": "TernaryExpr",
+          "test": {
+            "kind": "BinaryExpr",
+            "op": ">",
+            "left": {
+              "kind": "BinaryExpr",
+              "op": "+",
+              "left": {
+                "kind": "Identifier",
+                "name": "x"
+              },
+              "right": {
+                "kind": "Identifier",
+                "name": "y"
+              }
+            },
+            "right": {
+              "kind": "NumberLiteral",
+              "value": 0
+            }
+          },
+          "consequent": {
+            "kind": "Identifier",
+            "name": "x"
+          },
+          "alternate": {
+            "kind": "UnaryExpr",
+            "op": "-",
+            "argument": {
+              "kind": "Identifier",
+              "name": "x"
+            }
+          }
+        },
+        "async": false
+      }
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+# Node modules
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Native binaries (downloaded during postinstall)
+bin/pulse-native
+bin/pulse-native.exe
+bin/*.sha256
+
+# Build outputs
+build/
+.pulse-build/
+dist/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Environment files (local overrides)
+.env.local
+
+# Test outputs
+coverage/
+*.log
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+.coverage
+.coverage.*
+htmlcov/
+.pytest_cache/
+*.cpython-*.pyc
+
+# Rust/PVM build artifacts
+pvm/target/
+pvm/Cargo.lock
+
+# Test artifacts
+smoke-app/
+cloud-demo/
+
+# Runtime process files
+.pcr-cloud-pids
+*.pid
+
+# Local telemetry and test data
+.pulse/

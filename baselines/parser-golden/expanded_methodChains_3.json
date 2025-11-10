@@ -1,0 +1,44 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "ExprStmt",
+      "expr": {
+        "kind": "CallExpr",
+        "callee": {
+          "kind": "MemberExpr",
+          "object": {
+            "kind": "CallExpr",
+            "callee": {
+              "kind": "MemberExpr",
+              "object": {
+                "kind": "CallExpr",
+                "callee": {
+                  "kind": "MemberExpr",
+                  "object": {
+                    "kind": "CallExpr",
+                    "callee": {
+                      "kind": "MemberExpr",
+                      "object": {
+                        "kind": "Identifier",
+                        "name": "obj"
+                      },
+                      "property": "method"
+                    },
+                    "args": []
+                  },
+                  "property": "process"
+                },
+                "args": []
+              },
+              "property": "transform"
+            },
+            "args": []
+          },
+          "property": "filter"
+        },
+        "args": []
+      }
+    }
+  ]
+}

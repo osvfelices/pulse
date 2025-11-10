@@ -1,0 +1,39 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "ForInStmt",
+      "variable": {
+        "kind": "VarDecl",
+        "constant": true,
+        "name": "item",
+        "init": null
+      },
+      "object": {
+        "kind": "Identifier",
+        "name": "items"
+      },
+      "body": {
+        "kind": "Block",
+        "statements": [
+          {
+            "kind": "ExprStmt",
+            "expr": {
+              "kind": "CallExpr",
+              "callee": {
+                "kind": "Identifier",
+                "name": "print"
+              },
+              "args": [
+                {
+                  "kind": "Identifier",
+                  "name": "item"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "ImportDecl",
+      "source": "react",
+      "default": "React",
+      "named": [
+        {
+          "imported": "useState",
+          "local": "useState"
+        }
+      ],
+      "sideEffect": false
+    }
+  ]
+}

@@ -1,0 +1,81 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "FnDecl",
+      "name": "recursive",
+      "params": [
+        {
+          "name": "n",
+          "default": null
+        }
+      ],
+      "body": {
+        "kind": "Block",
+        "statements": [
+          {
+            "kind": "IfStmt",
+            "test": {
+              "kind": "BinaryExpr",
+              "op": "==",
+              "left": {
+                "kind": "Identifier",
+                "name": "n"
+              },
+              "right": {
+                "kind": "NumberLiteral",
+                "value": 0
+              }
+            },
+            "consequent": {
+              "kind": "Block",
+              "statements": [
+                {
+                  "kind": "ReturnStmt",
+                  "expr": {
+                    "kind": "NumberLiteral",
+                    "value": 1
+                  }
+                }
+              ]
+            },
+            "alternate": null
+          },
+          {
+            "kind": "ReturnStmt",
+            "expr": {
+              "kind": "BinaryExpr",
+              "op": "*",
+              "left": {
+                "kind": "Identifier",
+                "name": "n"
+              },
+              "right": {
+                "kind": "CallExpr",
+                "callee": {
+                  "kind": "Identifier",
+                  "name": "recursive"
+                },
+                "args": [
+                  {
+                    "kind": "BinaryExpr",
+                    "op": "-",
+                    "left": {
+                      "kind": "Identifier",
+                      "name": "n"
+                    },
+                    "right": {
+                      "kind": "NumberLiteral",
+                      "value": 1
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "async": false
+    }
+  ]
+}

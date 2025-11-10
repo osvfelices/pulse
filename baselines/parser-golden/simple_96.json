@@ -1,0 +1,16 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "ExprStmt",
+      "expr": {
+        "kind": "MemberExpr",
+        "object": {
+          "kind": "Identifier",
+          "name": "obj"
+        },
+        "property": "prop50"
+      }
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "ContractDecl",
+      "name": "User",
+      "fields": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "age",
+          "type": "number"
+        }
+      ]
+    }
+  ]
+}

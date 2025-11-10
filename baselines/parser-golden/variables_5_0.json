@@ -1,0 +1,38 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "VarDecl",
+      "constant": true,
+      "name": "nested",
+      "init": {
+        "kind": "ObjectExpr",
+        "properties": [
+          {
+            "key": "a",
+            "value": {
+              "kind": "ObjectExpr",
+              "properties": [
+                {
+                  "key": "b",
+                  "value": {
+                    "kind": "ObjectExpr",
+                    "properties": [
+                      {
+                        "key": "c",
+                        "value": {
+                          "kind": "NumberLiteral",
+                          "value": 1
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

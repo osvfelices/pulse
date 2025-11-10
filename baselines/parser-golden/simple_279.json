@@ -1,0 +1,37 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "ExprStmt",
+      "expr": {
+        "kind": "CallExpr",
+        "callee": {
+          "kind": "MemberExpr",
+          "object": {
+            "kind": "ArrayExpr",
+            "elements": [
+              {
+                "kind": "Identifier",
+                "name": "z"
+              }
+            ]
+          },
+          "property": "map"
+        },
+        "args": [
+          {
+            "kind": "ArrowFn",
+            "params": [
+              "x"
+            ],
+            "body": {
+              "kind": "Identifier",
+              "name": "x"
+            },
+            "async": false
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "VarDecl",
+      "constant": true,
+      "name": "arr",
+      "init": {
+        "kind": "ArrayExpr",
+        "elements": [
+          {
+            "kind": "NumberLiteral",
+            "value": 1
+          },
+          {
+            "kind": "NumberLiteral",
+            "value": 2
+          },
+          {
+            "kind": "NumberLiteral",
+            "value": 3
+          }
+        ]
+      }
+    }
+  ]
+}

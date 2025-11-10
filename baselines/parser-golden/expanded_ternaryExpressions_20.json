@@ -1,0 +1,50 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "ExprStmt",
+      "expr": {
+        "kind": "TernaryExpr",
+        "test": {
+          "kind": "BinaryExpr",
+          "op": ">",
+          "left": {
+            "kind": "Identifier",
+            "name": "x"
+          },
+          "right": {
+            "kind": "NumberLiteral",
+            "value": 0
+          }
+        },
+        "consequent": {
+          "kind": "StringLiteral",
+          "value": "pos"
+        },
+        "alternate": {
+          "kind": "TernaryExpr",
+          "test": {
+            "kind": "BinaryExpr",
+            "op": "<",
+            "left": {
+              "kind": "Identifier",
+              "name": "x"
+            },
+            "right": {
+              "kind": "NumberLiteral",
+              "value": 0
+            }
+          },
+          "consequent": {
+            "kind": "StringLiteral",
+            "value": "neg"
+          },
+          "alternate": {
+            "kind": "StringLiteral",
+            "value": "zero"
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "VarDecl",
+      "constant": true,
+      "name": "user",
+      "init": {
+        "kind": "CallExpr",
+        "callee": {
+          "kind": "MemberExpr",
+          "object": {
+            "kind": "Identifier",
+            "name": "sql"
+          },
+          "property": "one"
+        },
+        "args": [
+          {
+            "kind": "StringLiteral",
+            "value": "SELECT * FROM users WHERE id = ?"
+          },
+          {
+            "kind": "ArrayExpr",
+            "elements": [
+              {
+                "kind": "Identifier",
+                "name": "id"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

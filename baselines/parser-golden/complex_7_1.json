@@ -1,0 +1,69 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "FnDecl",
+      "name": "compose",
+      "params": [
+        {
+          "name": "f",
+          "default": null
+        },
+        {
+          "name": "g",
+          "default": null
+        }
+      ],
+      "body": {
+        "kind": "Block",
+        "statements": [
+          {
+            "kind": "ReturnStmt",
+            "expr": {
+              "kind": "FnDecl",
+              "name": null,
+              "params": [
+                {
+                  "name": "x",
+                  "default": null
+                }
+              ],
+              "body": {
+                "kind": "Block",
+                "statements": [
+                  {
+                    "kind": "ReturnStmt",
+                    "expr": {
+                      "kind": "CallExpr",
+                      "callee": {
+                        "kind": "Identifier",
+                        "name": "f"
+                      },
+                      "args": [
+                        {
+                          "kind": "CallExpr",
+                          "callee": {
+                            "kind": "Identifier",
+                            "name": "g"
+                          },
+                          "args": [
+                            {
+                              "kind": "Identifier",
+                              "name": "x"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                ]
+              },
+              "async": false
+            }
+          }
+        ]
+      },
+      "async": false
+    }
+  ]
+}

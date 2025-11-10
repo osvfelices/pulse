@@ -1,0 +1,86 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "ExprStmt",
+      "expr": {
+        "kind": "CallExpr",
+        "callee": {
+          "kind": "MemberExpr",
+          "object": {
+            "kind": "Identifier",
+            "name": "http"
+          },
+          "property": "post"
+        },
+        "args": [
+          {
+            "kind": "StringLiteral",
+            "value": "/api/users"
+          },
+          {
+            "kind": "FnDecl",
+            "name": null,
+            "params": [
+              {
+                "name": "req",
+                "default": null
+              },
+              {
+                "name": "res",
+                "default": null
+              }
+            ],
+            "body": {
+              "kind": "Block",
+              "statements": [
+                {
+                  "kind": "VarDecl",
+                  "constant": true,
+                  "name": "data",
+                  "init": {
+                    "kind": "CallExpr",
+                    "callee": {
+                      "kind": "MemberExpr",
+                      "object": {
+                        "kind": "Identifier",
+                        "name": "req"
+                      },
+                      "property": "json"
+                    },
+                    "args": []
+                  }
+                },
+                {
+                  "kind": "ExprStmt",
+                  "expr": {
+                    "kind": "CallExpr",
+                    "callee": {
+                      "kind": "MemberExpr",
+                      "object": {
+                        "kind": "Identifier",
+                        "name": "res"
+                      },
+                      "property": "json"
+                    },
+                    "args": [
+                      {
+                        "kind": "Identifier",
+                        "name": "data"
+                      },
+                      {
+                        "kind": "NumberLiteral",
+                        "value": 201
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            "async": false
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "TryStmt",
+      "body": {
+        "kind": "Block",
+        "statements": [
+          {
+            "kind": "ExprStmt",
+            "expr": {
+              "kind": "CallExpr",
+              "callee": {
+                "kind": "Identifier",
+                "name": "risky"
+              },
+              "args": []
+            }
+          }
+        ]
+      },
+      "handler": {
+        "param": "e",
+        "body": {
+          "kind": "Block",
+          "statements": [
+            {
+              "kind": "ExprStmt",
+              "expr": {
+                "kind": "CallExpr",
+                "callee": {
+                  "kind": "Identifier",
+                  "name": "print"
+                },
+                "args": [
+                  {
+                    "kind": "Identifier",
+                    "name": "e"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "finalizer": null
+    }
+  ]
+}

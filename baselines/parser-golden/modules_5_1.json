@@ -1,0 +1,26 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "ExportDecl",
+      "declaration": {
+        "kind": "FnDecl",
+        "name": "helper",
+        "params": [],
+        "body": {
+          "kind": "Block",
+          "statements": [
+            {
+              "kind": "ReturnStmt",
+              "expr": {
+                "kind": "NumberLiteral",
+                "value": 42
+              }
+            }
+          ]
+        },
+        "async": false
+      }
+    }
+  ]
+}

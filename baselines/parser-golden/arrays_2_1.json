@@ -1,0 +1,28 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "ExprStmt",
+      "expr": {
+        "kind": "ArrayExpr",
+        "elements": [
+          {
+            "kind": "NumberLiteral",
+            "value": 1
+          },
+          {
+            "kind": "StringLiteral",
+            "value": "two"
+          },
+          {
+            "kind": "BooleanLiteral",
+            "value": true
+          },
+          {
+            "kind": "NullLiteral"
+          }
+        ]
+      }
+    }
+  ]
+}

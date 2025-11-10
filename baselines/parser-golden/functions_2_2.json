@@ -1,0 +1,31 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "FnDecl",
+      "name": "fetch",
+      "params": [],
+      "body": {
+        "kind": "Block",
+        "statements": [
+          {
+            "kind": "ReturnStmt",
+            "expr": {
+              "kind": "UnaryExpr",
+              "op": "await",
+              "argument": {
+                "kind": "CallExpr",
+                "callee": {
+                  "kind": "Identifier",
+                  "name": "getData"
+                },
+                "args": []
+              }
+            }
+          }
+        ]
+      },
+      "async": true
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "WhileStmt",
+      "test": {
+        "kind": "NumberLiteral",
+        "value": 0
+      },
+      "body": {
+        "kind": "Block",
+        "statements": []
+      }
+    }
+  ]
+}

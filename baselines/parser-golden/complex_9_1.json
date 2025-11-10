@@ -1,0 +1,44 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "ExprStmt",
+      "expr": {
+        "kind": "BinaryExpr",
+        "op": "&&",
+        "left": {
+          "kind": "BinaryExpr",
+          "op": "==",
+          "left": {
+            "kind": "UnaryExpr",
+            "op": "typeof",
+            "argument": {
+              "kind": "Identifier",
+              "name": "x"
+            }
+          },
+          "right": {
+            "kind": "StringLiteral",
+            "value": "string"
+          }
+        },
+        "right": {
+          "kind": "BinaryExpr",
+          "op": ">",
+          "left": {
+            "kind": "MemberExpr",
+            "object": {
+              "kind": "Identifier",
+              "name": "x"
+            },
+            "property": "length"
+          },
+          "right": {
+            "kind": "NumberLiteral",
+            "value": 0
+          }
+        }
+      }
+    }
+  ]
+}

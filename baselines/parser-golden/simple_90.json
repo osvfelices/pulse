@@ -1,0 +1,34 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "IfStmt",
+      "test": {
+        "kind": "NumberLiteral",
+        "value": 2
+      },
+      "consequent": {
+        "kind": "Block",
+        "statements": [
+          {
+            "kind": "ExprStmt",
+            "expr": {
+              "kind": "CallExpr",
+              "callee": {
+                "kind": "Identifier",
+                "name": "print"
+              },
+              "args": [
+                {
+                  "kind": "NumberLiteral",
+                  "value": 3
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "alternate": null
+    }
+  ]
+}

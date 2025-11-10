@@ -1,0 +1,60 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "IfStmt",
+      "test": {
+        "kind": "Identifier",
+        "name": "x0"
+      },
+      "consequent": {
+        "kind": "Block",
+        "statements": [
+          {
+            "kind": "IfStmt",
+            "test": {
+              "kind": "Identifier",
+              "name": "x1"
+            },
+            "consequent": {
+              "kind": "Block",
+              "statements": [
+                {
+                  "kind": "IfStmt",
+                  "test": {
+                    "kind": "Identifier",
+                    "name": "x2"
+                  },
+                  "consequent": {
+                    "kind": "Block",
+                    "statements": [
+                      {
+                        "kind": "ExprStmt",
+                        "expr": {
+                          "kind": "CallExpr",
+                          "callee": {
+                            "kind": "Identifier",
+                            "name": "print"
+                          },
+                          "args": [
+                            {
+                              "kind": "StringLiteral",
+                              "value": "deep"
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  },
+                  "alternate": null
+                }
+              ]
+            },
+            "alternate": null
+          }
+        ]
+      },
+      "alternate": null
+    }
+  ]
+}

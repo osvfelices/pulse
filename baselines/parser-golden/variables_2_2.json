@@ -1,0 +1,14 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "VarDecl",
+      "constant": false,
+      "name": "z",
+      "init": {
+        "kind": "BooleanLiteral",
+        "value": true
+      }
+    }
+  ]
+}

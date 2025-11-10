@@ -1,0 +1,11 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "ImportDecl",
+      "source": "std/crypto",
+      "namespace": "crypto",
+      "sideEffect": false
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "name": "pulse-lang",
+  "version": "1.0.0",
+  "private": false,
+  "license": "MIT",
+  "description": "Pulse Language core: lexer, parser, reactivity runtime, and standard library",
+  "type": "module",
+  "main": "lib/parser.js",
+  "exports": {
+    ".": "./lib/parser.js",
+    "./lexer": "./lib/lexer.js",
+    "./parser": "./lib/parser.js",
+    "./runtime": "./lib/runtime/reactivity.js",
+    "./runtime/async": "./lib/runtime/async/index.js"
+  },
+  "scripts": {
+    "verify": "bash scripts/verify-lang-release.sh",
+    "test": "bash scripts/verify-lang-release.sh"
+  },
+  "keywords": [
+    "pulse",
+    "language",
+    "parser",
+    "reactive",
+    "signals",
+    "channels",
+    "async"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/osvfelices/pulse-lang.git"
+  },
+  "bugs": {
+    "url": "https://github.com/osvfelices/pulse-lang/issues"
+  },
+  "homepage": "https://github.com/osvfelices/pulse-lang#readme",
+  "engines": {
+    "node": ">=18"
+  },
+  "devDependencies": {}
+}

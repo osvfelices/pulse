@@ -1,0 +1,32 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "ExprStmt",
+      "expr": {
+        "kind": "BinaryExpr",
+        "op": "??",
+        "left": {
+          "kind": "OptionalMemberExpr",
+          "object": {
+            "kind": "OptionalMemberExpr",
+            "object": {
+              "kind": "OptionalMemberExpr",
+              "object": {
+                "kind": "Identifier",
+                "name": "obj"
+              },
+              "property": "prop"
+            },
+            "property": "nested"
+          },
+          "property": "value"
+        },
+        "right": {
+          "kind": "StringLiteral",
+          "value": "default"
+        }
+      }
+    }
+  ]
+}

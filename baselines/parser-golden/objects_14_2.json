@@ -1,0 +1,21 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "ExprStmt",
+      "expr": {
+        "kind": "NewExpr",
+        "callee": {
+          "kind": "Identifier",
+          "name": "Error"
+        },
+        "args": [
+          {
+            "kind": "StringLiteral",
+            "value": "message"
+          }
+        ]
+      }
+    }
+  ]
+}
