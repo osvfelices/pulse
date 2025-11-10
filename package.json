@@ -17,7 +17,10 @@
     "verify": "bash scripts/verify-lang-release.sh",
     "test": "bash scripts/verify-lang-release.sh",
     "docs": "node lib/run.js docs/scripts/build-docs.pulse",
-    "docs:serve": "node lib/run.js docs/scripts/serve.pulse"
+    "docs:serve": "node lib/run.js docs/scripts/serve.pulse",
+    "gen:snippets": "node tools/shiki/generate-snippets.mjs",
+    "gen:snippets:light": "node tools/shiki/generate-snippets.mjs --light",
+    "pulse:build": "node tools/build/build.mjs --src examples/fullstack --out examples/fullstack-dist"
   },
   "keywords": [
     "pulse",
@@ -39,5 +42,7 @@
   "engines": {
     "node": ">=18"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "shiki": "^1.0.0"
+  }
 }
