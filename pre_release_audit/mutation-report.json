@@ -1,7 +1,7 @@
 {
   "total": 20,
-  "killed": 17,
-  "survived": 3,
+  "killed": 16,
+  "survived": 4,
   "skipped": 0,
   "mutants": [
     {
@@ -102,7 +102,7 @@
     {
       "file": "lib/runtime/reactivity.js",
       "mutation": "!== → ===",
-      "status": "KILLED"
+      "status": "SURVIVED"
     }
   ]
 }

@@ -1,13 +1,13 @@
 {
-  "timestamp": "2025-11-10T11:30:23.840Z",
+  "timestamp": "2025-11-10T11:59:01.151Z",
   "reactivity": {
-    "updatesPerSec": 30303030,
-    "duration": 33,
+    "updatesPerSec": 32258064,
+    "duration": 31,
     "iterations": 1000000
   },
   "channels": {
-    "opsPerSec": 2857142,
-    "duration": 7,
+    "opsPerSec": 2500000,
+    "duration": 8,
     "messages": 10000
   }
 }

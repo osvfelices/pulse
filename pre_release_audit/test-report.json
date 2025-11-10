@@ -1,6 +1,6 @@
 {
-  "timestamp": "2025-11-10T11:30:23.725Z",
-  "duration": 40989,
+  "timestamp": "2025-11-10T11:59:01.031Z",
+  "duration": 40550,
   "passed": true,
   "forbiddenPatterns": {
     "passed": true,
@@ -14,82 +14,82 @@
       {
         "name": "async-class-methods.test.js",
         "status": "PASSED",
-        "duration": 103
+        "duration": 110
       },
       {
         "name": "comprehensive.test.js",
         "status": "PASSED",
-        "duration": 105
+        "duration": 111
       },
       {
         "name": "edge-cases.test.js",
         "status": "PASSED",
-        "duration": 108
+        "duration": 118
       },
       {
         "name": "final-coverage.test.js",
         "status": "PASSED",
-        "duration": 103
+        "duration": 113
       },
       {
         "name": "forof-advanced.test.js",
         "status": "PASSED",
-        "duration": 138
+        "duration": 140
       },
       {
         "name": "forof-basic.test.js",
         "status": "PASSED",
-        "duration": 110
+        "duration": 112
       },
       {
         "name": "integration.test.js",
         "status": "PASSED",
-        "duration": 98
+        "duration": 100
       },
       {
         "name": "minimal.test.js",
         "status": "PASSED",
-        "duration": 66
+        "duration": 67
       },
       {
         "name": "reactivity-simple.test.js",
         "status": "PASSED",
-        "duration": 66
+        "duration": 69
       },
       {
         "name": "reactivity.test.js",
         "status": "PASSED",
-        "duration": 73
+        "duration": 74
       },
       {
         "name": "runtime-globals.test.js",
         "status": "PASSED",
-        "duration": 70
+        "duration": 68
       },
       {
         "name": "stress.test.js",
         "status": "PASSED",
-        "duration": 83
+        "duration": 81
       },
       {
         "name": "async/async-core.test.js",
         "status": "PASSED",
-        "duration": 534
+        "duration": 525
       },
       {
         "name": "async/channels.test.js",
         "status": "PASSED",
-        "duration": 318
+        "duration": 316
       },
       {
         "name": "async/futures-utils.test.js",
         "status": "PASSED",
-        "duration": 626
+        "duration": 617
       },
       {
         "name": "parser/imports-exports.test.js",
         "status": "PASSED",
-        "duration": 71
+        "duration": 66
       }
     ]
   },
@@ -97,15 +97,15 @@
     "iterations": 1000,
     "crashes": 0,
     "timeouts": 0,
-    "duration": 212,
+    "duration": 192,
     "passed": true
   },
   "mutation": {
-    "duration": 38075,
+    "duration": 37637,
     "passed": true,
     "total": 20,
-    "killed": 17,
-    "survived": 3,
+    "killed": 16,
+    "survived": 4,
     "skipped": 0,
     "mutants": [
       {
@@ -206,7 +206,7 @@
       {
         "file": "lib/runtime/reactivity.js",
         "mutation": "!== → ===",
-        "status": "KILLED"
+        "status": "SURVIVED"
       }
     ]
   }
