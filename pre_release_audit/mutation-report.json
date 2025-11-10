@@ -1,0 +1,108 @@
+{
+  "total": 20,
+  "killed": 17,
+  "survived": 3,
+  "skipped": 0,
+  "mutants": [
+    {
+      "file": "lib/lexer.js",
+      "mutation": "=== → !==",
+      "status": "KILLED"
+    },
+    {
+      "file": "lib/lexer.js",
+      "mutation": "true → false",
+      "status": "SURVIVED"
+    },
+    {
+      "file": "lib/lexer.js",
+      "mutation": "false → true",
+      "status": "SURVIVED"
+    },
+    {
+      "file": "lib/lexer.js",
+      "mutation": "0 → 1",
+      "status": "KILLED"
+    },
+    {
+      "file": "lib/lexer.js",
+      "mutation": "1 → 0",
+      "status": "KILLED"
+    },
+    {
+      "file": "lib/lexer.js",
+      "mutation": "return x → return null",
+      "status": "KILLED"
+    },
+    {
+      "file": "lib/lexer.js",
+      "mutation": "&& → ||",
+      "status": "KILLED"
+    },
+    {
+      "file": "lib/lexer.js",
+      "mutation": "|| → &&",
+      "status": "KILLED"
+    },
+    {
+      "file": "lib/lexer.js",
+      "mutation": "+ → -",
+      "status": "KILLED"
+    },
+    {
+      "file": "lib/parser.js",
+      "mutation": "=== → !==",
+      "status": "KILLED"
+    },
+    {
+      "file": "lib/parser.js",
+      "mutation": "true → false",
+      "status": "KILLED"
+    },
+    {
+      "file": "lib/parser.js",
+      "mutation": "false → true",
+      "status": "KILLED"
+    },
+    {
+      "file": "lib/parser.js",
+      "mutation": "0 → 1",
+      "status": "KILLED"
+    },
+    {
+      "file": "lib/parser.js",
+      "mutation": "1 → 0",
+      "status": "KILLED"
+    },
+    {
+      "file": "lib/parser.js",
+      "mutation": "return x → return null",
+      "status": "KILLED"
+    },
+    {
+      "file": "lib/parser.js",
+      "mutation": "&& → ||",
+      "status": "KILLED"
+    },
+    {
+      "file": "lib/parser.js",
+      "mutation": "|| → &&",
+      "status": "KILLED"
+    },
+    {
+      "file": "lib/parser.js",
+      "mutation": "+ → -",
+      "status": "SURVIVED"
+    },
+    {
+      "file": "lib/runtime/reactivity.js",
+      "mutation": "=== → !==",
+      "status": "KILLED"
+    },
+    {
+      "file": "lib/runtime/reactivity.js",
+      "mutation": "!== → ===",
+      "status": "KILLED"
+    }
+  ]
+}

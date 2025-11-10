@@ -905,8 +905,8 @@ describe('for...of Basic Tests', () => {
           print(x.length)
         }
       `);
-      // Note: Pulse doesn't process escape sequences in parser, so \n is 2 chars
-      assert.deepEqual(results, ['12', '9']);
+      // Pulse correctly processes escape sequences: \n and \t are single chars
+      assert.deepEqual(results, ['11', '8']);
     });
 
     it('should handle unicode strings', () => {

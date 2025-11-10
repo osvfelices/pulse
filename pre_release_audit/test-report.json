@@ -1,25 +1,25 @@
 {
-  "timestamp": "2025-11-10T10:59:18.951Z",
-  "duration": 3120,
-  "passed": false,
+  "timestamp": "2025-11-10T11:30:23.725Z",
+  "duration": 40989,
+  "passed": true,
   "forbiddenPatterns": {
     "passed": true,
     "violations": []
   },
   "tests": {
     "total": 16,
-    "passed": 15,
-    "failed": 1,
+    "passed": 16,
+    "failed": 0,
     "tests": [
       {
         "name": "async-class-methods.test.js",
         "status": "PASSED",
-        "duration": 107
+        "duration": 103
       },
       {
         "name": "comprehensive.test.js",
         "status": "PASSED",
-        "duration": 104
+        "duration": 105
       },
       {
         "name": "edge-cases.test.js",
@@ -29,23 +29,22 @@
       {
         "name": "final-coverage.test.js",
         "status": "PASSED",
-        "duration": 99
+        "duration": 103
       },
       {
         "name": "forof-advanced.test.js",
         "status": "PASSED",
-        "duration": 139
+        "duration": 138
       },
       {
         "name": "forof-basic.test.js",
-        "status": "FAILED",
-        "duration": 288,
-        "error": "\n[PASS] All Basic for...of Tests Passed!\n\n"
+        "status": "PASSED",
+        "duration": 110
       },
       {
         "name": "integration.test.js",
         "status": "PASSED",
-        "duration": 106
+        "duration": 98
       },
       {
         "name": "minimal.test.js",
@@ -55,42 +54,42 @@
       {
         "name": "reactivity-simple.test.js",
         "status": "PASSED",
-        "duration": 78
+        "duration": 66
       },
       {
         "name": "reactivity.test.js",
         "status": "PASSED",
-        "duration": 83
+        "duration": 73
       },
       {
         "name": "runtime-globals.test.js",
         "status": "PASSED",
-        "duration": 69
+        "duration": 70
       },
       {
         "name": "stress.test.js",
         "status": "PASSED",
-        "duration": 94
+        "duration": 83
       },
       {
         "name": "async/async-core.test.js",
         "status": "PASSED",
-        "duration": 539
+        "duration": 534
       },
       {
         "name": "async/channels.test.js",
         "status": "PASSED",
-        "duration": 320
+        "duration": 318
       },
       {
         "name": "async/futures-utils.test.js",
         "status": "PASSED",
-        "duration": 627
+        "duration": 626
       },
       {
         "name": "parser/imports-exports.test.js",
         "status": "PASSED",
-        "duration": 75
+        "duration": 71
       }
     ]
   },
@@ -98,10 +97,117 @@
     "iterations": 1000,
     "crashes": 0,
     "timeouts": 0,
-    "duration": 186,
+    "duration": 212,
     "passed": true
   },
   "mutation": {
-    "skipped": true
+    "duration": 38075,
+    "passed": true,
+    "total": 20,
+    "killed": 17,
+    "survived": 3,
+    "skipped": 0,
+    "mutants": [
+      {
+        "file": "lib/lexer.js",
+        "mutation": "=== → !==",
+        "status": "KILLED"
+      },
+      {
+        "file": "lib/lexer.js",
+        "mutation": "true → false",
+        "status": "SURVIVED"
+      },
+      {
+        "file": "lib/lexer.js",
+        "mutation": "false → true",
+        "status": "SURVIVED"
+      },
+      {
+        "file": "lib/lexer.js",
+        "mutation": "0 → 1",
+        "status": "KILLED"
+      },
+      {
+        "file": "lib/lexer.js",
+        "mutation": "1 → 0",
+        "status": "KILLED"
+      },
+      {
+        "file": "lib/lexer.js",
+        "mutation": "return x → return null",
+        "status": "KILLED"
+      },
+      {
+        "file": "lib/lexer.js",
+        "mutation": "&& → ||",
+        "status": "KILLED"
+      },
+      {
+        "file": "lib/lexer.js",
+        "mutation": "|| → &&",
+        "status": "KILLED"
+      },
+      {
+        "file": "lib/lexer.js",
+        "mutation": "+ → -",
+        "status": "KILLED"
+      },
+      {
+        "file": "lib/parser.js",
+        "mutation": "=== → !==",
+        "status": "KILLED"
+      },
+      {
+        "file": "lib/parser.js",
+        "mutation": "true → false",
+        "status": "KILLED"
+      },
+      {
+        "file": "lib/parser.js",
+        "mutation": "false → true",
+        "status": "KILLED"
+      },
+      {
+        "file": "lib/parser.js",
+        "mutation": "0 → 1",
+        "status": "KILLED"
+      },
+      {
+        "file": "lib/parser.js",
+        "mutation": "1 → 0",
+        "status": "KILLED"
+      },
+      {
+        "file": "lib/parser.js",
+        "mutation": "return x → return null",
+        "status": "KILLED"
+      },
+      {
+        "file": "lib/parser.js",
+        "mutation": "&& → ||",
+        "status": "KILLED"
+      },
+      {
+        "file": "lib/parser.js",
+        "mutation": "|| → &&",
+        "status": "KILLED"
+      },
+      {
+        "file": "lib/parser.js",
+        "mutation": "+ → -",
+        "status": "SURVIVED"
+      },
+      {
+        "file": "lib/runtime/reactivity.js",
+        "mutation": "=== → !==",
+        "status": "KILLED"
+      },
+      {
+        "file": "lib/runtime/reactivity.js",
+        "mutation": "!== → ===",
+        "status": "KILLED"
+      }
+    ]
   }
 }
