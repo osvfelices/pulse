@@ -6,7 +6,7 @@
 
 ---
 
-## 🎉 Highlights
+## Highlights
 
 Pulse 1.0.0 is the first production-ready release of an **independent programming language** designed for reactive and concurrent computing.
 
@@ -20,15 +20,15 @@ Pulse 1.0.0 is the first production-ready release of an **independent programmin
 
 ### What's New in 1.0.0
 
-✅ **Async Class Methods** — Fully functional (CRITICAL FIX: 40/40 tests passing)
-✅ **100% Test Coverage** — 16/16 core tests passing
-✅ **FAANG-level Quality** — Mutation testing (80%), fuzzing (1000 iterations), SAST clean
-✅ **Optimized Package** — 48.2 kB (43 files), ESM-only
-✅ **Production Ready** — Zero bugs, zero limitations
+- **Async Class Methods** — Fully functional (CRITICAL FIX: 40/40 tests passing)
+- **100% Test Coverage** — 16/16 core tests passing
+- **FAANG-level Quality** — Mutation testing (80%), fuzzing (1000 iterations), SAST clean
+- **Optimized Package** — 48.2 kB (43 files), ESM-only
+- **Production Ready** — Zero bugs, zero limitations
 
 ---
 
-## 📦 Installation
+## Installation
 
 ```bash
 npm install pulse
@@ -43,7 +43,7 @@ npm install @osvfelices/pulse
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Reactivity Example
 
@@ -90,7 +90,7 @@ await Promise.all([producer(), consumer()]);
 
 ---
 
-## 🏗️ Architecture
+## Architecture
 
 Pulse is built on three modular layers:
 
@@ -102,33 +102,33 @@ Pulse is built on three modular layers:
 
 ---
 
-## 📊 Performance
+## Performance
 
 | Metric | Result | Target | Status |
 |--------|--------|--------|--------|
-| Signal Updates/sec | 32,258,064 | 1,400,000 | ✅ 23x |
-| Channel Ops/sec | 2,500,000 | N/A | ✅ |
-| Test Pass Rate | 100% (16/16) | >90% | ✅ |
-| Package Size | 48.2 kB | <100 kB | ✅ |
+| Signal Updates/sec | 32,258,064 | 1,400,000 | PASS (23x) |
+| Channel Ops/sec | 2,500,000 | N/A | PASS |
+| Test Pass Rate | 100% (16/16) | >90% | PASS |
+| Package Size | 48.2 kB | <100 kB | PASS |
 
 ---
 
-## ✅ Quality Gates
+## Quality Gates
 
-- ✅ **Security:** 0 vulnerabilities
-- ✅ **Tests:** 16/16 passing (100%)
-- ✅ **Fuzzing:** 1000 iterations, 0 crashes
-- ✅ **Mutation Testing:** 16/20 killed (80%)
+- **Security:** 0 vulnerabilities
+- **Tests:** 16/16 passing (100%)
+- **Fuzzing:** 1000 iterations, 0 crashes
+- **Mutation Testing:** 16/20 killed (80%)
 
 ---
 
-## ⚠️ Known Limitations
+## Known Limitations
 
 **NONE** — Zero limitations in 1.0.0
 
 ---
 
-## 📚 Documentation
+## Documentation
 
 - **Repository:** https://github.com/osvfelices/pulse
 - **Issues:** https://github.com/osvfelices/pulse/issues
@@ -136,7 +136,7 @@ Pulse is built on three modular layers:
 
 ---
 
-## 📝 License
+## License
 
 MIT License
 
