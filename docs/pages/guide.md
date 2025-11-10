@@ -33,7 +33,7 @@ main()
 Run it with:
 
 ```bash
-node lib/parser.js hello.pulse
+npm run parse hello.pulse
 ```
 
 ## Basic Syntax

@@ -118,12 +118,12 @@ await main()
 To run these examples locally:
 
 1. Save the code to a `.pulse` file
-2. Run it with: `node lib/parser.js your-file.pulse`
+2. Run it with: `npm run parse your-file.pulse`
 
-Or use the NPM scripts:
+Example:
 
 ```bash
-npm run parse examples/hello.pulse
+npm run parse examples/fullstack/server/index.pulse
 ```
 
 ## Community Examples
