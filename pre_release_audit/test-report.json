@@ -1,0 +1,111 @@
+{
+  "timestamp": "2025-11-10T10:42:28.366Z",
+  "duration": 3215,
+  "passed": false,
+  "forbiddenPatterns": {
+    "passed": true,
+    "violations": []
+  },
+  "tests": {
+    "total": 16,
+    "passed": 11,
+    "failed": 5,
+    "tests": [
+      {
+        "name": "async-class-methods.test.js",
+        "status": "FAILED",
+        "duration": 279,
+        "error": "\n[PASS] All Async Class Method Tests Passed!\n\n"
+      },
+      {
+        "name": "comprehensive.test.js",
+        "status": "FAILED",
+        "duration": 111,
+        "error": "\n[PASS] All Comprehensive Tests Passed!\n\n"
+      },
+      {
+        "name": "edge-cases.test.js",
+        "status": "FAILED",
+        "duration": 102,
+        "error": "\n[PASS] for...of Edge Cases Passed!\n\n\n[PASS] async Class Methods Edge Cases Passed!\n\n\n[PASS] Combined Features Edge Cases Passed!\n\n"
+      },
+      {
+        "name": "final-coverage.test.js",
+        "status": "PASSED",
+        "duration": 107
+      },
+      {
+        "name": "forof-advanced.test.js",
+        "status": "PASSED",
+        "duration": 144
+      },
+      {
+        "name": "forof-basic.test.js",
+        "status": "FAILED",
+        "duration": 293,
+        "error": "\n[PASS] All Basic for...of Tests Passed!\n\n"
+      },
+      {
+        "name": "integration.test.js",
+        "status": "FAILED",
+        "duration": 93,
+        "error": "\n[PASS] All Integration Tests Passed!\n\n"
+      },
+      {
+        "name": "minimal.test.js",
+        "status": "PASSED",
+        "duration": 64
+      },
+      {
+        "name": "reactivity-simple.test.js",
+        "status": "PASSED",
+        "duration": 62
+      },
+      {
+        "name": "reactivity.test.js",
+        "status": "PASSED",
+        "duration": 69
+      },
+      {
+        "name": "runtime-globals.test.js",
+        "status": "PASSED",
+        "duration": 63
+      },
+      {
+        "name": "stress.test.js",
+        "status": "PASSED",
+        "duration": 83
+      },
+      {
+        "name": "async/async-core.test.js",
+        "status": "PASSED",
+        "duration": 531
+      },
+      {
+        "name": "async/channels.test.js",
+        "status": "PASSED",
+        "duration": 314
+      },
+      {
+        "name": "async/futures-utils.test.js",
+        "status": "PASSED",
+        "duration": 621
+      },
+      {
+        "name": "parser/imports-exports.test.js",
+        "status": "PASSED",
+        "duration": 69
+      }
+    ]
+  },
+  "fuzzing": {
+    "iterations": 1000,
+    "crashes": 0,
+    "timeouts": 0,
+    "duration": 177,
+    "passed": true
+  },
+  "mutation": {
+    "skipped": true
+  }
+}
