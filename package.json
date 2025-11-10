@@ -1,5 +1,5 @@
 {
-  "name": "pulse-lang",
+  "name": "pulse",
   "version": "1.0.0",
   "private": false,
   "license": "MIT",
@@ -28,12 +28,12 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/osvfelices/pulse-lang.git"
+    "url": "git+https://github.com/osvfelices/pulse.git"
   },
   "bugs": {
-    "url": "https://github.com/osvfelices/pulse-lang/issues"
+    "url": "https://github.com/osvfelices/pulse/issues"
   },
-  "homepage": "https://github.com/osvfelices/pulse-lang#readme",
+  "homepage": "https://github.com/osvfelices/pulse#readme",
   "engines": {
     "node": ">=18"
   },
