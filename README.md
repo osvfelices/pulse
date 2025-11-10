@@ -268,5 +268,4 @@ npm run verify
 MIT License — see [LICENSE](LICENSE)
 
 - **Repository**: [github.com/osvfelices/pulse](https://github.com/osvfelices/pulse)
-- **Branch**: [release/lang-1.0-clean](https://github.com/osvfelices/pulse/tree/release/lang-1.0-clean)
 - **Issues**: [github.com/osvfelices/pulse/issues](https://github.com/osvfelices/pulse/issues)
