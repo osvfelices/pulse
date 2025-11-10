@@ -13,9 +13,17 @@
     "./runtime": "./lib/runtime/reactivity.js",
     "./runtime/async": "./lib/runtime/async/index.js"
   },
+  "files": [
+    "lib/",
+    "std/",
+    "LICENSE",
+    "README.md",
+    "CHANGELOG.md"
+  ],
   "scripts": {
-    "verify": "bash scripts/verify-lang-release.sh",
-    "test": "bash scripts/verify-lang-release.sh",
+    "verify": "bash scripts/release/verify-all.sh",
+    "test": "bash scripts/release/verify-all.sh",
+    "prepublishOnly": "npm run verify && npm pack --dry-run",
     "docs": "node lib/run.js docs/scripts/build-docs.pulse",
     "docs:serve": "node lib/run.js docs/scripts/serve.pulse",
     "gen:snippets": "node tools/shiki/generate-snippets.mjs",
@@ -29,12 +37,10 @@
     "reactive",
     "signals",
     "channels",
-    "async"
+    "async",
+    "esm"
   ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/osvfelices/pulse.git"
-  },
+  "repository": "https://github.com/osvfelices/pulse",
   "bugs": {
     "url": "https://github.com/osvfelices/pulse/issues"
   },

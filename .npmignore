@@ -34,6 +34,7 @@ build/
 .git/
 .gitignore
 .gitattributes
+*.yml
 
 # IDE
 .idea/
