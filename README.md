@@ -52,7 +52,29 @@ Compilation: Pulse Source → Parser → AST → Codegen → JavaScript
 
 ## Quick Start
 
-Install:
+**Note**: npm package temporarily unavailable - will be republished tomorrow. For now, please clone the repository to use Pulse.
+
+### Install from Repository
+
+```bash
+# 1. Clone the repo
+git clone https://github.com/osvfelices/pulse.git
+
+# 2. Enter the project
+cd pulse
+
+# 3. Install dependencies
+npm install
+```
+
+Then you can use Pulse in your projects by importing from the `lib/` directory:
+
+```javascript
+import { signal, effect } from './pulse/lib/runtime/reactivity.js';
+import { channel } from './pulse/lib/runtime/async/index.js';
+```
+
+### npm Install (available tomorrow)
 
 ```bash
 npm install pulselang
