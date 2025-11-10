@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="pulse.svg" alt="Pulse Logo" width="150" height="150">
+</p>
+
 # Pulse Programming Language
 
 A modern programming language for reactive and concurrent computing.
