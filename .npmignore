@@ -1,0 +1,51 @@
+# Pulse NPM Package - Exclude non-essential files
+# Only include core language: lib/, package.json, README.md, LICENSE, CHANGELOG.md
+
+# Documentation (users can view on GitHub/website)
+docs/
+*.md
+!README.md
+!CHANGELOG.md
+
+# Development & tooling
+tools/
+scripts/
+.github/
+.vscode/
+assets/
+examples/
+pre_release_audit/
+
+# Tests
+tests/
+test-*.js
+*.test.js
+*.spec.js
+baselines/
+
+# Build artifacts
+*.log
+*.tgz
+dist/
+build/
+.pulse-build/
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# IDE
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Misc
+TODO.md
+NOTES.md
+*.backup

@@ -1,0 +1,58 @@
+npm notice
+npm notice package: pulse@1.0.0
+npm notice Tarball Contents
+npm notice 4.6kB CHANGELOG.md
+npm notice 4B LICENSE
+npm notice 10.0kB README.md
+npm notice 15.2kB lib/codegen.js
+npm notice 3.3kB lib/lexer.js
+npm notice 26.5kB lib/parser.js
+npm notice 1.6kB lib/run.js
+npm notice 8.6kB lib/runtime/async/channel.js
+npm notice 4.7kB lib/runtime/async/future.js
+npm notice 776B lib/runtime/async/go.js
+npm notice 1.3kB lib/runtime/async/index.js
+npm notice 3.3kB lib/runtime/async/queue.js
+npm notice 8.1kB lib/runtime/async/scheduler.js
+npm notice 2.5kB lib/runtime/async/sleep.js
+npm notice 4.1kB lib/runtime/async/task.js
+npm notice 8.1kB lib/runtime/async/utils.js
+npm notice 5.1kB lib/runtime/debug.mjs
+npm notice 7.8kB lib/runtime/dom.js
+npm notice 479B lib/runtime/globals.js
+npm notice 8.8kB lib/runtime/reactivity.js
+npm notice 8.7kB lib/runtime/router.js
+npm notice 7.5kB lib/view-compiler.js
+npm notice 1.4kB package.json
+npm notice 242.2kB pulse.svg
+npm notice 3.8kB std/async.mjs
+npm notice 4.3kB std/async.pulse
+npm notice 4.4kB std/cli.mjs
+npm notice 5.0kB std/cli.pulse
+npm notice 2.2kB std/collections.js
+npm notice 3.7kB std/crypto.js
+npm notice 768B std/env.js
+npm notice 1.7kB std/fs.js
+npm notice 3.1kB std/fs.mjs
+npm notice 3.2kB std/fs.pulse
+npm notice 642B std/json.js
+npm notice 516B std/json.mjs
+npm notice 664B std/json.pulse
+npm notice 1.5kB std/math.mjs
+npm notice 1.6kB std/math.pulse
+npm notice 291B std/os.js
+npm notice 397B std/path.js
+npm notice 1.7kB std/path.mjs
+npm notice 1.7kB std/path.pulse
+npm notice 1.2kB std/reactive.mjs
+npm notice Tarball Details
+npm notice name: pulse
+npm notice version: 1.0.0
+npm notice filename: pulse-1.0.0.tgz
+npm notice package size: 61.3 kB
+npm notice unpacked size: 426.8 kB
+npm notice shasum: 3ef2e8c7f9835fd3483e16c022f34e153187de75
+npm notice integrity: sha512-SSO0IJnj9QeYg[...]D27LY3OmHxnjw==
+npm notice total files: 44
+npm notice
+pulse-1.0.0.tgz
