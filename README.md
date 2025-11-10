@@ -182,7 +182,7 @@ No need to be an expert - curious developers who want to learn about language de
 
 ## License
 
-MIT License - see LICENSE file.
+MIT License
 
 ## Repository
 
