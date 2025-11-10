@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{{TITLE}} - Pulse Language</title>
+  <title>Pulse Language - Pulse Language</title>
   <link rel="stylesheet" href="./style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css">
 </head>
@@ -52,7 +52,102 @@
 
     <main class="main-content">
       <article class="article">
-        {{CONTENT}}
+        <h1>Pulse Language</h1>
+
+<p>A programming language with reactivity and concurrency features.</p>
+
+<h2>Overview</h2>
+
+<p>Pulse is a programming language with its own lexer, parser, runtime, and standard library. It's separate from JavaScript engines but compiles to JavaScript as a target.</p>
+
+<p>The syntax is similar to JavaScript for familiarity, but Pulse has built-in support for signal-based reactivity and CSP-style concurrency as language features.</p>
+
+<h2>Key Features</h2>
+
+<h3>Reactivity</h3>
+
+<p>Pulse includes a reactive system with signals, computed values, and effects.</p>
+
+<pre><code class="language-javascript">import { signal, effect, computed } from 'std/reactive'
+
+const [count, setCount] = signal(0)
+const doubled = computed(() =&gt; count() * 2)
+
+effect(() =&gt; {
+  print('Count is', count(), 'doubled is', doubled())
+})
+
+setCount(5)
+</code></pre>
+
+<h3>Concurrency</h3>
+
+<p>Write concurrent code using channels and select operations.</p>
+
+<pre><code class="language-javascript">import { channel, select } from 'std/async'
+
+const ch = channel(10)
+
+async fn producer() {
+  for (const i of [1, 2, 3]) {
+    await ch.send(i)
+  }
+}
+
+async fn consumer() {
+  const value = await ch.recv()
+  print('Received:', value)
+}
+</code></pre>
+
+<h3>Modern Syntax</h3>
+
+<p>Pulse supports modern JavaScript features: arrow functions, async/await, destructuring, template literals.</p>
+
+<pre><code class="language-javascript">const greet = (name) =&gt; `Hello, ${name}`
+
+async fn fetchUser(id) {
+  const response = await fetch(`/api/users/${id}`)
+  return response.json()
+}
+
+const [first, second, ...rest] = [1, 2, 3, 4, 5]
+</code></pre>
+
+<h2>Quick Start</h2>
+
+<p>Install Pulse from npm:</p>
+
+<pre><code class="language-bash">npm install -g pulselang
+</code></pre>
+
+<p>Create a <code>hello.pulse</code> file and run it:</p>
+
+<pre><code class="language-bash">pulse hello.pulse
+</code></pre>
+
+<h2>Performance</h2>
+
+<ul>
+<li>Reactive updates: Fast performance with automatic dependency tracking</li>
+<li>Memory management: No leaks detected</li>
+<li>Parser: Optimized parsing code</li>
+<li>Test coverage: All core modules tested</li>
+</ul>
+
+<h2>Getting Started</h2>
+
+<p>Ready to start? Check out the <a href="guide.html">Getting Started Guide</a> to write your first Pulse program, or explore the <a href="api.html">API Reference</a> to learn about the standard library.</p>
+
+<h2>Community</h2>
+
+<p>Pulse is open source.</p>
+
+<ul>
+<li>GitHub: <a href="https://github.com/osvfelices/pulse">github.com/osvfelices/pulse</a></li>
+<li>License: MIT</li>
+<li>Version: 1.0.0</li>
+</ul>
       </article>
     </main>
   </div>

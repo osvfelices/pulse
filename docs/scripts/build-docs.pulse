@@ -1,6 +1,8 @@
 import fs from '../../std/fs.mjs'
 import path from '../../std/path.mjs'
 
+let codeBlocks = {}
+
 fn escapeHtml(text) {
   let result = text
   result = result.split('&').join('&amp;')
@@ -22,7 +24,10 @@ fn processCodeBlocks(text) {
 
     result = result + text.substring(i, start)
 
-    const codeStart = text.indexOf('\n', start) + 1
+    const langEnd = text.indexOf('\n', start)
+    const lang = text.substring(start + 3, langEnd).trim()
+
+    const codeStart = langEnd + 1
     const codeEnd = text.indexOf('```', codeStart)
 
     if (codeEnd == -1) {
@@ -32,7 +37,18 @@ fn processCodeBlocks(text) {
 
     const code = text.substring(codeStart, codeEnd)
     const escaped = escapeHtml(code)
-    result = result + '<pre><code>' + escaped + '</code></pre>'
+
+    let prismLang = lang
+    if (lang == 'pulse') {
+      prismLang = 'javascript'
+    }
+
+    const langClass = prismLang ? ' class="language-' + prismLang + '"' : ''
+
+    const placeholder = '<<<CODEBLOCK_PLACEHOLDER_' + i + '>>>'
+    result = result + placeholder
+
+    codeBlocks[placeholder] = '<pre><code' + langClass + '>' + escaped + '</code></pre>'
 
     i = codeEnd + 3
   }
@@ -140,6 +156,7 @@ fn processLinks(text) {
 }
 
 fn parseMarkdown(markdown) {
+  codeBlocks = {}
   let html = processCodeBlocks(markdown)
   html = processInlineCode(html)
   html = processBold(html)
@@ -154,20 +171,13 @@ fn parseMarkdown(markdown) {
     let line = lines[i]
     const trimmed = line.trim()
 
-    if (trimmed.startsWith('<pre><code>')) {
-      inCodeBlock = true
-      processed.push(line)
-      continue
-    }
-
-    if (trimmed == '</code></pre>') {
-      inCodeBlock = false
-      processed.push(line)
-      continue
-    }
-
-    if (inCodeBlock) {
-      processed.push(line)
+    if (trimmed.indexOf('<<<CODEBLOCK_PLACEHOLDER_') != -1) {
+      const placeholder = trimmed
+      if (codeBlocks[placeholder]) {
+        processed.push(codeBlocks[placeholder])
+      } else {
+        processed.push(line)
+      }
       continue
     }
 
@@ -251,7 +261,7 @@ async fn buildDocs() {
   const docsRoot = path.resolve('docs')
   const pagesDir = path.join(docsRoot, 'pages')
   const templatesDir = path.join(docsRoot, 'templates')
-  const buildDir = path.join(docsRoot, 'build')
+  const buildDir = docsRoot
 
   const templatePath = path.join(templatesDir, 'base.html')
   const templateExists = await fs.exists(templatePath)
@@ -262,12 +272,6 @@ async fn buildDocs() {
 
   print('Reading template...')
   const template = await fs.readText(templatePath)
-
-  const buildExists = await fs.exists(buildDir)
-  if (!buildExists) {
-    print('Creating build directory...')
-    await fs.createDir(buildDir)
-  }
 
   print('Reading pages directory...')
   const files = await fs.readDir(pagesDir)

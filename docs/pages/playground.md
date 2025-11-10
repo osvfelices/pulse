@@ -128,10 +128,10 @@ npm run parse examples/hello.pulse
 
 ## Community Examples
 
-Want to share your Pulse creations? Submit them to our [GitHub repository](https://github.com/yourusername/pulse/tree/main/examples).
+Want to share your Pulse creations? Submit them to our [GitHub repository](https://github.com/osvfelices/pulse/tree/main/examples).
 
 ## Next Steps
 
-- Check out the [API Reference](/api.html) for complete documentation
-- Read the [Getting Started Guide](/guide.html) to learn more
-- Star us on [GitHub](https://github.com/yourusername/pulse)
+- Check out the [API Reference](api.html) for complete documentation
+- Read the [Getting Started Guide](guide.html) to learn more
+- Star us on [GitHub](https://github.com/osvfelices/pulse)

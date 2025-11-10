@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>API Reference - Pulse Language</title>
+  <link rel="stylesheet" href="./style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css">
+</head>
+<body>
+  <nav class="top-nav">
+    <div class="top-nav-container">
+      <div class="top-nav-left">
+        <a href="index.html" class="top-nav-logo">
+          <img src="./pulse.svg" alt="Pulse Logo" class="top-nav-logo-img">
+          <span class="top-nav-logo-text">Pulse</span>
+        </a>
+        <div class="top-nav-links">
+          <a href="index.html" class="top-nav-link">Docs</a>
+          <a href="playground.html" class="top-nav-link">Playground</a>
+          <a href="https://github.com/osvfelices/pulse" class="top-nav-link" target="_blank">GitHub</a>
+        </div>
+      </div>
+      <div class="top-nav-right">
+        <a href="https://www.npmjs.com/package/pulselang" class="top-nav-button" target="_blank">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          Download
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="docs-container">
+    <aside class="sidebar-left">
+      <nav class="sidebar-nav">
+        <div class="nav-group">
+          <div class="nav-group-title">Getting Started</div>
+          <a href="index.html" class="nav-item">Overview</a>
+          <a href="guide.html" class="nav-item">Installation</a>
+        </div>
+        <div class="nav-group">
+          <div class="nav-group-title">Documentation</div>
+          <a href="api.html" class="nav-item">API Reference</a>
+          <a href="playground.html" class="nav-item">Playground</a>
+        </div>
+      </nav>
+    </aside>
+
+    <main class="main-content">
+      <article class="article">
+        <h1>API Reference</h1>
+
+<p>Complete reference for the Pulse standard library.</p>
+
+<h2>File System (std/fs)</h2>
+
+<p>The <code>fs</code> module provides comprehensive file system operations.</p>
+
+<h3>Reading Files</h3>
+
+<pre><code class="language-javascript">import fs from 'std/fs'
+
+await fs.readText(filePath)
+</code></pre>
+
+<p>Reads a file and returns its contents as a string.</p>
+
+<strong>Parameters:</strong>
+<ul>
+<li><code>filePath</code> (string): Path to the file</li>
+</ul>
+
+<strong>Returns:</strong> <code>Promise<string></code>
+
+<hr>
+
+<pre><code class="language-javascript">await fs.readJson(filePath)
+</code></pre>
+
+<p>Reads and parses a JSON file.</p>
+
+<strong>Parameters:</strong>
+<ul>
+<li><code>filePath</code> (string): Path to the JSON file</li>
+</ul>
+
+<strong>Returns:</strong> <code>Promise<object></code>
+
+<h3>Writing Files</h3>
+
+<pre><code class="language-javascript">await fs.writeText(filePath, content)
+</code></pre>
+
+<p>Writes a string to a file.</p>
+
+<strong>Parameters:</strong>
+<ul>
+<li><code>filePath</code> (string): Path to the file</li>
+<li><code>content</code> (string): Content to write</li>
+</ul>
+
+<strong>Returns:</strong> <code>Promise<void></code>
+
+<hr>
+
+<pre><code class="language-javascript">await fs.writeJson(filePath, data)
+</code></pre>
+
+<p>Writes an object to a JSON file.</p>
+
+<strong>Parameters:</strong>
+<ul>
+<li><code>filePath</code> (string): Path to the file</li>
+<li><code>data</code> (object): Data to write</li>
+</ul>
+
+<strong>Returns:</strong> <code>Promise<void></code>
+
+<hr>
+
+<pre><code class="language-javascript">await fs.appendText(filePath, content)
+</code></pre>
+
+<p>Appends content to a file.</p>
+
+<strong>Parameters:</strong>
+<ul>
+<li><code>filePath</code> (string): Path to the file</li>
+<li><code>content</code> (string): Content to append</li>
+</ul>
+
+<strong>Returns:</strong> <code>Promise<void></code>
+
+<h3>Directory Operations</h3>
+
+<pre><code class="language-javascript">await fs.readDir(dirPath)
+</code></pre>
+
+<p>Lists all files and directories in a directory.</p>
+
+<strong>Parameters:</strong>
+<ul>
+<li><code>dirPath</code> (string): Path to the directory</li>
+</ul>
+
+<strong>Returns:</strong> <code>Promise<string[]></code>
+
+<hr>
+
+<pre><code class="language-javascript">await fs.createDir(dirPath)
+</code></pre>
+
+<p>Creates a directory.</p>
+
+<strong>Parameters:</strong>
+<ul>
+<li><code>dirPath</code> (string): Path to create</li>
+</ul>
+
+<strong>Returns:</strong> <code>Promise<void></code>
+
+<hr>
+
+<pre><code class="language-javascript">await fs.removeDir(dirPath)
+</code></pre>
+
+<p>Removes a directory.</p>
+
+<strong>Parameters:</strong>
+<ul>
+<li><code>dirPath</code> (string): Path to remove</li>
+</ul>
+
+<strong>Returns:</strong> <code>Promise<void></code>
+
+<h3>File Operations</h3>
+
+<pre><code class="language-javascript">await fs.exists(path)
+</code></pre>
+
+<p>Checks if a file or directory exists.</p>
+
+<strong>Parameters:</strong>
+<ul>
+<li><code>path</code> (string): Path to check</li>
+</ul>
+
+<strong>Returns:</strong> <code>Promise<boolean></code>
+
+<hr>
+
+<pre><code class="language-javascript">await fs.removeFile(filePath)
+</code></pre>
+
+<p>Removes a file.</p>
+
+<strong>Parameters:</strong>
+<ul>
+<li><code>filePath</code> (string): Path to the file</li>
+</ul>
+
+<strong>Returns:</strong> <code>Promise<void></code>
+
+<hr>
+
+<pre><code class="language-javascript">await fs.copyFile(source, dest)
+</code></pre>
+
+<p>Copies a file.</p>
+
+<strong>Parameters:</strong>
+<ul>
+<li><code>source</code> (string): Source path</li>
+<li><code>dest</code> (string): Destination path</li>
+</ul>
+
+<strong>Returns:</strong> <code>Promise<void></code>
+
+<hr>
+
+<pre><code class="language-javascript">await fs.rename(oldPath, newPath)
+</code></pre>
+
+<p>Renames or moves a file.</p>
+
+<strong>Parameters:</strong>
+<ul>
+<li><code>oldPath</code> (string): Current path</li>
+<li><code>newPath</code> (string): New path</li>
+</ul>
+
+<strong>Returns:</strong> <code>Promise<void></code>
+
+<hr>
+
+<pre><code class="language-javascript">await fs.stat(path)
+</code></pre>
+
+<p>Gets file or directory information.</p>
+
+<strong>Parameters:</strong>
+<ul>
+<li><code>path</code> (string): Path to inspect</li>
+</ul>
+
+<strong>Returns:</strong> <code>Promise<{isFile, isDirectory, size, created, modified}></code>
+
+<h2>JSON (std/json)</h2>
+
+<p>Parse and stringify JSON data.</p>
+
+<pre><code class="language-javascript">import json from 'std/json'
+
+json.parse(jsonString)
+</code></pre>
+
+<p>Parses a JSON string.</p>
+
+<strong>Parameters:</strong>
+<ul>
+<li><code>jsonString</code> (string): JSON string to parse</li>
+</ul>
+
+<strong>Returns:</strong> <code>object</code>
+
+<hr>
+
+<pre><code class="language-javascript">json.stringify(value)
+</code></pre>
+
+<p>Converts a value to JSON string.</p>
+
+<strong>Parameters:</strong>
+<ul>
+<li><code>value</code> (any): Value to stringify</li>
+</ul>
+
+<strong>Returns:</strong> <code>string</code>
+
+<hr>
+
+<pre><code class="language-javascript">json.stringifyPretty(value)
+</code></pre>
+
+<p>Converts a value to formatted JSON string.</p>
+
+<strong>Parameters:</strong>
+<ul>
+<li><code>value</code> (any): Value to stringify</li>
+</ul>
+
+<strong>Returns:</strong> <code>string</code> (formatted with indentation)
+
+<hr>
+
+<pre><code class="language-javascript">json.validate(jsonString)
+</code></pre>
+
+<p>Validates a JSON string.</p>
+
+<strong>Parameters:</strong>
+<ul>
+<li><code>jsonString</code> (string): JSON to validate</li>
+</ul>
+
+<strong>Returns:</strong> <code>boolean</code>
+
+<h2>Math (std/math)</h2>
+
+<p>Mathematical functions and constants.</p>
+
+<h3>Constants</h3>
+
+<pre><code class="language-javascript">import math from 'std/math'
+
+math.PI
+math.E
+math.SQRT2
+</code></pre>
+
+<h3>Basic Functions</h3>
+
+<pre><code class="language-javascript">math.abs(x)
+math.min(a, b)
+math.max(a, b)
+math.floor(x)
+math.ceil(x)
+math.round(x)
+math.pow(base, exponent)
+math.sqrt(x)
+</code></pre>
+
+<h3>Trigonometry</h3>
+
+<pre><code class="language-javascript">math.sin(x)
+math.cos(x)
+math.tan(x)
+math.toRadians(degrees)
+math.toDegrees(radians)
+</code></pre>
+
+<h3>Utilities</h3>
+
+<pre><code class="language-javascript">math.random()
+math.randomInt(min, max)
+math.clamp(value, min, max)
+math.lerp(start, end, t)
+</code></pre>
+
+<h2>Async (std/async)</h2>
+
+<p>Advanced async utilities and concurrency primitives.</p>
+
+<h3>Channels</h3>
+
+<pre><code class="language-javascript">import { channel } from 'std/async'
+
+const ch = channel(bufferSize)
+</code></pre>
+
+<p>Creates a new channel for concurrent communication.</p>
+
+<strong>Parameters:</strong>
+<ul>
+<li><code>bufferSize</code> (number): Buffer size (0 for unbuffered)</li>
+</ul>
+
+<strong>Returns:</strong> <code>Channel</code>
+
+<strong>Channel Methods:</strong>
+<ul>
+<li><code>await ch.send(value)</code>: Send a value</li>
+<li><code>await ch.recv()</code>: Receive a value</li>
+<li><code>ch.close()</code>: Close the channel</li>
+</ul>
+
+<h3>Async Utilities</h3>
+
+<pre><code class="language-javascript">await sleep(ms)
+</code></pre>
+
+<p>Pauses execution for a duration.</p>
+
+<strong>Parameters:</strong>
+<ul>
+<li><code>ms</code> (number): Milliseconds to sleep</li>
+</ul>
+
+<strong>Returns:</strong> <code>Promise<void></code>
+
+<hr>
+
+<pre><code class="language-javascript">await parallel(tasks, options)
+</code></pre>
+
+<p>Executes tasks in parallel.</p>
+
+<strong>Parameters:</strong>
+<ul>
+<li><code>tasks</code> (function[]): Array of async functions</li>
+<li><code>options</code> (object): Optional configuration</li>
+</ul>
+
+<strong>Returns:</strong> <code>Promise<results[]></code>
+
+<hr>
+
+<pre><code class="language-javascript">await race(tasks)
+</code></pre>
+
+<p>Returns the result of the first completed task.</p>
+
+<strong>Parameters:</strong>
+<ul>
+<li><code>tasks</code> (function[]): Array of async functions</li>
+</ul>
+
+<strong>Returns:</strong> <code>Promise<result></code>
+
+<hr>
+
+<pre><code class="language-javascript">await timeout(task, ms)
+</code></pre>
+
+<p>Executes a task with a timeout.</p>
+
+<strong>Parameters:</strong>
+<ul>
+<li><code>task</code> (function): Async function to execute</li>
+<li><code>ms</code> (number): Timeout in milliseconds</li>
+</ul>
+
+<strong>Returns:</strong> <code>Promise<result></code>
+
+<hr>
+
+<pre><code class="language-javascript">await retry(task, options)
+</code></pre>
+
+<p>Retries a task on failure.</p>
+
+<strong>Parameters:</strong>
+<ul>
+<li><code>task</code> (function): Async function to retry</li>
+<li><code>options</code> (object): <code>{ maxAttempts, delay, backoff }</code></li>
+</ul>
+
+<strong>Returns:</strong> <code>Promise<result></code>
+
+<hr>
+
+<pre><code class="language-javascript">await sequence(tasks)
+</code></pre>
+
+<p>Executes tasks sequentially.</p>
+
+<strong>Parameters:</strong>
+<ul>
+<li><code>tasks</code> (function[]): Array of async functions</li>
+</ul>
+
+<strong>Returns:</strong> <code>Promise<results[][Getting Started Guide(guide.html).
+
+      </article>
+    </main>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-left">
+        <a href="https://github.com/osvfelices/pulse" target="_blank">GitHub</a>
+        <a href="https://www.npmjs.com/package/pulselang" target="_blank">npm</a>
+        <a href="https://github.com/osvfelices/pulse/blob/main/LICENSE">License</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+  <script>
+    // Add IDs to headings for direct linking
+    document.addEventListener('DOMContentLoaded', function() {
+      const article = document.querySelector('.article');
+      const headings = article.querySelectorAll('h2, h3');
+
+      headings.forEach((heading, index) => {
+        if (!heading.id) {
+          heading.id = heading.textContent.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '');
+        }
+      });
+
+      // Highlight code blocks
+      Prism.highlightAll();
+    });
+  </script>
+</body>
+</html>

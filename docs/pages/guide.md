@@ -4,10 +4,16 @@ Learn the fundamentals of Pulse programming in this comprehensive guide.
 
 ## Installation
 
-Clone the repository and install dependencies:
+Install Pulse from npm:
 
 ```bash
-git clone https://github.com/yourusername/pulse.git
+npm install -g pulselang
+```
+
+Or clone the repository for development:
+
+```bash
+git clone https://github.com/osvfelices/pulse.git
 cd pulse
 npm install
 ```
@@ -245,12 +251,12 @@ Pulse includes a rich standard library:
 - **cli**: Command-line interface helpers
 - **path**: Path manipulation utilities
 
-Explore the [API Reference](/api.html) for complete documentation.
+Explore the [API Reference(api.html) for complete documentation.
 
 ## Next Steps
 
 Now that you understand the basics, explore:
 
-- [API Reference](/api.html) - Complete standard library documentation
-- [Playground](/playground.html) - Try Pulse in your browser
-- [GitHub](https://github.com/yourusername/pulse) - Contribute to the project
+- [API Reference(api.html) - Complete standard library documentation
+- [Playground(playground.html) - Try Pulse in your browser
+- [GitHub](https://github.com/osvfelices/pulse) - Contribute to the project

@@ -1,6 +1,6 @@
 {
-  "name": "pulse",
-  "version": "1.0.0",
+  "name": "pulselang",
+  "version": "1.0.1",
   "private": false,
   "license": "MIT",
   "description": "Pulse Language core: lexer, parser, reactivity runtime, and standard library",
@@ -18,7 +18,8 @@
     "std/",
     "LICENSE",
     "README.md",
-    "CHANGELOG.md"
+    "CHANGELOG.md",
+    "pulse.svg"
   ],
   "scripts": {
     "verify": "bash scripts/release/verify-all.sh",

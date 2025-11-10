@@ -1,0 +1,38 @@
+import { signal, effect } from '../../../std/reactive.mjs'
+
+const [hits, setHits] = signal(0)
+
+effect(() => {
+  print('Server hits:', hits())
+})
+
+async fn startServer() {
+  const http = await import('node:http')
+  const fs = await import('node:fs/promises')
+
+  const server = http.createServer(async (req, res) => {
+    if (req.url == '/' || req.url == '/index.html') {
+      const html = await fs.readFile(new URL('../web/index.html', import.meta.url), 'utf8')
+      res.writeHead(200, { 'content-type': 'text/html; charset=utf-8' })
+      res.end(html)
+      setHits(hits() + 1)
+      return
+    }
+
+    if (req.url == '/main.mjs') {
+      const mod = await fs.readFile(new URL('../../fullstack-dist/web/main.mjs', import.meta.url), 'utf8')
+      res.writeHead(200, { 'content-type': 'text/javascript; charset=utf-8' })
+      res.end(mod)
+      return
+    }
+
+    res.writeHead(404)
+    res.end('Not found')
+  })
+
+  server.listen(3000, () => {
+    print('Pulse full-stack app running on http://localhost:3000')
+  })
+}
+
+await startServer()

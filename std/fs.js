@@ -1,27 +1,16 @@
-/**
- * File system module for Pulse (JavaScript target)
- * Mirrors the native PVM FS API
- */
+// File system utilities for Pulse
 
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
-/**
- * Read a text file
- * @param {string} filePath - Path to file
- * @returns {Promise<string>}
- */
+// Read a text file
 async function readText(filePath) {
   return await fs.readFile(filePath, 'utf8');
 }
 
-/**
- * Write a text file
- * @param {string} filePath - Path to file
- * @param {string} content - Content to write
- */
+// Write a text file
 async function writeText(filePath, content) {
-  // Ensure parent directory exists
+  // Make sure directory exists
   const dir = path.dirname(filePath);
   await fs.mkdir(dir, { recursive: true });
 

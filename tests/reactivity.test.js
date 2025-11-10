@@ -490,7 +490,7 @@ console.log(`Passed: ${testsPassed}`);
 console.log(`Failed: ${testsFailed}`);
 
 if (testsFailed > 0) {
-  console.log('\n[ERROR] TESTS FAILED - NOT PRODUCTION READY\n');
+  console.log('\n[ERROR] Some tests failed\n');
   process.exit(1);
 } else {
   console.log('\n[OK] ALL TESTS PASSED - PRODUCTION READY\n');

@@ -1,17 +1,18 @@
 # Pulse Language
 
-**A modern programming language with fine-grained reactivity and Go-style concurrency**
+A programming language with reactivity and concurrency features.
 
 ## Overview
 
-Pulse is an independent programming language designed for reactive and concurrent computing. It features its own lexer, parser, runtime, and standard library, completely separate from JavaScript engines or Node.js.
+Pulse is a programming language with its own lexer, parser, runtime, and standard library. It's separate from JavaScript engines but compiles to JavaScript as a target.
 
-While Pulse syntax draws inspiration from JavaScript for familiarity, it implements distinct semantics with native support for signal-based reactivity and CSP-style concurrency as first-class language primitives. Pulse compiles to JavaScript as a compilation target (similar to how TypeScript, Kotlin, or Dart compile to JS), but it is not a JavaScript library or framework.
+The syntax is similar to JavaScript for familiarity, but Pulse has built-in support for signal-based reactivity and CSP-style concurrency as language features.
 
 ## Key Features
 
-### Fine-Grained Reactivity
-Pulse includes a built-in reactive system with signals, computed values, and effects. Achieve over 1.4 million updates per second with deterministic, glitch-free reactivity.
+### Reactivity
+
+Pulse includes a reactive system with signals, computed values, and effects.
 
 ```pulse
 import { signal, effect, computed } from 'std/reactive'
@@ -26,8 +27,9 @@ effect(() => {
 setCount(5)
 ```
 
-### Go-Style Concurrency
-Write concurrent code using channels and CSP-style select operations. No callback hell, no promise chains - just clean, synchronous-looking async code.
+### Concurrency
+
+Write concurrent code using channels and select operations.
 
 ```pulse
 import { channel, select } from 'std/async'
@@ -47,7 +49,8 @@ async fn consumer() {
 ```
 
 ### Modern Syntax
-Pulse supports all the modern JavaScript features you love: arrow functions, async/await, destructuring, template literals, and more.
+
+Pulse supports modern JavaScript features: arrow functions, async/await, destructuring, template literals.
 
 ```pulse
 const greet = (name) => `Hello, ${name}`
@@ -62,30 +65,33 @@ const [first, second, ...rest] = [1, 2, 3, 4, 5]
 
 ## Quick Start
 
-Install Pulse and run your first program:
+Install Pulse from npm:
 
 ```bash
-git clone https://github.com/yourusername/pulse.git
-cd pulse
-npm install
-node lib/parser.js examples/hello.pulse
+npm install -g pulselang
+```
+
+Create a `hello.pulse` file and run it:
+
+```bash
+pulse hello.pulse
 ```
 
 ## Performance
 
-- **Reactive Updates**: ~1.4M updates/second
-- **Zero Memory Leaks**: Deterministic cleanup
-- **Fast Parser**: 958 lines of optimized parsing code
-- **100% Test Coverage**: On all core modules
+- Reactive updates: Fast performance with automatic dependency tracking
+- Memory management: No leaks detected
+- Parser: Optimized parsing code
+- Test coverage: All core modules tested
 
 ## Getting Started
 
-Ready to dive in? Check out the [Getting Started Guide](/guide.html) to write your first Pulse program, or explore the [API Reference](/api.html) to learn about the standard library.
+Ready to start? Check out the [Getting Started Guide](guide.html) to write your first Pulse program, or explore the [API Reference](api.html) to learn about the standard library.
 
 ## Community
 
-Pulse is open source and built with love by developers who believe in the power of reactive programming.
+Pulse is open source.
 
-- **GitHub**: [github.com/yourusername/pulse](https://github.com/yourusername/pulse)
-- **License**: MIT
-- **Version**: 1.0.0
+- GitHub: [github.com/osvfelices/pulse](https://github.com/osvfelices/pulse)
+- License: MIT
+- Version: 1.0.0

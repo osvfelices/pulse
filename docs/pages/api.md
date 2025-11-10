@@ -521,4 +521,4 @@ Outputs values to the console.
 
 ---
 
-For more examples and tutorials, visit the [Getting Started Guide](/guide.html).
+For more examples and tutorials, visit the [Getting Started Guide(guide.html).
