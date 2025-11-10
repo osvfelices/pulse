@@ -1,0 +1,65 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "ExprStmt",
+      "expr": {
+        "kind": "CallExpr",
+        "callee": {
+          "kind": "MemberExpr",
+          "object": {
+            "kind": "Identifier",
+            "name": "http"
+          },
+          "property": "get"
+        },
+        "args": [
+          {
+            "kind": "StringLiteral",
+            "value": "/api/users"
+          },
+          {
+            "kind": "FnDecl",
+            "name": null,
+            "params": [
+              {
+                "name": "req",
+                "default": null
+              },
+              {
+                "name": "res",
+                "default": null
+              }
+            ],
+            "body": {
+              "kind": "Block",
+              "statements": [
+                {
+                  "kind": "ExprStmt",
+                  "expr": {
+                    "kind": "CallExpr",
+                    "callee": {
+                      "kind": "MemberExpr",
+                      "object": {
+                        "kind": "Identifier",
+                        "name": "res"
+                      },
+                      "property": "json"
+                    },
+                    "args": [
+                      {
+                        "kind": "Identifier",
+                        "name": "users"
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            "async": false
+          }
+        ]
+      }
+    }
+  ]
+}

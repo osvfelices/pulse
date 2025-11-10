@@ -1,0 +1,1 @@
+arr.map(x  =>  x  *  2).filter(x  =>  x  >  10).reduce((a,  b)  =>  a  +  b,  0)

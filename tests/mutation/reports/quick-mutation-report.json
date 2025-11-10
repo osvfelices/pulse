@@ -1,0 +1,31 @@
+{
+  "timestamp": "2025-11-07T14:12:02.437Z",
+  "mutationScore": 33.33333333333333,
+  "target": 85,
+  "passed": false,
+  "total": 54,
+  "killed": 9,
+  "survived": 18,
+  "skipped": 27,
+  "errors": 0,
+  "byFile": {
+    "lib/lexer.js": {
+      "total": 18,
+      "killed": 4,
+      "survived": 4,
+      "skipped": 10
+    },
+    "lib/parser.js": {
+      "total": 18,
+      "killed": 3,
+      "survived": 9,
+      "skipped": 6
+    },
+    "lib/codegen.js": {
+      "total": 18,
+      "killed": 2,
+      "survived": 5,
+      "skipped": 11
+    }
+  }
+}

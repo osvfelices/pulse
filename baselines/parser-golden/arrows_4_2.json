@@ -1,0 +1,37 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "VarDecl",
+      "constant": true,
+      "name": "f",
+      "init": {
+        "kind": "ArrowFn",
+        "params": [
+          "x"
+        ],
+        "body": {
+          "kind": "Block",
+          "statements": [
+            {
+              "kind": "ReturnStmt",
+              "expr": {
+                "kind": "BinaryExpr",
+                "op": "*",
+                "left": {
+                  "kind": "Identifier",
+                  "name": "x"
+                },
+                "right": {
+                  "kind": "NumberLiteral",
+                  "value": 2
+                }
+              }
+            }
+          ]
+        },
+        "async": false
+      }
+    }
+  ]
+}

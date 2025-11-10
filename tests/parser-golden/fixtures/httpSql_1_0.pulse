@@ -1,0 +1,1 @@
+http.post("/api/users", fn(req, res) { const data = req.json() res.json(data, 201) })

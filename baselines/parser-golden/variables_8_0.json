@@ -1,0 +1,23 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "VarDecl",
+      "constant": false,
+      "pattern": {
+        "kind": "ArrayPattern",
+        "elements": [
+          "first",
+          {
+            "kind": "RestElement",
+            "name": "rest"
+          }
+        ]
+      },
+      "init": {
+        "kind": "Identifier",
+        "name": "array"
+      }
+    }
+  ]
+}

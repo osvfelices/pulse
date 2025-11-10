@@ -1,0 +1,23 @@
+// Test to verify import/export codegen works correctly
+// This test verifies the compiled output contains correct import/export statements
+
+// Test various import forms (will fail at runtime but should compile)
+import * as utils from 'std/fs'
+import defaultThing from 'std/env'
+import { readFile, writeFile as write } from 'std/fs'
+import combined, { a, b as c } from 'some-module'
+import 'side-effect-module'
+
+// Test that the code after imports still works
+const x = 42
+print('Test compiled successfully!')
+print('Value of x:', x)
+
+// Export various forms (for verification)
+export const PI = 3.14159
+export fn add(a, b) {
+  return a + b
+}
+
+const result = add(2, 3)
+print('Add result:', result)

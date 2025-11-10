@@ -1,0 +1,1 @@
+fn withRest(...args) { return args }

@@ -1,0 +1,37 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "ClassDecl",
+      "name": "Animal",
+      "superClass": "Being",
+      "methods": [
+        {
+          "name": "move",
+          "params": [],
+          "body": {
+            "kind": "Block",
+            "statements": [
+              {
+                "kind": "ExprStmt",
+                "expr": {
+                  "kind": "CallExpr",
+                  "callee": {
+                    "kind": "Identifier",
+                    "name": "print"
+                  },
+                  "args": [
+                    {
+                      "kind": "StringLiteral",
+                      "value": "moving"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

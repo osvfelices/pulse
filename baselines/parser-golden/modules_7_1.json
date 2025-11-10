@@ -1,0 +1,18 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "ExportDefault",
+      "expr": {
+        "kind": "FnDecl",
+        "name": "main",
+        "params": [],
+        "body": {
+          "kind": "Block",
+          "statements": []
+        },
+        "async": false
+      }
+    }
+  ]
+}

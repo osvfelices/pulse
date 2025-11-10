@@ -1,0 +1,6 @@
+// Test module: default + named exports
+
+export default 42
+
+export const name = 'Pulse'
+export const version = '1.2.0'

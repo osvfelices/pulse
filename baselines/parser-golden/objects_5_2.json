@@ -1,0 +1,25 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "ExprStmt",
+      "expr": {
+        "kind": "ObjectExpr",
+        "properties": [
+          {
+            "key": "computed",
+            "value": {
+              "kind": "ArrayExpr",
+              "elements": [
+                {
+                  "kind": "Identifier",
+                  "name": "expr"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

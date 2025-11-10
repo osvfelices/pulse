@@ -1,0 +1,36 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "ExprStmt",
+      "expr": {
+        "kind": "ObjectExpr",
+        "properties": [
+          {
+            "key": "nested",
+            "value": {
+              "kind": "ObjectExpr",
+              "properties": [
+                {
+                  "key": "deep",
+                  "value": {
+                    "kind": "ObjectExpr",
+                    "properties": [
+                      {
+                        "key": "value",
+                        "value": {
+                          "kind": "NumberLiteral",
+                          "value": 42
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

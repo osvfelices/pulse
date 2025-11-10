@@ -1,0 +1,55 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "VarDecl",
+      "constant": true,
+      "name": "arr",
+      "init": {
+        "kind": "CallExpr",
+        "callee": {
+          "kind": "MemberExpr",
+          "object": {
+            "kind": "ArrayExpr",
+            "elements": [
+              {
+                "kind": "NumberLiteral",
+                "value": 1
+              },
+              {
+                "kind": "NumberLiteral",
+                "value": 2
+              },
+              {
+                "kind": "NumberLiteral",
+                "value": 3
+              }
+            ]
+          },
+          "property": "map"
+        },
+        "args": [
+          {
+            "kind": "ArrowFn",
+            "params": [
+              "x"
+            ],
+            "body": {
+              "kind": "BinaryExpr",
+              "op": "*",
+              "left": {
+                "kind": "Identifier",
+                "name": "x"
+              },
+              "right": {
+                "kind": "NumberLiteral",
+                "value": 2
+              }
+            },
+            "async": false
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,1 @@
+["hello"].map(x => x)

@@ -1,0 +1,68 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "ExprStmt",
+      "expr": {
+        "kind": "CallExpr",
+        "callee": {
+          "kind": "MemberExpr",
+          "object": {
+            "kind": "CallExpr",
+            "callee": {
+              "kind": "MemberExpr",
+              "object": {
+                "kind": "CallExpr",
+                "callee": {
+                  "kind": "MemberExpr",
+                  "object": {
+                    "kind": "Identifier",
+                    "name": "users"
+                  },
+                  "property": "filter"
+                },
+                "args": [
+                  {
+                    "kind": "ArrowFn",
+                    "params": [
+                      "u"
+                    ],
+                    "body": {
+                      "kind": "MemberExpr",
+                      "object": {
+                        "kind": "Identifier",
+                        "name": "u"
+                      },
+                      "property": "active"
+                    },
+                    "async": false
+                  }
+                ]
+              },
+              "property": "map"
+            },
+            "args": [
+              {
+                "kind": "ArrowFn",
+                "params": [
+                  "u"
+                ],
+                "body": {
+                  "kind": "MemberExpr",
+                  "object": {
+                    "kind": "Identifier",
+                    "name": "u"
+                  },
+                  "property": "name"
+                },
+                "async": false
+              }
+            ]
+          },
+          "property": "sort"
+        },
+        "args": []
+      }
+    }
+  ]
+}

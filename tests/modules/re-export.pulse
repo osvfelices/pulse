@@ -1,0 +1,4 @@
+// Test module: re-exports from utils
+
+export { add, multiply as mult } from './utils.pulse'
+export * from './default-export.pulse'

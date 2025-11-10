@@ -1,0 +1,45 @@
+// Test: Method chaining after new expressions
+// Tests the new feature that allows postfix chains on new expressions
+
+// Test 1: Basic method call on new
+const date1 = new Date().toISOString()
+print('[Test 1] new Date().toISOString():', date1.length > 0 ? 'PASS' : 'FAIL')
+
+// Test 2: Chained method calls
+const map1 = new Map().set('a', 1).get('a')
+print('[Test 2] new Map().set().get():', map1 == 1 ? 'PASS' : 'FAIL')
+
+// Test 3: Property access chain
+const time1 = new Date().getTime()
+print('[Test 3] new Date().getTime():', time1 > 0 ? 'PASS' : 'FAIL')
+
+// Test 4: Multiple properties and methods
+fn TestClass() {
+  this.value = 42
+  this.getValue = fn() { return this.value }
+}
+const val1 = new TestClass().getValue()
+print('[Test 4] new TestClass().getValue():', val1 == 42 ? 'PASS' : 'FAIL')
+
+// Test 5: Side effects test - constructor should be called only once
+let constructorCalls = 0
+fn Counter() {
+  constructorCalls = constructorCalls + 1
+  this.value = constructorCalls
+}
+Counter.prototype.getValue = fn() { return this.value }
+
+const result1 = new Counter().getValue()
+print('[Test 5] Constructor called once:', constructorCalls == 1 ? 'PASS' : 'FAIL')
+print('[Test 5] Value correct:', result1 == 1 ? 'PASS' : 'FAIL')
+
+// Test 6: Long chain
+constructorCalls = 0
+const result2 = new Counter().getValue()
+print('[Test 6] Long chain constructor once:', constructorCalls == 1 ? 'PASS' : 'FAIL')
+
+// Test 7: Array/Map operations
+const size1 = new Map().set('x', 1).set('y', 2).size
+print('[Test 7] new Map() chain:', size1 == 2 ? 'PASS' : 'FAIL')
+
+print('\n[PASS] All new expression chaining tests completed!')

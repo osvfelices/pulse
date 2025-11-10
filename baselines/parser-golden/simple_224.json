@@ -1,0 +1,44 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "VarDecl",
+      "constant": true,
+      "name": "f",
+      "init": {
+        "kind": "ArrowFn",
+        "params": [
+          {
+            "name": "x",
+            "default": null
+          },
+          {
+            "name": "y",
+            "default": null
+          }
+        ],
+        "body": {
+          "kind": "BinaryExpr",
+          "op": "+",
+          "left": {
+            "kind": "BinaryExpr",
+            "op": "+",
+            "left": {
+              "kind": "Identifier",
+              "name": "x"
+            },
+            "right": {
+              "kind": "Identifier",
+              "name": "y"
+            }
+          },
+          "right": {
+            "kind": "NumberLiteral",
+            "value": 4
+          }
+        },
+        "async": false
+      }
+    }
+  ]
+}

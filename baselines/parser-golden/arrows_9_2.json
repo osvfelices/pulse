@@ -1,0 +1,53 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "VarDecl",
+      "constant": true,
+      "name": "sum",
+      "init": {
+        "kind": "CallExpr",
+        "callee": {
+          "kind": "MemberExpr",
+          "object": {
+            "kind": "Identifier",
+            "name": "numbers"
+          },
+          "property": "reduce"
+        },
+        "args": [
+          {
+            "kind": "ArrowFn",
+            "params": [
+              {
+                "name": "acc",
+                "default": null
+              },
+              {
+                "name": "x",
+                "default": null
+              }
+            ],
+            "body": {
+              "kind": "BinaryExpr",
+              "op": "+",
+              "left": {
+                "kind": "Identifier",
+                "name": "acc"
+              },
+              "right": {
+                "kind": "Identifier",
+                "name": "x"
+              }
+            },
+            "async": false
+          },
+          {
+            "kind": "NumberLiteral",
+            "value": 0
+          }
+        ]
+      }
+    }
+  ]
+}

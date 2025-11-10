@@ -1,0 +1,15 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "FnDecl",
+      "name": "empty",
+      "params": [],
+      "body": {
+        "kind": "Block",
+        "statements": []
+      },
+      "async": false
+    }
+  ]
+}

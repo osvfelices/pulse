@@ -1,0 +1,34 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "ExprStmt",
+      "expr": {
+        "kind": "ObjectExpr",
+        "properties": [
+          {
+            "key": "a",
+            "value": {
+              "kind": "NumberLiteral",
+              "value": 1
+            }
+          },
+          {
+            "key": "b",
+            "value": {
+              "kind": "NumberLiteral",
+              "value": 2
+            }
+          },
+          {
+            "key": "c",
+            "value": {
+              "kind": "NumberLiteral",
+              "value": 3
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

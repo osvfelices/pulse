@@ -1,0 +1,102 @@
+{
+  "timestamp": "2025-11-07T14:13:56.623Z",
+  "nodejs": "v22.21.1",
+  "platform": "linux",
+  "arch": "x64",
+  "parser": {
+    "simple": {
+      "name": "Simple expression",
+      "weight": "light",
+      "avgMs": 0.009538312,
+      "opsPerSec": 104840.3533036034
+    },
+    "medium": {
+      "name": "Function with logic",
+      "weight": "medium",
+      "avgMs": 0.043552228000000005,
+      "opsPerSec": 22960.93784226148
+    },
+    "complex": {
+      "name": "Complex nested structures",
+      "weight": "heavy",
+      "avgMs": 0.084053838,
+      "opsPerSec": 11897.13668993913
+    },
+    "arrow": {
+      "name": "Arrow functions",
+      "weight": "medium",
+      "avgMs": 0.03386478,
+      "opsPerSec": 29529.204087550548
+    },
+    "loops": {
+      "name": "Loops and arrays",
+      "weight": "medium",
+      "avgMs": 0.057479593999999995,
+      "opsPerSec": 17397.478486017142
+    }
+  },
+  "codegen": {
+    "simple": {
+      "name": "Simple expression",
+      "weight": "light",
+      "avgMs": 0.000819971,
+      "opsPerSec": 1219555.3257371297
+    },
+    "medium": {
+      "name": "Function with logic",
+      "weight": "medium",
+      "avgMs": 0.004204178,
+      "opsPerSec": 237858.62539597516
+    },
+    "complex": {
+      "name": "Complex nested structures",
+      "weight": "heavy",
+      "avgMs": 0.008269117,
+      "opsPerSec": 120931.89635604381
+    },
+    "arrow": {
+      "name": "Arrow functions",
+      "weight": "medium",
+      "avgMs": 0.00343956,
+      "opsPerSec": 290734.86143576505
+    },
+    "loops": {
+      "name": "Loops and arrays",
+      "weight": "medium",
+      "avgMs": 0.0069046459999999995,
+      "opsPerSec": 144830.0173535327
+    }
+  },
+  "endToEnd": {
+    "simple": {
+      "name": "Simple expression",
+      "weight": "light",
+      "avgMs": 0.005730459,
+      "opsPerSec": 174506.09104785498
+    },
+    "medium": {
+      "name": "Function with logic",
+      "weight": "medium",
+      "avgMs": 0.03618485,
+      "opsPerSec": 27635.875235077663
+    },
+    "complex": {
+      "name": "Complex nested structures",
+      "weight": "heavy",
+      "avgMs": 0.080917424,
+      "opsPerSec": 12358.277742504508
+    },
+    "arrow": {
+      "name": "Arrow functions",
+      "weight": "medium",
+      "avgMs": 0.033291853,
+      "opsPerSec": 30037.37881457064
+    },
+    "loops": {
+      "name": "Loops and arrays",
+      "weight": "medium",
+      "avgMs": 0.054351891000000006,
+      "opsPerSec": 18398.623885965622
+    }
+  }
+}

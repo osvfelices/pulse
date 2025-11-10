@@ -1,0 +1,14 @@
+# Pulse language mapping
+*.pulse linguist-language=JavaScript linguist-detectable=true
+
+# Documentation
+**/*.md linguist-documentation
+baselines/** linguist-documentation
+
+# Generated/test fixtures
+tests/parser-golden/fixtures/** linguist-generated
+tests/fuzzer/** linguist-generated
+pre_release_audit/** linguist-documentation
+
+# Vendored deps
+node_modules/** linguist-vendored

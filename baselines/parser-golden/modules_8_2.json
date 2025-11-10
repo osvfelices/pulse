@@ -1,0 +1,14 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "ExportNamed",
+      "specifiers": [
+        {
+          "local": "helper",
+          "exported": "helper"
+        }
+      ]
+    }
+  ]
+}

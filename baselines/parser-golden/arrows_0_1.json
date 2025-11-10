@@ -1,0 +1,21 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "VarDecl",
+      "constant": true,
+      "name": "f",
+      "init": {
+        "kind": "ArrowFn",
+        "params": [
+          "x"
+        ],
+        "body": {
+          "kind": "Identifier",
+          "name": "x"
+        },
+        "async": false
+      }
+    }
+  ]
+}

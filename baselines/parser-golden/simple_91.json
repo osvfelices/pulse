@@ -1,0 +1,53 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "ForStmt",
+      "init": {
+        "kind": "VarDecl",
+        "constant": false,
+        "name": "i",
+        "init": {
+          "kind": "NumberLiteral",
+          "value": 0
+        }
+      },
+      "test": {
+        "kind": "BinaryExpr",
+        "op": "<",
+        "left": {
+          "kind": "Identifier",
+          "name": "i"
+        },
+        "right": {
+          "kind": "NumberLiteral",
+          "value": 3
+        }
+      },
+      "update": {
+        "kind": "BinaryExpr",
+        "op": "=",
+        "left": {
+          "kind": "Identifier",
+          "name": "i"
+        },
+        "right": {
+          "kind": "BinaryExpr",
+          "op": "+",
+          "left": {
+            "kind": "Identifier",
+            "name": "i"
+          },
+          "right": {
+            "kind": "NumberLiteral",
+            "value": 1
+          }
+        }
+      },
+      "body": {
+        "kind": "Block",
+        "statements": []
+      }
+    }
+  ]
+}

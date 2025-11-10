@@ -1,0 +1,5 @@
+// Test module: default export
+
+export default fn calculate(x) {
+  return x * 2 + 10
+}

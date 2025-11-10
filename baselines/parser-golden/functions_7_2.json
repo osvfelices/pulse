@@ -1,0 +1,28 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "VarDecl",
+      "constant": true,
+      "name": "f",
+      "init": {
+        "kind": "FnDecl",
+        "name": null,
+        "params": [],
+        "body": {
+          "kind": "Block",
+          "statements": [
+            {
+              "kind": "ReturnStmt",
+              "expr": {
+                "kind": "NumberLiteral",
+                "value": 42
+              }
+            }
+          ]
+        },
+        "async": false
+      }
+    }
+  ]
+}

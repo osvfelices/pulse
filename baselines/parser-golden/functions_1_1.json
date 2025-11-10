@@ -1,0 +1,37 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "FnDecl",
+      "name": "greet",
+      "params": [
+        {
+          "name": "name",
+          "default": null
+        }
+      ],
+      "body": {
+        "kind": "Block",
+        "statements": [
+          {
+            "kind": "ExprStmt",
+            "expr": {
+              "kind": "CallExpr",
+              "callee": {
+                "kind": "Identifier",
+                "name": "print"
+              },
+              "args": [
+                {
+                  "kind": "Identifier",
+                  "name": "name"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "async": false
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "VarDecl",
+      "constant": true,
+      "name": "obj",
+      "init": {
+        "kind": "ObjectExpr",
+        "properties": [
+          {
+            "key": "key",
+            "value": {
+              "kind": "NumberLiteral",
+              "value": 0
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

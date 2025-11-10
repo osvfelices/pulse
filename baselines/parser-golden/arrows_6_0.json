@@ -1,0 +1,36 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "VarDecl",
+      "constant": true,
+      "name": "nested",
+      "init": {
+        "kind": "ArrowFn",
+        "params": [
+          "a"
+        ],
+        "body": {
+          "kind": "ArrowFn",
+          "params": [
+            "b"
+          ],
+          "body": {
+            "kind": "BinaryExpr",
+            "op": "+",
+            "left": {
+              "kind": "Identifier",
+              "name": "a"
+            },
+            "right": {
+              "kind": "Identifier",
+              "name": "b"
+            }
+          },
+          "async": false
+        },
+        "async": false
+      }
+    }
+  ]
+}

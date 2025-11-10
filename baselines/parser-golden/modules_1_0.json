@@ -1,0 +1,16 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "ImportDecl",
+      "source": "std/fs",
+      "named": [
+        {
+          "imported": "readFile",
+          "local": "readFile"
+        }
+      ],
+      "sideEffect": false
+    }
+  ]
+}

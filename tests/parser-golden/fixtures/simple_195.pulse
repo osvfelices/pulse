@@ -1,0 +1,1 @@
+for (let i = 0; i < "test"; i = i + 1) { }

@@ -1,0 +1,33 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "ExprStmt",
+      "expr": {
+        "kind": "CallExpr",
+        "callee": {
+          "kind": "MemberExpr",
+          "object": {
+            "kind": "NewExpr",
+            "callee": {
+              "kind": "Identifier",
+              "name": "Map"
+            },
+            "args": []
+          },
+          "property": "set"
+        },
+        "args": [
+          {
+            "kind": "StringLiteral",
+            "value": "key"
+          },
+          {
+            "kind": "StringLiteral",
+            "value": "value"
+          }
+        ]
+      }
+    }
+  ]
+}

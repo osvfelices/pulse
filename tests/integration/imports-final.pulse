@@ -1,0 +1,48 @@
+// Final runtime test for ES6 imports/exports
+// Uses real std modules to verify everything works
+
+// Test namespace import
+import * as crypto from 'std/crypto'
+
+// Test default import
+import env from 'std/env'
+
+print('==========================================')
+print('ES6 Imports - Final Runtime Test')
+print('==========================================')
+print('')
+
+// Test namespace import works (namespace contains default export)
+const hash = crypto.default.sha256('test')
+if (hash) {
+  print('[PASS] Namespace import works (import * as crypto)')
+} else {
+  print('[ERROR] Namespace import failed')
+  throw new Error('Namespace import failed')
+}
+
+// Test default import works
+const envVar = env.get('PATH')
+if (envVar) {
+  print('[PASS] Default import works (import env from ...)')
+} else {
+  print('[ERROR] Default import failed')
+  throw new Error('Default import failed')
+}
+
+// Test exports work
+export const PI = 3.14159
+export fn square(x) {
+  return x * x
+}
+
+const result = square(5)
+if (result == 25) {
+  print('[PASS] Exported function works')
+} else {
+  print('[ERROR] Exported function failed')
+  throw new Error('Exported function failed')
+}
+
+print('')
+print('[PASS] All ES6 import/export tests passed!')

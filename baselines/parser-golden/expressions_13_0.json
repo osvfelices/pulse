@@ -1,0 +1,23 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "ExprStmt",
+      "expr": {
+        "kind": "TernaryExpr",
+        "test": {
+          "kind": "Identifier",
+          "name": "x"
+        },
+        "consequent": {
+          "kind": "Identifier",
+          "name": "y"
+        },
+        "alternate": {
+          "kind": "Identifier",
+          "name": "z"
+        }
+      }
+    }
+  ]
+}

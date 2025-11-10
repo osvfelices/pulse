@@ -1,0 +1,40 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "FnDecl",
+      "name": "add",
+      "params": [
+        {
+          "name": "a",
+          "default": null
+        },
+        {
+          "name": "b",
+          "default": null
+        }
+      ],
+      "body": {
+        "kind": "Block",
+        "statements": [
+          {
+            "kind": "ReturnStmt",
+            "expr": {
+              "kind": "BinaryExpr",
+              "op": "+",
+              "left": {
+                "kind": "Identifier",
+                "name": "a"
+              },
+              "right": {
+                "kind": "Identifier",
+                "name": "b"
+              }
+            }
+          }
+        ]
+      },
+      "async": false
+    }
+  ]
+}

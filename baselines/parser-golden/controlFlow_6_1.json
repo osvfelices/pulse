@@ -1,0 +1,89 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "SwitchStmt",
+      "discriminant": {
+        "kind": "Identifier",
+        "name": "x"
+      },
+      "cases": [
+        {
+          "test": {
+            "kind": "NumberLiteral",
+            "value": 1
+          },
+          "consequent": [
+            {
+              "kind": "ExprStmt",
+              "expr": {
+                "kind": "CallExpr",
+                "callee": {
+                  "kind": "Identifier",
+                  "name": "print"
+                },
+                "args": [
+                  {
+                    "kind": "StringLiteral",
+                    "value": "one"
+                  }
+                ]
+              }
+            },
+            {
+              "kind": "BreakStmt"
+            }
+          ]
+        },
+        {
+          "test": {
+            "kind": "NumberLiteral",
+            "value": 2
+          },
+          "consequent": [
+            {
+              "kind": "ExprStmt",
+              "expr": {
+                "kind": "CallExpr",
+                "callee": {
+                  "kind": "Identifier",
+                  "name": "print"
+                },
+                "args": [
+                  {
+                    "kind": "StringLiteral",
+                    "value": "two"
+                  }
+                ]
+              }
+            },
+            {
+              "kind": "BreakStmt"
+            }
+          ]
+        },
+        {
+          "test": null,
+          "consequent": [
+            {
+              "kind": "ExprStmt",
+              "expr": {
+                "kind": "CallExpr",
+                "callee": {
+                  "kind": "Identifier",
+                  "name": "print"
+                },
+                "args": [
+                  {
+                    "kind": "StringLiteral",
+                    "value": "other"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

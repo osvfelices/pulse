@@ -1,0 +1,31 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "ExprStmt",
+      "expr": {
+        "kind": "TernaryExpr",
+        "test": {
+          "kind": "BinaryExpr",
+          "op": "&&",
+          "left": {
+            "kind": "Identifier",
+            "name": "x"
+          },
+          "right": {
+            "kind": "Identifier",
+            "name": "y"
+          }
+        },
+        "consequent": {
+          "kind": "BooleanLiteral",
+          "value": true
+        },
+        "alternate": {
+          "kind": "BooleanLiteral",
+          "value": false
+        }
+      }
+    }
+  ]
+}

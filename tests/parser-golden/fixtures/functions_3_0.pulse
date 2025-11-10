@@ -1,0 +1,1 @@
+fn curry(a) { return fn(b) { return a + b } }

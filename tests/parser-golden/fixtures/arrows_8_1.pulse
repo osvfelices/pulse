@@ -1,0 +1,1 @@
+const filtered = arr.filter(x => x > 5)

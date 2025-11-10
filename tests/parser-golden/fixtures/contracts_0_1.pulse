@@ -1,0 +1,1 @@
+contract User { name: string, age: number }

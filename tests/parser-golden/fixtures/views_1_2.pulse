@@ -1,0 +1,1 @@
+view  Button(props)  {  return  `<button  data-handler="onClick">Click</button>`  }

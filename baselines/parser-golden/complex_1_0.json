@@ -1,0 +1,28 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "ExprStmt",
+      "expr": {
+        "kind": "BinaryExpr",
+        "op": "+",
+        "left": {
+          "kind": "Identifier",
+          "name": "a"
+        },
+        "right": {
+          "kind": "BinaryExpr",
+          "op": "*",
+          "left": {
+            "kind": "Identifier",
+            "name": "b"
+          },
+          "right": {
+            "kind": "Identifier",
+            "name": "c"
+          }
+        }
+      }
+    }
+  ]
+}

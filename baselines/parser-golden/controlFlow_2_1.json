@@ -1,0 +1,98 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "IfStmt",
+      "test": {
+        "kind": "BinaryExpr",
+        "op": ">",
+        "left": {
+          "kind": "Identifier",
+          "name": "x"
+        },
+        "right": {
+          "kind": "NumberLiteral",
+          "value": 10
+        }
+      },
+      "consequent": {
+        "kind": "Block",
+        "statements": [
+          {
+            "kind": "ExprStmt",
+            "expr": {
+              "kind": "CallExpr",
+              "callee": {
+                "kind": "Identifier",
+                "name": "print"
+              },
+              "args": [
+                {
+                  "kind": "StringLiteral",
+                  "value": "big"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "alternate": {
+        "kind": "IfStmt",
+        "test": {
+          "kind": "BinaryExpr",
+          "op": ">",
+          "left": {
+            "kind": "Identifier",
+            "name": "x"
+          },
+          "right": {
+            "kind": "NumberLiteral",
+            "value": 5
+          }
+        },
+        "consequent": {
+          "kind": "Block",
+          "statements": [
+            {
+              "kind": "ExprStmt",
+              "expr": {
+                "kind": "CallExpr",
+                "callee": {
+                  "kind": "Identifier",
+                  "name": "print"
+                },
+                "args": [
+                  {
+                    "kind": "StringLiteral",
+                    "value": "medium"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "alternate": {
+          "kind": "Block",
+          "statements": [
+            {
+              "kind": "ExprStmt",
+              "expr": {
+                "kind": "CallExpr",
+                "callee": {
+                  "kind": "Identifier",
+                  "name": "print"
+                },
+                "args": [
+                  {
+                    "kind": "StringLiteral",
+                    "value": "small"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "IfStmt",
+      "test": {
+        "kind": "Identifier",
+        "name": "a"
+      },
+      "consequent": {
+        "kind": "Block",
+        "statements": [
+          {
+            "kind": "ExprStmt",
+            "expr": {
+              "kind": "CallExpr",
+              "callee": {
+                "kind": "Identifier",
+                "name": "print"
+              },
+              "args": [
+                {
+                  "kind": "Identifier",
+                  "name": "b"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "alternate": null
+    }
+  ]
+}

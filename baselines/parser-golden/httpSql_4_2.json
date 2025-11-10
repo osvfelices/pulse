@@ -1,0 +1,27 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "VarDecl",
+      "constant": true,
+      "name": "users",
+      "init": {
+        "kind": "CallExpr",
+        "callee": {
+          "kind": "MemberExpr",
+          "object": {
+            "kind": "Identifier",
+            "name": "sql"
+          },
+          "property": "many"
+        },
+        "args": [
+          {
+            "kind": "StringLiteral",
+            "value": "SELECT  *  FROM  users"
+          }
+        ]
+      }
+    }
+  ]
+}

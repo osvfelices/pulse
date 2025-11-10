@@ -1,0 +1,1 @@
+users.filter(u => u.active).map(u => u.name).sort()

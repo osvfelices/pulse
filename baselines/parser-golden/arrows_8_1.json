@@ -1,0 +1,42 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "VarDecl",
+      "constant": true,
+      "name": "filtered",
+      "init": {
+        "kind": "CallExpr",
+        "callee": {
+          "kind": "MemberExpr",
+          "object": {
+            "kind": "Identifier",
+            "name": "arr"
+          },
+          "property": "filter"
+        },
+        "args": [
+          {
+            "kind": "ArrowFn",
+            "params": [
+              "x"
+            ],
+            "body": {
+              "kind": "BinaryExpr",
+              "op": ">",
+              "left": {
+                "kind": "Identifier",
+                "name": "x"
+              },
+              "right": {
+                "kind": "NumberLiteral",
+                "value": 5
+              }
+            },
+            "async": false
+          }
+        ]
+      }
+    }
+  ]
+}

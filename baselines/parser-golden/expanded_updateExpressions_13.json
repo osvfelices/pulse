@@ -1,0 +1,17 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "ExprStmt",
+      "expr": {
+        "kind": "UpdateExpr",
+        "op": "++",
+        "argument": {
+          "kind": "Identifier",
+          "name": "index"
+        },
+        "prefix": false
+      }
+    }
+  ]
+}

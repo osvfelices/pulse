@@ -1,0 +1,34 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "ExprStmt",
+      "expr": {
+        "kind": "ObjectExpr",
+        "properties": [
+          {
+            "key": "method",
+            "value": {
+              "kind": "FnDecl",
+              "name": null,
+              "params": [],
+              "body": {
+                "kind": "Block",
+                "statements": [
+                  {
+                    "kind": "ReturnStmt",
+                    "expr": {
+                      "kind": "BooleanLiteral",
+                      "value": true
+                    }
+                  }
+                ]
+              },
+              "async": false
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

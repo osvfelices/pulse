@@ -1,0 +1,1409 @@
+{
+  "version": "2.1.0",
+  "$schema": "https://raw.githubusercontent.com/oasis-tcs/sarif-spec/master/Schemata/sarif-schema-2.1.0.json",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "Pulse SAST Analyzer",
+          "version": "1.0.0",
+          "informationUri": "https://github.com/pulse/security",
+          "rules": [
+            {
+              "id": "INSECURE_RANDOM",
+              "shortDescription": {
+                "text": "Use crypto.randomBytes() for security-sensitive random numbers"
+              },
+              "properties": {
+                "cwe": "CWE-338"
+              }
+            },
+            {
+              "id": "EVAL_USAGE",
+              "shortDescription": {
+                "text": "eval() is dangerous and can lead to code injection"
+              },
+              "properties": {
+                "cwe": "CWE-95"
+              }
+            },
+            {
+              "id": "FUNCTION_CONSTRUCTOR",
+              "shortDescription": {
+                "text": "Function constructor can lead to code injection"
+              },
+              "properties": {
+                "cwe": "CWE-95"
+              }
+            },
+            {
+              "id": "CHILD_PROCESS_EXEC",
+              "shortDescription": {
+                "text": "Unsanitized exec() can lead to command injection"
+              },
+              "properties": {
+                "cwe": "CWE-78"
+              }
+            },
+            {
+              "id": "SQL_CONCATENATION",
+              "shortDescription": {
+                "text": "SQL query concatenation can lead to SQL injection"
+              },
+              "properties": {
+                "cwe": "CWE-89"
+              }
+            },
+            {
+              "id": "HARDCODED_SECRET",
+              "shortDescription": {
+                "text": "Hardcoded secret detected"
+              },
+              "properties": {
+                "cwe": "CWE-798"
+              }
+            },
+            {
+              "id": "WEAK_CRYPTO",
+              "shortDescription": {
+                "text": "Use createCipheriv/createDecipheriv with explicit IV"
+              },
+              "properties": {
+                "cwe": "CWE-327"
+              }
+            },
+            {
+              "id": "PATH_TRAVERSAL",
+              "shortDescription": {
+                "text": "Potential path traversal vulnerability"
+              },
+              "properties": {
+                "cwe": "CWE-22"
+              }
+            },
+            {
+              "id": "OPEN_REDIRECT",
+              "shortDescription": {
+                "text": "Potential open redirect vulnerability"
+              },
+              "properties": {
+                "cwe": "CWE-601"
+              }
+            },
+            {
+              "id": "REGEX_DOS",
+              "shortDescription": {
+                "text": "Potential ReDoS (Regular Expression Denial of Service)"
+              },
+              "properties": {
+                "cwe": "CWE-1333"
+              }
+            }
+          ]
+        }
+      },
+      "results": [
+        {
+          "ruleId": "INSECURE_RANDOM",
+          "level": "medium",
+          "message": {
+            "text": "Use crypto.randomBytes() for security-sensitive random numbers"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "benchmarks/pcr-load-test.js"
+                },
+                "region": {
+                  "startLine": 207,
+                  "snippet": {
+                    "text": "const rand = Math.random();"
+                  }
+                }
+              }
+            }
+          ],
+          "properties": {
+            "cwe": "CWE-338",
+            "severity": "MEDIUM"
+          }
+        },
+        {
+          "ruleId": "INSECURE_RANDOM",
+          "level": "medium",
+          "message": {
+            "text": "Use crypto.randomBytes() for security-sensitive random numbers"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "benchmarks/reactivity-bench.js"
+                },
+                "region": {
+                  "startLine": 83,
+                  "snippet": {
+                    "text": "setA(Math.random());"
+                  }
+                }
+              }
+            }
+          ],
+          "properties": {
+            "cwe": "CWE-338",
+            "severity": "MEDIUM"
+          }
+        },
+        {
+          "ruleId": "INSECURE_RANDOM",
+          "level": "medium",
+          "message": {
+            "text": "Use crypto.randomBytes() for security-sensitive random numbers"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "benchmarks/reactivity-bench.js"
+                },
+                "region": {
+                  "startLine": 147,
+                  "snippet": {
+                    "text": "setBase(Math.random());"
+                  }
+                }
+              }
+            }
+          ],
+          "properties": {
+            "cwe": "CWE-338",
+            "severity": "MEDIUM"
+          }
+        },
+        {
+          "ruleId": "INSECURE_RANDOM",
+          "level": "medium",
+          "message": {
+            "text": "Use crypto.randomBytes() for security-sensitive random numbers"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "channels/acl.js"
+                },
+                "region": {
+                  "startLine": 48,
+                  "snippet": {
+                    "text": "return `acl-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;"
+                  }
+                }
+              }
+            }
+          ],
+          "properties": {
+            "cwe": "CWE-338",
+            "severity": "MEDIUM"
+          }
+        },
+        {
+          "ruleId": "INSECURE_RANDOM",
+          "level": "medium",
+          "message": {
+            "text": "Use crypto.randomBytes() for security-sensitive random numbers"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "channels/broker-federated.js"
+                },
+                "region": {
+                  "startLine": 613,
+                  "snippet": {
+                    "text": "const clientId = `client-${Date.now()}-${Math.random().toString(36).substring(7)}`;"
+                  }
+                }
+              }
+            }
+          ],
+          "properties": {
+            "cwe": "CWE-338",
+            "severity": "MEDIUM"
+          }
+        },
+        {
+          "ruleId": "INSECURE_RANDOM",
+          "level": "medium",
+          "message": {
+            "text": "Use crypto.randomBytes() for security-sensitive random numbers"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "channels/broker.js"
+                },
+                "region": {
+                  "startLine": 210,
+                  "snippet": {
+                    "text": "const clientId = `client-${Date.now()}-${Math.random().toString(36).substring(7)}`;"
+                  }
+                }
+              }
+            }
+          ],
+          "properties": {
+            "cwe": "CWE-338",
+            "severity": "MEDIUM"
+          }
+        },
+        {
+          "ruleId": "INSECURE_RANDOM",
+          "level": "medium",
+          "message": {
+            "text": "Use crypto.randomBytes() for security-sensitive random numbers"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "channels/cluster.js"
+                },
+                "region": {
+                  "startLine": 313,
+                  "snippet": {
+                    "text": "const requestId = Math.random().toString(36);"
+                  }
+                }
+              }
+            }
+          ],
+          "properties": {
+            "cwe": "CWE-338",
+            "severity": "MEDIUM"
+          }
+        },
+        {
+          "ruleId": "INSECURE_RANDOM",
+          "level": "medium",
+          "message": {
+            "text": "Use crypto.randomBytes() for security-sensitive random numbers"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "channels/federation.js"
+                },
+                "region": {
+                  "startLine": 493,
+                  "snippet": {
+                    "text": "if (Math.random() > 0.01) { // 99% success rate"
+                  }
+                }
+              }
+            }
+          ],
+          "properties": {
+            "cwe": "CWE-338",
+            "severity": "MEDIUM"
+          }
+        },
+        {
+          "ruleId": "INSECURE_RANDOM",
+          "level": "medium",
+          "message": {
+            "text": "Use crypto.randomBytes() for security-sensitive random numbers"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "channels/federation.js"
+                },
+                "region": {
+                  "startLine": 549,
+                  "snippet": {
+                    "text": "const shuffled = [...peers].sort(() => Math.random() - 0.5);"
+                  }
+                }
+              }
+            }
+          ],
+          "properties": {
+            "cwe": "CWE-338",
+            "severity": "MEDIUM"
+          }
+        },
+        {
+          "ruleId": "FUNCTION_CONSTRUCTOR",
+          "level": "critical",
+          "message": {
+            "text": "Function constructor can lead to code injection"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "desktop/tests/validate-tests.js"
+                },
+                "region": {
+                  "startLine": 41,
+                  "snippet": {
+                    "text": "new Function(content);"
+                  }
+                }
+              }
+            }
+          ],
+          "properties": {
+            "cwe": "CWE-95",
+            "severity": "CRITICAL"
+          }
+        },
+        {
+          "ruleId": "INSECURE_RANDOM",
+          "level": "medium",
+          "message": {
+            "text": "Use crypto.randomBytes() for security-sensitive random numbers"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/async-pipeline.js"
+                },
+                "region": {
+                  "startLine": 33,
+                  "snippet": {
+                    "text": "const processingTime = Math.floor(Math.random() * 200) + 50;"
+                  }
+                }
+              }
+            }
+          ],
+          "properties": {
+            "cwe": "CWE-338",
+            "severity": "MEDIUM"
+          }
+        },
+        {
+          "ruleId": "INSECURE_RANDOM",
+          "level": "medium",
+          "message": {
+            "text": "Use crypto.randomBytes() for security-sensitive random numbers"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "examples/async-pipeline.js"
+                },
+                "region": {
+                  "startLine": 40,
+                  "snippet": {
+                    "text": "size: Math.floor(Math.random() * 1000) + 100,"
+                  }
+                }
+              }
+            }
+          ],
+          "properties": {
+            "cwe": "CWE-338",
+            "severity": "MEDIUM"
+          }
+        },
+        {
+          "ruleId": "INSECURE_RANDOM",
+          "level": "medium",
+          "message": {
+            "text": "Use crypto.randomBytes() for security-sensitive random numbers"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "lib/cloud/observability/aggregator.js"
+                },
+                "region": {
+                  "startLine": 466,
+                  "snippet": {
+                    "text": "nodeId: options.nodeId || `node-${Math.random().toString(36).substring(7)}`,"
+                  }
+                }
+              }
+            }
+          ],
+          "properties": {
+            "cwe": "CWE-338",
+            "severity": "MEDIUM"
+          }
+        },
+        {
+          "ruleId": "INSECURE_RANDOM",
+          "level": "medium",
+          "message": {
+            "text": "Use crypto.randomBytes() for security-sensitive random numbers"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "lib/cloud/observability/logger.js"
+                },
+                "region": {
+                  "startLine": 296,
+                  "snippet": {
+                    "text": "const requestId = Math.random().toString(36).substring(7);"
+                  }
+                }
+              }
+            }
+          ],
+          "properties": {
+            "cwe": "CWE-338",
+            "severity": "MEDIUM"
+          }
+        },
+        {
+          "ruleId": "INSECURE_RANDOM",
+          "level": "medium",
+          "message": {
+            "text": "Use crypto.randomBytes() for security-sensitive random numbers"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "lib/codegen.js"
+                },
+                "region": {
+                  "startLine": 242,
+                  "snippet": {
+                    "text": "const indexVar = `__i${Math.random().toString(36).substr(2,9)}`;"
+                  }
+                }
+              }
+            }
+          ],
+          "properties": {
+            "cwe": "CWE-338",
+            "severity": "MEDIUM"
+          }
+        },
+        {
+          "ruleId": "INSECURE_RANDOM",
+          "level": "medium",
+          "message": {
+            "text": "Use crypto.randomBytes() for security-sensitive random numbers"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "lib/codegen.js"
+                },
+                "region": {
+                  "startLine": 243,
+                  "snippet": {
+                    "text": "const arrayVar = `__arr${Math.random().toString(36).substr(2,9)}`;"
+                  }
+                }
+              }
+            }
+          ],
+          "properties": {
+            "cwe": "CWE-338",
+            "severity": "MEDIUM"
+          }
+        },
+        {
+          "ruleId": "INSECURE_RANDOM",
+          "level": "medium",
+          "message": {
+            "text": "Use crypto.randomBytes() for security-sensitive random numbers"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "lib/telemetry/tracer.js"
+                },
+                "region": {
+                  "startLine": 55,
+                  "snippet": {
+                    "text": "return Math.random() < this.sampler.ratio;"
+                  }
+                }
+              }
+            }
+          ],
+          "properties": {
+            "cwe": "CWE-338",
+            "severity": "MEDIUM"
+          }
+        },
+        {
+          "ruleId": "SQL_CONCATENATION",
+          "level": "critical",
+          "message": {
+            "text": "SQL query concatenation can lead to SQL injection"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "packages/registry/backend/db/index.js"
+                },
+                "region": {
+                  "startLine": 36,
+                  "snippet": {
+                    "text": "const result = await pool.query("
+                  }
+                }
+              }
+            }
+          ],
+          "properties": {
+            "cwe": "CWE-89",
+            "severity": "CRITICAL"
+          }
+        },
+        {
+          "ruleId": "INSECURE_RANDOM",
+          "level": "medium",
+          "message": {
+            "text": "Use crypto.randomBytes() for security-sensitive random numbers"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pre_release_audit/parser-fuzzer.js"
+                },
+                "region": {
+                  "startLine": 17,
+                  "snippet": {
+                    "text": "result += chars.charAt(Math.floor(Math.random() * chars.length));"
+                  }
+                }
+              }
+            }
+          ],
+          "properties": {
+            "cwe": "CWE-338",
+            "severity": "MEDIUM"
+          }
+        },
+        {
+          "ruleId": "INSECURE_RANDOM",
+          "level": "medium",
+          "message": {
+            "text": "Use crypto.randomBytes() for security-sensitive random numbers"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pre_release_audit/parser-fuzzer.js"
+                },
+                "region": {
+                  "startLine": 29,
+                  "snippet": {
+                    "text": "const pos = Math.floor(Math.random() * input.length);"
+                  }
+                }
+              }
+            }
+          ],
+          "properties": {
+            "cwe": "CWE-338",
+            "severity": "MEDIUM"
+          }
+        },
+        {
+          "ruleId": "INSECURE_RANDOM",
+          "level": "medium",
+          "message": {
+            "text": "Use crypto.randomBytes() for security-sensitive random numbers"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pre_release_audit/parser-fuzzer.js"
+                },
+                "region": {
+                  "startLine": 33,
+                  "snippet": {
+                    "text": "() => input.repeat(Math.floor(Math.random() * 3) + 1),"
+                  }
+                }
+              }
+            }
+          ],
+          "properties": {
+            "cwe": "CWE-338",
+            "severity": "MEDIUM"
+          }
+        },
+        {
+          "ruleId": "INSECURE_RANDOM",
+          "level": "medium",
+          "message": {
+            "text": "Use crypto.randomBytes() for security-sensitive random numbers"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pre_release_audit/parser-fuzzer.js"
+                },
+                "region": {
+                  "startLine": 36,
+                  "snippet": {
+                    "text": "const pos = Math.floor(Math.random() * input.length);"
+                  }
+                }
+              }
+            }
+          ],
+          "properties": {
+            "cwe": "CWE-338",
+            "severity": "MEDIUM"
+          }
+        },
+        {
+          "ruleId": "INSECURE_RANDOM",
+          "level": "medium",
+          "message": {
+            "text": "Use crypto.randomBytes() for security-sensitive random numbers"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pre_release_audit/parser-fuzzer.js"
+                },
+                "region": {
+                  "startLine": 47,
+                  "snippet": {
+                    "text": "const strategy = strategies[Math.floor(Math.random() * strategies.length)];"
+                  }
+                }
+              }
+            }
+          ],
+          "properties": {
+            "cwe": "CWE-338",
+            "severity": "MEDIUM"
+          }
+        },
+        {
+          "ruleId": "INSECURE_RANDOM",
+          "level": "medium",
+          "message": {
+            "text": "Use crypto.randomBytes() for security-sensitive random numbers"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pre_release_audit/parser-fuzzer.js"
+                },
+                "region": {
+                  "startLine": 74,
+                  "snippet": {
+                    "text": "const baseInput = corpus[Math.floor(Math.random() * corpus.length)];"
+                  }
+                }
+              }
+            }
+          ],
+          "properties": {
+            "cwe": "CWE-338",
+            "severity": "MEDIUM"
+          }
+        },
+        {
+          "ruleId": "INSECURE_RANDOM",
+          "level": "medium",
+          "message": {
+            "text": "Use crypto.randomBytes() for security-sensitive random numbers"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pre_release_audit/parser-fuzzer.js"
+                },
+                "region": {
+                  "startLine": 75,
+                  "snippet": {
+                    "text": "const input = Math.random() > 0.5 ? mutate(baseInput) : randomString(Math.floor(Math.random() * 100) + 1);"
+                  }
+                }
+              }
+            }
+          ],
+          "properties": {
+            "cwe": "CWE-338",
+            "severity": "MEDIUM"
+          }
+        },
+        {
+          "ruleId": "INSECURE_RANDOM",
+          "level": "medium",
+          "message": {
+            "text": "Use crypto.randomBytes() for security-sensitive random numbers"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pre_release_audit/parser-fuzzer.js"
+                },
+                "region": {
+                  "startLine": 75,
+                  "snippet": {
+                    "text": "const input = Math.random() > 0.5 ? mutate(baseInput) : randomString(Math.floor(Math.random() * 100) + 1);"
+                  }
+                }
+              }
+            }
+          ],
+          "properties": {
+            "cwe": "CWE-338",
+            "severity": "MEDIUM"
+          }
+        },
+        {
+          "ruleId": "EVAL_USAGE",
+          "level": "critical",
+          "message": {
+            "text": "eval() is dangerous and can lead to code injection"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "pre_release_audit/sast-analyzer.js"
+                },
+                "region": {
+                  "startLine": 32,
+                  "snippet": {
+                    "text": "message: 'eval() is dangerous and can lead to code injection',"
+                  }
+                }
+              }
+            }
+          ],
+          "properties": {
+            "cwe": "CWE-95",
+            "severity": "CRITICAL"
+          }
+        },
+        {
+          "ruleId": "EVAL_USAGE",
+          "level": "critical",
+          "message": {
+            "text": "eval() is dangerous and can lead to code injection"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "scripts/verify-studio-ui.js"
+                },
+                "region": {
+                  "startLine": 141,
+                  "snippet": {
+                    "text": "const regionCount = await page.$$eval('.region-card', cards => cards.length);"
+                  }
+                }
+              }
+            }
+          ],
+          "properties": {
+            "cwe": "CWE-95",
+            "severity": "CRITICAL"
+          }
+        },
+        {
+          "ruleId": "EVAL_USAGE",
+          "level": "critical",
+          "message": {
+            "text": "eval() is dangerous and can lead to code injection"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "scripts/verify-studio-ui.js"
+                },
+                "region": {
+                  "startLine": 215,
+                  "snippet": {
+                    "text": "const currentMode = await page.$eval('select[data-setting=\"mode\"]', el => el.value);"
+                  }
+                }
+              }
+            }
+          ],
+          "properties": {
+            "cwe": "CWE-95",
+            "severity": "CRITICAL"
+          }
+        },
+        {
+          "ruleId": "INSECURE_RANDOM",
+          "level": "medium",
+          "message": {
+            "text": "Use crypto.randomBytes() for security-sensitive random numbers"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "std/math.mjs"
+                },
+                "region": {
+                  "startLine": 39,
+                  "snippet": {
+                    "text": "return Math.random();"
+                  }
+                }
+              }
+            }
+          ],
+          "properties": {
+            "cwe": "CWE-338",
+            "severity": "MEDIUM"
+          }
+        },
+        {
+          "ruleId": "INSECURE_RANDOM",
+          "level": "medium",
+          "message": {
+            "text": "Use crypto.randomBytes() for security-sensitive random numbers"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "studio/debug/ui/network-panel.js"
+                },
+                "region": {
+                  "startLine": 203,
+                  "snippet": {
+                    "text": "id: request.id || `req-${Date.now()}-${Math.random()}`,"
+                  }
+                }
+              }
+            }
+          ],
+          "properties": {
+            "cwe": "CWE-338",
+            "severity": "MEDIUM"
+          }
+        },
+        {
+          "ruleId": "INSECURE_RANDOM",
+          "level": "medium",
+          "message": {
+            "text": "Use crypto.randomBytes() for security-sensitive random numbers"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "studio/net/network.js"
+                },
+                "region": {
+                  "startLine": 441,
+                  "snippet": {
+                    "text": "return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;"
+                  }
+                }
+              }
+            }
+          ],
+          "properties": {
+            "cwe": "CWE-338",
+            "severity": "MEDIUM"
+          }
+        },
+        {
+          "ruleId": "INSECURE_RANDOM",
+          "level": "medium",
+          "message": {
+            "text": "Use crypto.randomBytes() for security-sensitive random numbers"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "studio/realtime/log-viewer.js"
+                },
+                "region": {
+                  "startLine": 31,
+                  "snippet": {
+                    "text": "this.id = `${timestamp}-${Math.random().toString(36).substr(2, 9)}`;"
+                  }
+                }
+              }
+            }
+          ],
+          "properties": {
+            "cwe": "CWE-338",
+            "severity": "MEDIUM"
+          }
+        },
+        {
+          "ruleId": "INSECURE_RANDOM",
+          "level": "medium",
+          "message": {
+            "text": "Use crypto.randomBytes() for security-sensitive random numbers"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "studio/realtime/stream.js"
+                },
+                "region": {
+                  "startLine": 34,
+                  "snippet": {
+                    "text": "this.id = `${timestamp}-${Math.random().toString(36).substr(2, 9)}`;"
+                  }
+                }
+              }
+            }
+          ],
+          "properties": {
+            "cwe": "CWE-338",
+            "severity": "MEDIUM"
+          }
+        },
+        {
+          "ruleId": "INSECURE_RANDOM",
+          "level": "medium",
+          "message": {
+            "text": "Use crypto.randomBytes() for security-sensitive random numbers"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "test/realtime.test.js"
+                },
+                "region": {
+                  "startLine": 54,
+                  "snippet": {
+                    "text": "id: `${Date.now()}-${Math.random()}`,"
+                  }
+                }
+              }
+            }
+          ],
+          "properties": {
+            "cwe": "CWE-338",
+            "severity": "MEDIUM"
+          }
+        },
+        {
+          "ruleId": "FUNCTION_CONSTRUCTOR",
+          "level": "critical",
+          "message": {
+            "text": "Function constructor can lead to code injection"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tests/arrow/arrow-runtime.test.js"
+                },
+                "region": {
+                  "startLine": 253,
+                  "snippet": {
+                    "text": "new Function(code);"
+                  }
+                }
+              }
+            }
+          ],
+          "properties": {
+            "cwe": "CWE-95",
+            "severity": "CRITICAL"
+          }
+        },
+        {
+          "ruleId": "FUNCTION_CONSTRUCTOR",
+          "level": "critical",
+          "message": {
+            "text": "Function constructor can lead to code injection"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tests/arrow/arrow-runtime.test.js"
+                },
+                "region": {
+                  "startLine": 264,
+                  "snippet": {
+                    "text": "new Function(code);"
+                  }
+                }
+              }
+            }
+          ],
+          "properties": {
+            "cwe": "CWE-95",
+            "severity": "CRITICAL"
+          }
+        },
+        {
+          "ruleId": "EVAL_USAGE",
+          "level": "critical",
+          "message": {
+            "text": "eval() is dangerous and can lead to code injection"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tests/async-class-methods.test.js"
+                },
+                "region": {
+                  "startLine": 32,
+                  "snippet": {
+                    "text": "await eval(wrappedJs);"
+                  }
+                }
+              }
+            }
+          ],
+          "properties": {
+            "cwe": "CWE-95",
+            "severity": "CRITICAL"
+          }
+        },
+        {
+          "ruleId": "EVAL_USAGE",
+          "level": "critical",
+          "message": {
+            "text": "eval() is dangerous and can lead to code injection"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tests/comprehensive.test.js"
+                },
+                "region": {
+                  "startLine": 30,
+                  "snippet": {
+                    "text": "await eval(wrappedJs);"
+                  }
+                }
+              }
+            }
+          ],
+          "properties": {
+            "cwe": "CWE-95",
+            "severity": "CRITICAL"
+          }
+        },
+        {
+          "ruleId": "EVAL_USAGE",
+          "level": "critical",
+          "message": {
+            "text": "eval() is dangerous and can lead to code injection"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tests/edge-cases.test.js"
+                },
+                "region": {
+                  "startLine": 26,
+                  "snippet": {
+                    "text": "await eval(wrappedJs);"
+                  }
+                }
+              }
+            }
+          ],
+          "properties": {
+            "cwe": "CWE-95",
+            "severity": "CRITICAL"
+          }
+        },
+        {
+          "ruleId": "EVAL_USAGE",
+          "level": "critical",
+          "message": {
+            "text": "eval() is dangerous and can lead to code injection"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tests/final-coverage.test.js"
+                },
+                "region": {
+                  "startLine": 25,
+                  "snippet": {
+                    "text": "await eval(wrappedJs);"
+                  }
+                }
+              }
+            }
+          ],
+          "properties": {
+            "cwe": "CWE-95",
+            "severity": "CRITICAL"
+          }
+        },
+        {
+          "ruleId": "EVAL_USAGE",
+          "level": "critical",
+          "message": {
+            "text": "eval() is dangerous and can lead to code injection"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tests/forof-advanced.test.js"
+                },
+                "region": {
+                  "startLine": 30,
+                  "snippet": {
+                    "text": "eval(cleanedJs);"
+                  }
+                }
+              }
+            }
+          ],
+          "properties": {
+            "cwe": "CWE-95",
+            "severity": "CRITICAL"
+          }
+        },
+        {
+          "ruleId": "EVAL_USAGE",
+          "level": "critical",
+          "message": {
+            "text": "eval() is dangerous and can lead to code injection"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tests/forof-basic.test.js"
+                },
+                "region": {
+                  "startLine": 30,
+                  "snippet": {
+                    "text": "eval(cleanedJs);"
+                  }
+                }
+              }
+            }
+          ],
+          "properties": {
+            "cwe": "CWE-95",
+            "severity": "CRITICAL"
+          }
+        },
+        {
+          "ruleId": "INSECURE_RANDOM",
+          "level": "medium",
+          "message": {
+            "text": "Use crypto.randomBytes() for security-sensitive random numbers"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tests/fuzzer/parser-fuzzer.js"
+                },
+                "region": {
+                  "startLine": 20,
+                  "snippet": {
+                    "text": "const random = (max) => Math.floor(Math.random() * max);"
+                  }
+                }
+              }
+            }
+          ],
+          "properties": {
+            "cwe": "CWE-338",
+            "severity": "MEDIUM"
+          }
+        },
+        {
+          "ruleId": "INSECURE_RANDOM",
+          "level": "medium",
+          "message": {
+            "text": "Use crypto.randomBytes() for security-sensitive random numbers"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tests/fuzzer/parser-fuzzer.js"
+                },
+                "region": {
+                  "startLine": 22,
+                  "snippet": {
+                    "text": "const bool = () => Math.random() > 0.5;"
+                  }
+                }
+              }
+            }
+          ],
+          "properties": {
+            "cwe": "CWE-338",
+            "severity": "MEDIUM"
+          }
+        },
+        {
+          "ruleId": "INSECURE_RANDOM",
+          "level": "medium",
+          "message": {
+            "text": "Use crypto.randomBytes() for security-sensitive random numbers"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tests/fuzzer/smoke-fuzzer.js"
+                },
+                "region": {
+                  "startLine": 11,
+                  "snippet": {
+                    "text": "const random = (max) => Math.floor(Math.random() * max);"
+                  }
+                }
+              }
+            }
+          ],
+          "properties": {
+            "cwe": "CWE-338",
+            "severity": "MEDIUM"
+          }
+        },
+        {
+          "ruleId": "INSECURE_RANDOM",
+          "level": "medium",
+          "message": {
+            "text": "Use crypto.randomBytes() for security-sensitive random numbers"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tests/fuzzer/smoke-fuzzer.js"
+                },
+                "region": {
+                  "startLine": 13,
+                  "snippet": {
+                    "text": "const bool = () => Math.random() > 0.5;"
+                  }
+                }
+              }
+            }
+          ],
+          "properties": {
+            "cwe": "CWE-338",
+            "severity": "MEDIUM"
+          }
+        },
+        {
+          "ruleId": "EVAL_USAGE",
+          "level": "critical",
+          "message": {
+            "text": "eval() is dangerous and can lead to code injection"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "tests/integration.test.js"
+                },
+                "region": {
+                  "startLine": 26,
+                  "snippet": {
+                    "text": "await eval(wrappedJs);"
+                  }
+                }
+              }
+            }
+          ],
+          "properties": {
+            "cwe": "CWE-95",
+            "severity": "CRITICAL"
+          }
+        },
+        {
+          "ruleId": "CHILD_PROCESS_EXEC",
+          "level": "high",
+          "message": {
+            "text": "Unsanitized exec() can lead to command injection"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "vscode-extension/src/features/commands.ts"
+                },
+                "region": {
+                  "startLine": 762,
+                  "snippet": {
+                    "text": "child_process.exec(command, { cwd }, (error, stdout, stderr) => {"
+                  }
+                }
+              }
+            }
+          ],
+          "properties": {
+            "cwe": "CWE-78",
+            "severity": "HIGH"
+          }
+        },
+        {
+          "ruleId": "CHILD_PROCESS_EXEC",
+          "level": "high",
+          "message": {
+            "text": "Unsanitized exec() can lead to command injection"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "vscode-extension/src/features/tracingCommands.ts"
+                },
+                "region": {
+                  "startLine": 229,
+                  "snippet": {
+                    "text": "const result = child_process.execSync("
+                  }
+                }
+              }
+            }
+          ],
+          "properties": {
+            "cwe": "CWE-78",
+            "severity": "HIGH"
+          }
+        }
+      ]
+    }
+  ]
+}

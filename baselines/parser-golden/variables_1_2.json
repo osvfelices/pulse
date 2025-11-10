@@ -1,0 +1,14 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "VarDecl",
+      "constant": true,
+      "name": "y",
+      "init": {
+        "kind": "StringLiteral",
+        "value": "hello"
+      }
+    }
+  ]
+}

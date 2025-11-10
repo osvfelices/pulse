@@ -1,0 +1,1 @@
+arr.forEach(x => x)

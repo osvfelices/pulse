@@ -1,0 +1,27 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "ExprStmt",
+      "expr": {
+        "kind": "ArrayExpr",
+        "elements": [
+          {
+            "kind": "SpreadElement",
+            "argument": {
+              "kind": "Identifier",
+              "name": "arr1"
+            }
+          },
+          {
+            "kind": "SpreadElement",
+            "argument": {
+              "kind": "Identifier",
+              "name": "arr2"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

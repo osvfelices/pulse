@@ -1,0 +1,36 @@
+// Pulse Standard Library - JSON Module
+// Week 9 - Pure Pulse Implementation
+// Provides JSON parsing, serialization, and validation
+
+fn parse(jsonString) {
+  try {
+    return JSON.parse(jsonString)
+  } catch (e) {
+    throw 'Invalid JSON: ' + e.message
+  }
+}
+
+fn stringify(value) {
+  return JSON.stringify(value)
+}
+
+fn stringifyPretty(value) {
+  return JSON.stringify(value, null, 2)
+}
+
+fn validate(jsonString) {
+  try {
+    JSON.parse(jsonString)
+    return true
+  } catch (e) {
+    return false
+  }
+}
+
+// Export all functions as default object
+export default {
+  parse: parse,
+  stringify: stringify,
+  stringifyPretty: stringifyPretty,
+  validate: validate
+}

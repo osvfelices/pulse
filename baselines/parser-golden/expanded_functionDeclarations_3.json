@@ -1,0 +1,36 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "FnDecl",
+      "name": "f",
+      "params": [
+        {
+          "name": "p0",
+          "default": null
+        },
+        {
+          "name": "p1",
+          "default": null
+        },
+        {
+          "name": "p2",
+          "default": null
+        }
+      ],
+      "body": {
+        "kind": "Block",
+        "statements": [
+          {
+            "kind": "ReturnStmt",
+            "expr": {
+              "kind": "NumberLiteral",
+              "value": 3
+            }
+          }
+        ]
+      },
+      "async": false
+    }
+  ]
+}

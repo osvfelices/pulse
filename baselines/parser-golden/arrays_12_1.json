@@ -1,0 +1,51 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "ExprStmt",
+      "expr": {
+        "kind": "CallExpr",
+        "callee": {
+          "kind": "MemberExpr",
+          "object": {
+            "kind": "Identifier",
+            "name": "arr"
+          },
+          "property": "reduce"
+        },
+        "args": [
+          {
+            "kind": "ArrowFn",
+            "params": [
+              {
+                "name": "a",
+                "default": null
+              },
+              {
+                "name": "b",
+                "default": null
+              }
+            ],
+            "body": {
+              "kind": "BinaryExpr",
+              "op": "+",
+              "left": {
+                "kind": "Identifier",
+                "name": "a"
+              },
+              "right": {
+                "kind": "Identifier",
+                "name": "b"
+              }
+            },
+            "async": false
+          },
+          {
+            "kind": "NumberLiteral",
+            "value": 0
+          }
+        ]
+      }
+    }
+  ]
+}

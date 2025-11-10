@@ -1,0 +1,26 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "ExportDecl",
+      "declaration": {
+        "kind": "FnDecl",
+        "name": "exported",
+        "params": [],
+        "body": {
+          "kind": "Block",
+          "statements": [
+            {
+              "kind": "ReturnStmt",
+              "expr": {
+                "kind": "BooleanLiteral",
+                "value": true
+              }
+            }
+          ]
+        },
+        "async": false
+      }
+    }
+  ]
+}

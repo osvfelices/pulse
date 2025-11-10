@@ -1,0 +1,1 @@
+http.get("/api/users", fn(req, res) { res.json(users) })

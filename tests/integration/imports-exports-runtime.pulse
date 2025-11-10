@@ -1,0 +1,102 @@
+// Runtime integration test for ES6 imports/exports
+// Tests all import/export forms work correctly at runtime
+
+let testCount = 0
+let passCount = 0
+
+fn test(name, callback) {
+  testCount = testCount + 1
+  try {
+    callback()
+    passCount = passCount + 1
+    print('[PASS] [Test ' + testCount + '] ' + name)
+  } catch (error) {
+    print('[ERROR] [Test ' + testCount + '] ' + name)
+    print('   Error: ' + error.message)
+  }
+}
+
+print('==========================================')
+print('ES6 Imports/Exports Runtime Tests')
+print('==========================================')
+print('')
+
+// Test 1: Named imports
+import { add, multiply } from '../modules/utils.pulse'
+
+test('Named imports work', fn() {
+  const result = add(2, 3)
+  if (result != 5) {
+    throw new Error('Expected 5, got ' + result)
+  }
+})
+
+test('Multiple named imports work', fn() {
+  const result = multiply(4, 5)
+  if (result != 20) {
+    throw new Error('Expected 20, got ' + result)
+  }
+})
+
+// Test 2: Named import with alias
+import { greet as sayHello } from '../modules/utils.pulse'
+
+test('Named import with alias works', fn() {
+  const result = sayHello('Pulse')
+  if (result != 'Hello, Pulse') {
+    throw new Error('Expected "Hello, Pulse", got "' + result + '"')
+  }
+})
+
+// Test 3: Import const
+import { PI } from '../modules/utils.pulse'
+
+test('Import const works', fn() {
+  if (PI < 3.14 || PI > 3.15) {
+    throw new Error('Expected PI ≈ 3.14159, got ' + PI)
+  }
+})
+
+// Test 4: Default import
+import calculate from '../modules/default-export.pulse'
+
+test('Default import works', fn() {
+  const result = calculate(5)
+  if (result != 20) {
+    throw new Error('Expected 20, got ' + result)
+  }
+})
+
+// Test 5: Mixed default + named (would need a module that exports both)
+import value, { name, version } from '../modules/mixed-exports.pulse'
+
+test('Default import from mixed module works', fn() {
+  if (value != 42) {
+    throw new Error('Expected 42, got ' + value)
+  }
+})
+
+test('Named imports from mixed module work', fn() {
+  if (name != 'Pulse') {
+    throw new Error('Expected "Pulse", got "' + name + '"')
+  }
+  if (version != '1.2.0') {
+    throw new Error('Expected "1.2.0", got "' + version + '"')
+  }
+})
+
+print('')
+print('==========================================')
+print('Test Results:')
+print('  Total: ' + testCount)
+print('  Passed: ' + passCount)
+print('  Failed: ' + (testCount - passCount))
+print('==========================================')
+print('')
+
+if (passCount == testCount) {
+  print('[PASS] All runtime tests passed!')
+} else {
+  print('[ERROR] Some tests failed')
+  throw new Error('Tests failed')
+}

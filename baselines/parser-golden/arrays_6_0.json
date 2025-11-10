@@ -1,0 +1,31 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "ExprStmt",
+      "expr": {
+        "kind": "IndexExpr",
+        "object": {
+          "kind": "Identifier",
+          "name": "arr"
+        },
+        "index": {
+          "kind": "BinaryExpr",
+          "op": "-",
+          "left": {
+            "kind": "MemberExpr",
+            "object": {
+              "kind": "Identifier",
+              "name": "arr"
+            },
+            "property": "length"
+          },
+          "right": {
+            "kind": "NumberLiteral",
+            "value": 1
+          }
+        }
+      }
+    }
+  ]
+}

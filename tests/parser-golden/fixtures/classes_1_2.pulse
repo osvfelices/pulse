@@ -1,0 +1,1 @@
+class  Animal  extends  Being  {  move()  {  print("moving")  }  }

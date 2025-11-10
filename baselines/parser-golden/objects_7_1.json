@@ -1,0 +1,20 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "ExprStmt",
+      "expr": {
+        "kind": "ObjectExpr",
+        "properties": [
+          {
+            "key": "key",
+            "value": {
+              "kind": "Identifier",
+              "name": "value"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

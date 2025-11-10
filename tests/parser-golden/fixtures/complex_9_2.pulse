@@ -1,0 +1,1 @@
+typeof  x  ==  "string"  &&  x.length  >  0

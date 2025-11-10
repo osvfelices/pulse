@@ -1,0 +1,19 @@
+{
+  "kind": "Program",
+  "body": [
+    {
+      "kind": "ExprStmt",
+      "expr": {
+        "kind": "IndexExpr",
+        "object": {
+          "kind": "Identifier",
+          "name": "arr"
+        },
+        "index": {
+          "kind": "BooleanLiteral",
+          "value": false
+        }
+      }
+    }
+  ]
+}
