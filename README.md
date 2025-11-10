@@ -90,18 +90,24 @@ Pulse solves this by making reactivity and concurrency **first-class language pr
 
 ## Quick Start
 
+Install via npm:
+
 ```bash
-# Local build (npm package coming soon)
-git clone https://github.com/osvfelices/pulse.git
-cd pulse
-git checkout release/lang-1.0-clean
-bash scripts/verify-lang-release.sh
+npm install pulse
 ```
 
-Run parser manually:
+Use in your JavaScript/Node.js project:
 
-```bash
-node lib/parser.js examples/hello.pulse
+```javascript
+import { signal, effect } from 'pulse/runtime';
+
+const [count, setCount] = signal(0);
+
+effect(() => {
+  console.log('Count:', count());
+});
+
+setCount(5); // Output: Count: 5
 ```
 
 ### Hello World (Reactivity)
