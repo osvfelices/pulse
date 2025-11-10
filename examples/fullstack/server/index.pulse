@@ -26,6 +26,13 @@ async fn startServer() {
       return
     }
 
+    if (req.url.startsWith('/std/')) {
+      const mod = await fs.readFile(new URL('../../../' + req.url, import.meta.url), 'utf8')
+      res.writeHead(200, { 'content-type': 'text/javascript; charset=utf-8' })
+      res.end(mod)
+      return
+    }
+
     res.writeHead(404)
     res.end('Not found')
   })

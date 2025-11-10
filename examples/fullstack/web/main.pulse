@@ -1,4 +1,4 @@
-import { signal, effect } from '../../../std/reactive.mjs'
+import { signal, effect } from '/std/reactive.mjs'
 
 const [count, setCount] = signal(0)
 
