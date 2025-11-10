@@ -22,6 +22,7 @@
     "pulse.svg"
   ],
   "scripts": {
+    "parse": "node lib/run.js",
     "verify": "bash scripts/verify-lang-release.sh",
     "test": "bash scripts/verify-lang-release.sh",
     "prepublishOnly": "npm run verify && npm pack --dry-run",
