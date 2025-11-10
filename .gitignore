@@ -8,6 +8,7 @@ yarn-error.log*
 build/
 .pulse-build/
 dist/
+docs/build/
 
 # Native binaries
 bin/pulse-native
@@ -50,6 +51,7 @@ cloud-demo/
 # Runtime files
 .pcrc-cloud-pids
 *.pid
+.tmp_pulse_exec_*.mjs
 
 # Local data
 .pulse/
