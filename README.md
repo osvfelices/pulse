@@ -16,8 +16,14 @@
 
 ## Overview
 
-**Pulse** is a modern programming language featuring fine-grained reactivity, Go-style concurrency, and JavaScript-compatible syntax.
-Designed for **performance** and **developer experience**, it brings reactive programming and CSP-style channels as first-class language constructs.
+**Pulse** is an independent programming language designed for reactive and concurrent computing. It features its own lexer, parser, runtime, and standard library—completely separate from JavaScript engines or Node.js.
+
+While Pulse syntax draws inspiration from JavaScript for familiarity, it implements distinct semantics with native support for:
+- **Signal-based reactivity** — Automatic dependency tracking without virtual DOM
+- **CSP-style concurrency** — Channels and select operations for deterministic scheduling
+- **Predictable performance** — Zero runtime introspection or dynamic patching
+
+Pulse compiles to JavaScript as a compilation target (similar to how TypeScript, Kotlin, or Dart compile to JS), but it is not a JavaScript library or framework.
 
 ---
 
@@ -49,6 +55,36 @@ Designed for **performance** and **developer experience**, it brings reactive pr
 - Zero security issues (SAST verified)
 - Zero memory leaks detected
 - Comprehensive error handling
+
+---
+
+## Architecture
+
+Pulse is built on three modular layers:
+
+1. **Parser** — Hand-written recursive descent parser (958 LOC) that generates Pulse-specific AST nodes
+2. **Runtime** — Core execution engine implementing signals, effects, channels, and memory safety
+3. **Standard Library (std/)** — Modules for async operations, reactive state, I/O, math, and crypto
+
+The compilation pipeline: **Pulse Source → Parser → AST → Codegen → JavaScript Output**
+
+Each layer is modular and portable, allowing future backends (WASM, Rust, C++) without changing language semantics.
+
+---
+
+## Design Philosophy
+
+Pulse addresses a fundamental limitation in modern programming: reactive programming and concurrency are typically implemented as libraries, not language features. This leads to:
+- Framework lock-in and vendor dependency
+- Performance overhead from runtime patching
+- Non-deterministic scheduling behavior
+- Complex mental models and steep learning curves
+
+Pulse solves this by making reactivity and concurrency **first-class language primitives**. This enables:
+- **Compile-time optimization** — The compiler understands reactive dependencies
+- **Deterministic execution** — Predictable scheduling with no hidden magic
+- **Zero-overhead abstractions** — Direct code generation without wrapper layers
+- **Portable semantics** — Language guarantees independent of runtime implementation
 
 ---
 
