@@ -140,15 +140,15 @@ function runMutationTesting() {
   // Verify tests pass before mutation
   console.log('Verifying baseline tests pass...');
   if (!runTests()) {
-    console.error('❌ Baseline tests failed. Fix tests before mutation testing.\n');
+    console.error('FAIL Baseline tests failed. Fix tests before mutation testing.\n');
     process.exit(1);
   }
-  console.log('✅ Baseline tests pass\n');
+  console.log('PASS Baseline tests pass\n');
 
   for (const targetFile of MUTATION_TARGETS) {
     const filePath = path.join(ROOT, targetFile);
     if (!fs.existsSync(filePath)) {
-      console.log(`⚠️  Skipping ${targetFile} (not found)`);
+      console.log(`WARNING  Skipping ${targetFile} (not found)`);
       continue;
     }
 
@@ -179,7 +179,7 @@ function runMutationTesting() {
 
       if (testsPass) {
         results.survived++;
-        console.log(`  ❌ SURVIVED: ${mutation.description}`);
+        console.log(`  FAIL SURVIVED: ${mutation.description}`);
         results.mutants.push({
           file: targetFile,
           mutation: mutation.description,
@@ -187,7 +187,7 @@ function runMutationTesting() {
         });
       } else {
         results.killed++;
-        console.log(`  ✅ KILLED: ${mutation.description}`);
+        console.log(`  PASS KILLED: ${mutation.description}`);
         results.mutants.push({
           file: targetFile,
           mutation: mutation.description,
@@ -197,7 +197,7 @@ function runMutationTesting() {
 
       // Limit to 20 mutants for speed
       if (results.total >= 20) {
-        console.log('\n⚠️  Reached 20 mutants limit (for performance)');
+        console.log('\nWARNING  Reached 20 mutants limit (for performance)');
         break;
       }
     }
@@ -221,10 +221,10 @@ function runMutationTesting() {
   // Pass if >= 70% killed
   const killRate = results.killed / results.total;
   if (killRate >= 0.7) {
-    console.log('✅ PASS: Mutation score ≥ 70%\n');
+    console.log('PASS PASS: Mutation score ≥ 70%\n');
     return 0;
   } else {
-    console.log('❌ FAIL: Mutation score < 70%\n');
+    console.log('FAIL FAIL: Mutation score < 70%\n');
     return 1;
   }
 }

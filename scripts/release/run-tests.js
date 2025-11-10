@@ -225,13 +225,13 @@ function checkForbiddenPatterns() {
   }
 
   if (violations.length > 0) {
-    console.log('  ❌ Found forbidden patterns:');
+    console.log('  FAIL Found forbidden patterns:');
     violations.forEach(v => console.log(`     ${v.file}: ${v.pattern} (${v.count})`));
     console.log();
     return { passed: false, violations };
   }
 
-  console.log('  ✅ No forbidden patterns found\n');
+  console.log('  PASS No forbidden patterns found\n');
   return { passed: true, violations: [] };
 }
 
@@ -264,7 +264,7 @@ async function main() {
     mutationResults = runMutation();
     if (!mutationResults.passed) allPassed = false;
   } else {
-    console.log('⚠️  Skipping mutation testing (base tests failed)\n');
+    console.log('WARNING  Skipping mutation testing (base tests failed)\n');
   }
 
   const totalDuration = Date.now() - startTime;
@@ -293,7 +293,7 @@ async function main() {
   console.log(`Mutation: ${mutationResults.passed ? 'PASS' : mutationResults.skipped ? 'SKIP' : 'FAIL'}`);
   console.log(`Forbidden Patterns: ${forbiddenResult.passed ? 'PASS' : 'FAIL'}`);
   console.log(`\nReport: ${reportPath}`);
-  console.log(`\nOverall: ${allPassed ? '✅ PASS' : '❌ FAIL'}\n`);
+  console.log(`\nOverall: ${allPassed ? 'PASS PASS' : 'FAIL FAIL'}\n`);
 
   process.exit(allPassed ? 0 : 1);
 }

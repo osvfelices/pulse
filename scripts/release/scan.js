@@ -130,11 +130,11 @@ function runScan() {
 
   // Report results
   if (allIssues.length === 0) {
-    console.log('✅ PASS: No forbidden patterns detected\n');
+    console.log('PASS PASS: No forbidden patterns detected\n');
     return 0;
   }
 
-  console.error('❌ FAIL: Found', allIssues.length, 'security issue(s)\n');
+  console.error('FAIL FAIL: Found', allIssues.length, 'security issue(s)\n');
 
   // Group by severity
   const bySeverity = {
@@ -161,7 +161,7 @@ function runScan() {
     }
   }
 
-  console.error('\n🚨 Security scan failed. Fix these issues before release.\n');
+  console.error('\nERROR Security scan failed. Fix these issues before release.\n');
   return 1;
 }
 

@@ -16,7 +16,7 @@ async function main() {
   console.log('⚡ Pulse Performance Benchmarks\n');
 
   // 1. Signal Updates (Core reactivity performance)
-  console.log('1️⃣  Signal Updates');
+  console.log('1.  Signal Updates');
   const [count, setCount] = signal(0);
   const iterations = 1_000_000;
 
@@ -30,7 +30,7 @@ async function main() {
   console.log(`   ${updatesPerSec.toLocaleString()} updates/sec\n`);
 
   // 2. Channel Operations (Async concurrency performance)
-  console.log('2️⃣  Channel Operations');
+  console.log('2.  Channel Operations');
   const ch = channel(100);
   const msgCount = 10_000;
 
@@ -79,21 +79,21 @@ async function main() {
   const reportPath = path.join(ROOT, 'pre_release_audit/benchmarks.json');
   fs.writeFileSync(reportPath, JSON.stringify(results, null, 2));
 
-  console.log('📊 Summary');
-  console.log(`   Reactivity: ${updatesPerSec >= 1_000_000 ? '✅' : '⚠️'} ${updatesPerSec.toLocaleString()}/sec`);
-  console.log(`   Channels: ✅ ${channelOps.toLocaleString()} ops/sec`);
+  console.log(' Summary');
+  console.log(`   Reactivity: ${updatesPerSec >= 1_000_000 ? 'PASS' : 'WARNING'} ${updatesPerSec.toLocaleString()}/sec`);
+  console.log(`   Channels: PASS ${channelOps.toLocaleString()} ops/sec`);
   console.log(`   Report: ${reportPath}\n`);
 
   if (updatesPerSec >= 1_000_000) {
-    console.log('✅ PASS: Performance meets requirements (≥1M updates/sec)\n');
+    console.log('PASS PASS: Performance meets requirements (≥1M updates/sec)\n');
     process.exit(0);
   } else {
-    console.log('❌ FAIL: Performance below 1M updates/sec\n');
+    console.log('FAIL FAIL: Performance below 1M updates/sec\n');
     process.exit(1);
   }
 }
 
 main().catch(err => {
-  console.error('❌ Benchmark failed:', err.message);
+  console.error('FAIL Benchmark failed:', err.message);
   process.exit(1);
 });

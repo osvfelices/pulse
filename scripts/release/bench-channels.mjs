@@ -226,31 +226,31 @@ async function benchMemory() {
 async function main() {
   console.log('📡 Pulse Channels Benchmarks\n');
 
-  console.log('1️⃣  Unbuffered Channel (send + recv)');
+  console.log('1.  Unbuffered Channel (send + recv)');
   const unbuf = await benchUnbuffered();
   console.log(`   ${unbuf.iterations.toLocaleString()} messages in ${unbuf.duration}ms`);
   console.log(`   ${unbuf.opsPerSec.toLocaleString()} ops/sec\n`);
 
-  console.log('2️⃣  Buffered Channel (buffer=100)');
+  console.log('2.  Buffered Channel (buffer=100)');
   const buf = await benchBuffered();
   console.log(`   ${buf.iterations.toLocaleString()} messages in ${buf.duration}ms`);
   console.log(`   ${buf.opsPerSec.toLocaleString()} ops/sec\n`);
 
-  console.log('3️⃣  Select with 3 Channels');
+  console.log('3.  Select with 3 Channels');
   const sel = await benchSelect();
   console.log(`   ${sel.received.toLocaleString()} selects in ${sel.duration}ms`);
   console.log(`   ${sel.selectsPerSec.toLocaleString()} selects/sec\n`);
 
-  console.log('4️⃣  Throughput (3 producers, 3 consumers)');
+  console.log('4.  Throughput (3 producers, 3 consumers)');
   const thr = await benchThroughput();
   console.log(`   ${thr.totalReceived.toLocaleString()} messages in ${thr.duration}ms`);
   console.log(`   ${thr.throughput.toLocaleString()} messages/sec\n`);
 
-  console.log('5️⃣  Memory Leak Test');
+  console.log('5.  Memory Leak Test');
   const mem = await benchMemory();
   console.log(`   ${mem.iterations.toLocaleString()} channel lifecycles`);
   console.log(`   Heap delta: ${mem.leakMB.toFixed(2)} MB`);
-  console.log(`   ${mem.leakMB < 10 ? '✅ No significant leak' : '⚠️  Potential leak'}\n`);
+  console.log(`   ${mem.leakMB < 10 ? 'PASS No significant leak' : 'WARNING  Potential leak'}\n`);
 
   // Save results
   const results = {
@@ -265,19 +265,19 @@ async function main() {
   const reportPath = path.join(ROOT, 'pre_release_audit/channels-benchmarks.json');
   fs.writeFileSync(reportPath, JSON.stringify(results, null, 2));
 
-  console.log('📊 Summary');
+  console.log(' Summary');
   console.log(`   Unbuffered: ${unbuf.opsPerSec.toLocaleString()} ops/sec`);
   console.log(`   Buffered: ${buf.opsPerSec.toLocaleString()} ops/sec`);
   console.log(`   Throughput: ${thr.throughput.toLocaleString()} msg/sec`);
-  console.log(`   Memory: ${mem.leakMB < 10 ? '✅' : '⚠️'} ${mem.leakMB.toFixed(2)} MB delta`);
+  console.log(`   Memory: ${mem.leakMB < 10 ? 'PASS' : 'WARNING'} ${mem.leakMB.toFixed(2)} MB delta`);
   console.log(`\n   Report: ${reportPath}\n`);
 
   // Pass if no major leaks
   if (mem.leakMB < 10) {
-    console.log('✅ PASS: Channel performance acceptable\n');
+    console.log('PASS PASS: Channel performance acceptable\n');
     process.exit(0);
   } else {
-    console.log('❌ FAIL: Memory leak detected\n');
+    console.log('FAIL FAIL: Memory leak detected\n');
     process.exit(1);
   }
 }

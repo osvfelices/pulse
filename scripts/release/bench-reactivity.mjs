@@ -175,43 +175,43 @@ function benchMemoryLeak() {
 function main() {
   console.log('⚡ Pulse Reactivity Benchmarks\n');
 
-  console.log('1️⃣  Signal Reads');
+  console.log('1.  Signal Reads');
   const reads = benchSignalReads();
   console.log(`   ${reads.iterations.toLocaleString()} reads in ${reads.duration}ms`);
   console.log(`   ${reads.readsPerSec.toLocaleString()} reads/sec\n`);
 
-  console.log('2️⃣  Signal Updates');
+  console.log('2.  Signal Updates');
   const updates = benchSignalUpdates();
   console.log(`   ${updates.iterations.toLocaleString()} updates in ${updates.duration}ms`);
   console.log(`   ${updates.updatesPerSec.toLocaleString()} updates/sec\n`);
 
-  console.log('3️⃣  Computed Values');
+  console.log('3.  Computed Values');
   const comp = benchComputed();
   console.log(`   ${comp.iterations.toLocaleString()} reads in ${comp.duration}ms`);
   console.log(`   ${comp.readsPerSec.toLocaleString()} reads/sec\n`);
 
-  console.log('4️⃣  Effects with Updates');
+  console.log('4.  Effects with Updates');
   const eff = benchEffects();
   console.log(`   ${eff.iterations.toLocaleString()} updates in ${eff.duration}ms`);
   console.log(`   ${eff.updatesPerSec.toLocaleString()} updates/sec`);
   console.log(`   Effect ran ${eff.effectRuns.toLocaleString()} times\n`);
 
-  console.log('5️⃣  Batched Updates');
+  console.log('5.  Batched Updates');
   const bat = benchBatch();
   console.log(`   ${bat.iterations.toLocaleString()} batches in ${bat.duration}ms`);
   console.log(`   ${bat.batchesPerSec.toLocaleString()} batches/sec`);
   console.log(`   Effect ran ${bat.effectRuns.toLocaleString()} times (batched)\n`);
 
-  console.log('6️⃣  Deep Dependencies (10 levels)');
+  console.log('6. Deep Dependencies (10 levels)');
   const deep = benchDeepDependencies();
   console.log(`   ${deep.iterations.toLocaleString()} updates in ${deep.duration}ms`);
   console.log(`   ${deep.updatesPerSec.toLocaleString()} updates/sec\n`);
 
-  console.log('7️⃣  Memory Leak Test');
+  console.log('7. Memory Leak Test');
   const mem = benchMemoryLeak();
   console.log(`   ${mem.iterations.toLocaleString()} signal/computed/effect cycles`);
   console.log(`   Heap delta: ${mem.leakMB.toFixed(2)} MB`);
-  console.log(`   ${mem.leakMB < 10 ? '✅ No significant leak' : '⚠️  Potential leak'}\n`);
+  console.log(`   ${mem.leakMB < 10 ? 'PASS No significant leak' : 'WARNING  Potential leak'}\n`);
 
   // Save results
   const results = {
@@ -228,17 +228,17 @@ function main() {
   const reportPath = path.join(ROOT, 'pre_release_audit/benchmarks.json');
   fs.writeFileSync(reportPath, JSON.stringify(results, null, 2));
 
-  console.log('📊 Summary');
-  console.log(`   Signal updates: ${updates.updatesPerSec >= 1_000_000 ? '✅' : '⚠️'} ${updates.updatesPerSec.toLocaleString()}/sec`);
-  console.log(`   Memory: ${mem.leakMB < 10 ? '✅' : '⚠️'} ${mem.leakMB.toFixed(2)} MB delta`);
+  console.log(' Summary');
+  console.log(`   Signal updates: ${updates.updatesPerSec >= 1_000_000 ? 'PASS' : 'WARNING'} ${updates.updatesPerSec.toLocaleString()}/sec`);
+  console.log(`   Memory: ${mem.leakMB < 10 ? 'PASS' : 'WARNING'} ${mem.leakMB.toFixed(2)} MB delta`);
   console.log(`\n   Report: ${reportPath}\n`);
 
   // Pass if updates >= 1M/sec and no major leak
   if (updates.updatesPerSec >= 1_000_000 && mem.leakMB < 10) {
-    console.log('✅ PASS: Performance meets requirements\n');
+    console.log('PASS PASS: Performance meets requirements\n');
     process.exit(0);
   } else {
-    console.log('❌ FAIL: Performance below requirements\n');
+    console.log('FAIL FAIL: Performance below requirements\n');
     process.exit(1);
   }
 }
