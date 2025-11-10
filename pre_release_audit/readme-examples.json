@@ -1,0 +1,45 @@
+{
+  "total": 7,
+  "passed": 4,
+  "failed": 3,
+  "examples": [
+    {
+      "index": 1,
+      "status": "PASS",
+      "code": "import { signal, effect } from 'std/reactive'\n\ncon..."
+    },
+    {
+      "index": 2,
+      "status": "FAIL",
+      "error": "unknown char #",
+      "code": "import { channel, select } from 'std/async'\n\nconst..."
+    },
+    {
+      "index": 3,
+      "status": "PASS",
+      "code": "import { getHighlighter } from 'shiki'\nimport puls..."
+    },
+    {
+      "index": 4,
+      "status": "PASS",
+      "code": "fn add(a, b) {\n  return a + b\n}\n\nconst multiply = ..."
+    },
+    {
+      "index": 5,
+      "status": "PASS",
+      "code": "class Person {\n  constructor(name, age) {\n    this..."
+    },
+    {
+      "index": 6,
+      "status": "FAIL",
+      "error": "unknown char #",
+      "code": "import { signal, computed, effect, batch } from 's..."
+    },
+    {
+      "index": 7,
+      "status": "FAIL",
+      "error": "unknown char #",
+      "code": "# BAD: Undefined behavior\nconst arr = [1, 2, 3]\nfo..."
+    }
+  ]
+}

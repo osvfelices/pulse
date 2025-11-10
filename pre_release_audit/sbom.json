@@ -1,0 +1,32 @@
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.4",
+  "serialNumber": "urn:uuid:af200473-fb23-45af-a43e-0b5a777ccb20",
+  "version": 1,
+  "metadata": {
+    "timestamp": "2025-11-10T10:57:21.423Z",
+    "tools": [
+      {
+        "vendor": "Pulse",
+        "name": "sbom-generator",
+        "version": "1.0.0"
+      }
+    ],
+    "component": {
+      "type": "library",
+      "bom-ref": "pkg:npm/pulse@1.0.0",
+      "name": "pulse",
+      "version": "1.0.0",
+      "description": "Pulse Language core: lexer, parser, reactivity runtime, and standard library",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/pulse@1.0.0"
+    }
+  },
+  "components": []
+}
