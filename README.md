@@ -108,6 +108,102 @@ await select([
 
 ---
 
+## Theme & Playground
+
+Pulse includes custom syntax highlighting themes and an interactive playground:
+
+### Shiki Themes
+
+Two official themes with the Pulse color palette:
+
+- **pulse-dark** - Dark theme optimized for readability
+- **pulse-light** - Light theme variant
+
+Located in `tools/shiki/theme/`. Use with Shiki syntax highlighter:
+
+```javascript
+import { getHighlighter } from 'shiki'
+import pulseDark from './tools/shiki/theme/pulse-dark.json'
+
+const highlighter = await getHighlighter({ themes: [] })
+await highlighter.loadTheme(pulseDark)
+```
+
+### Code Snippets
+
+Generate syntax-highlighted SVG previews:
+
+```bash
+npm run gen:snippets
+```
+
+Output: `assets/snippets/*.svg` (hello, reactivity, channels, classes examples)
+
+### Monaco Playground
+
+Interactive browser-based editor at `docs/playground/index.html`:
+
+- Live Pulse code editing with Monaco Editor
+- Dark/light theme switcher
+- Copy to clipboard and download functionality
+- Syntax highlighting with Pulse grammar
+
+Open `docs/playground/index.html` in a browser to try it out.
+
+---
+
+## Build Tools
+
+### Compile .pulse → .mjs
+
+Use the build tool to compile Pulse files to JavaScript modules:
+
+```bash
+npm run pulse:build
+# or
+node tools/build/build.mjs --src <source-dir> --out <output-dir>
+```
+
+Example:
+
+```bash
+node tools/build/build.mjs --src examples/fullstack --out examples/fullstack-dist
+```
+
+This compiles all `.pulse` files to `.mjs` while preserving directory structure.
+
+---
+
+## Full-Stack Starter
+
+The `examples/fullstack/` directory demonstrates a complete full-stack application written entirely in Pulse:
+
+**Server** (`server/index.pulse`):
+- Node.js HTTP server with dynamic imports
+- Reactive hit counter using signals
+- Serves static HTML and compiled client code
+
+**Client** (`web/main.pulse`):
+- Reactive UI with signal-based state management
+- No framework - vanilla DOM manipulation
+- Compiled to `.mjs` for browser use
+
+**Build & Run**:
+
+```bash
+# Compile Pulse to JavaScript
+npm run pulse:build
+
+# Run the server
+node lib/run.js examples/fullstack/server/index.pulse
+
+# Visit http://localhost:3000
+```
+
+The example shows how Pulse can be used for both server-side and client-side development with shared reactive primitives.
+
+---
+
 ## Language Guide
 
 ### Functions
