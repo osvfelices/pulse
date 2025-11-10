@@ -1,10 +1,10 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.4",
-  "serialNumber": "urn:uuid:af200473-fb23-45af-a43e-0b5a777ccb20",
+  "serialNumber": "urn:uuid:a2bfd81f-c2e8-455f-9416-8872f1bc94fd",
   "version": 1,
   "metadata": {
-    "timestamp": "2025-11-10T10:57:21.423Z",
+    "timestamp": "2025-11-10T10:59:21.491Z",
     "tools": [
       {
         "vendor": "Pulse",

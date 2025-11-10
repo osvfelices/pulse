@@ -1,6 +1,6 @@
 {
-  "timestamp": "2025-11-10T10:57:18.980Z",
-  "duration": 3254,
+  "timestamp": "2025-11-10T10:59:18.951Z",
+  "duration": 3120,
   "passed": false,
   "forbiddenPatterns": {
     "passed": true,
@@ -14,68 +14,68 @@
       {
         "name": "async-class-methods.test.js",
         "status": "PASSED",
-        "duration": 134
+        "duration": 107
       },
       {
         "name": "comprehensive.test.js",
         "status": "PASSED",
-        "duration": 115
+        "duration": 104
       },
       {
         "name": "edge-cases.test.js",
         "status": "PASSED",
-        "duration": 114
+        "duration": 108
       },
       {
         "name": "final-coverage.test.js",
         "status": "PASSED",
-        "duration": 119
+        "duration": 99
       },
       {
         "name": "forof-advanced.test.js",
         "status": "PASSED",
-        "duration": 157
+        "duration": 139
       },
       {
         "name": "forof-basic.test.js",
         "status": "FAILED",
-        "duration": 301,
+        "duration": 288,
         "error": "\n[PASS] All Basic for...of Tests Passed!\n\n"
       },
       {
         "name": "integration.test.js",
         "status": "PASSED",
-        "duration": 117
+        "duration": 106
       },
       {
         "name": "minimal.test.js",
         "status": "PASSED",
-        "duration": 74
+        "duration": 66
       },
       {
         "name": "reactivity-simple.test.js",
         "status": "PASSED",
-        "duration": 74
+        "duration": 78
       },
       {
         "name": "reactivity.test.js",
         "status": "PASSED",
-        "duration": 81
+        "duration": 83
       },
       {
         "name": "runtime-globals.test.js",
         "status": "PASSED",
-        "duration": 72
+        "duration": 69
       },
       {
         "name": "stress.test.js",
         "status": "PASSED",
-        "duration": 98
+        "duration": 94
       },
       {
         "name": "async/async-core.test.js",
         "status": "PASSED",
-        "duration": 537
+        "duration": 539
       },
       {
         "name": "async/channels.test.js",
@@ -85,7 +85,7 @@
       {
         "name": "async/futures-utils.test.js",
         "status": "PASSED",
-        "duration": 634
+        "duration": 627
       },
       {
         "name": "parser/imports-exports.test.js",
@@ -98,7 +98,7 @@
     "iterations": 1000,
     "crashes": 0,
     "timeouts": 0,
-    "duration": 197,
+    "duration": 186,
     "passed": true
   },
   "mutation": {
