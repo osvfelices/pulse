@@ -4,6 +4,7 @@ import { readFileSync, writeFileSync, mkdirSync, readdirSync, statSync } from 'n
 import { join, dirname, relative, extname, basename } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { Parser } from '../../lib/parser.js'
+import { emitProgram } from '../../lib/codegen.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -28,35 +29,12 @@ console.log(`  Source: ${srcDir}`)
 console.log(`  Output: ${outDir}`)
 console.log()
 
-// Import the generateCode function from lib/run.js by reading and extracting it
-const runJsPath = join(__dirname, '..', '..', 'lib', 'run.js')
-const runJsContent = readFileSync(runJsPath, 'utf8')
-
-// Extract the code generation functions
-const codegenStart = runJsContent.indexOf('// Helper to process escape sequences')
-const codegenEnd = runJsContent.lastIndexOf('main().catch')
-const codegenCode = runJsContent.slice(codegenStart, codegenEnd)
-
-// Create a function wrapper
-const codegenFunc = new Function('Parser', `
-${codegenCode}
-
-return {
-  processEscapes,
-  generateCode,
-  generateStatement,
-  generateExpression
-}
-`)
-
-const { processEscapes, generateCode, generateStatement, generateExpression } = codegenFunc(Parser)
-
 function compilePulseFile(inputPath, outputPath) {
   try {
     const source = readFileSync(inputPath, 'utf8')
     const parser = new Parser(source)
     const ast = parser.parseProgram()
-    const js = generateCode(ast)
+    const js = emitProgram(ast)
 
     // Ensure output directory exists
     mkdirSync(dirname(outputPath), { recursive: true })
