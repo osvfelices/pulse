@@ -309,11 +309,11 @@ async fn buildDocs() {
     print('  Copied style.css')
   }
 
-  const logoPath = path.join(docsRoot, 'logo.svg')
+  const logoPath = path.join(docsRoot, 'pulse.svg')
   const logoExists = await fs.exists(logoPath)
   if (logoExists) {
-    await fs.copyFile(logoPath, path.join(buildDir, 'logo.svg'))
-    print('  Copied logo.svg')
+    await fs.copyFile(logoPath, path.join(buildDir, 'pulse.svg'))
+    print('  Copied pulse.svg')
   }
 
   print('')
