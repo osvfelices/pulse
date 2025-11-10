@@ -16,7 +16,8 @@
   "scripts": {
     "verify": "bash scripts/verify-lang-release.sh",
     "test": "bash scripts/verify-lang-release.sh",
-    "docs": "node docs/scripts/build-docs.mjs"
+    "docs": "node docs/scripts/build-docs.mjs",
+    "docs:serve": "node docs/scripts/serve.mjs"
   },
   "keywords": [
     "pulse",

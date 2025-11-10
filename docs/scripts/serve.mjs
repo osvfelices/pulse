@@ -1,0 +1,58 @@
+import { createServer } from 'node:http'
+import { readFileSync, statSync } from 'node:fs'
+import { join, extname } from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { dirname } from 'node:path'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
+
+const MIME_TYPES = {
+  '.html': 'text/html',
+  '.css': 'text/css',
+  '.js': 'text/javascript',
+  '.json': 'application/json',
+  '.png': 'image/png',
+  '.jpg': 'image/jpeg',
+  '.svg': 'image/svg+xml',
+  '.ico': 'image/x-icon'
+}
+
+const PORT = 8080
+const BUILD_DIR = join(__dirname, '../build')
+
+const server = createServer((req, res) => {
+  let filePath = req.url === '/' ? '/index.html' : req.url
+  filePath = join(BUILD_DIR, filePath)
+
+  try {
+    const stats = statSync(filePath)
+
+    if (stats.isFile()) {
+      const ext = extname(filePath)
+      const mimeType = MIME_TYPES[ext] || 'application/octet-stream'
+
+      const content = readFileSync(filePath)
+
+      res.writeHead(200, { 'Content-Type': mimeType })
+      res.end(content)
+    } else {
+      res.writeHead(404, { 'Content-Type': 'text/plain' })
+      res.end('404 Not Found')
+    }
+  } catch (error) {
+    if (error.code === 'ENOENT') {
+      res.writeHead(404, { 'Content-Type': 'text/plain' })
+      res.end('404 Not Found')
+    } else {
+      res.writeHead(500, { 'Content-Type': 'text/plain' })
+      res.end('500 Internal Server Error')
+    }
+  }
+})
+
+server.listen(PORT, () => {
+  console.log(`Pulse Documentation Server`)
+  console.log(`Running at: http://localhost:${PORT}`)
+  console.log(`Press Ctrl+C to stop`)
+})
