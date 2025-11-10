@@ -164,6 +164,22 @@ npm run coverage
 | Parse Time | <5ms/file | Average source file |
 | Memory Usage | Stable | No leaks detected |
 
+## Contributing
+
+Want to help make Pulse better? Here are some ways to contribute:
+
+- **Bug reports**: Found something broken? Open an issue with details about what happened
+- **Feature ideas**: Have an idea for making Pulse better? Start a discussion
+- **Code contributions**: 
+  - Look for issues labeled "good first issue"
+  - Check the `tests/` folder for examples of how things work
+  - Run `npm test` before submitting PRs
+  - Keep changes focused and simple
+- **Documentation**: Help improve examples, fix typos, or clarify explanations
+- **Standard library**: Contribute new modules or improve existing ones
+
+No need to be an expert - curious developers who want to learn about language design are welcome. If you're interested in contributing but not sure where to start, just open an issue and we'll help you find something that matches your skills.
+
 ## License
 
 MIT License - see LICENSE file.
