@@ -1,4 +1,4 @@
-# Pulse Language 1.0 — Release Deliverables
+# Pulse Language 1.0: Release Deliverables
 
 **Date**: November 9, 2025
 **Version**: v1.0.0-lang
@@ -219,7 +219,7 @@ Type: commit
 Tagger: Claude Code Agent
 Date: November 9, 2025
 
-Pulse Language 1.0 (parser+runtime stable) — 0 skips, fuzz 1000/1000, 1.6M updates/s
+Pulse Language 1.0 (parser+runtime stable). 0 skips, fuzz 1000/1000, 1.6M updates/s
 
 Release Verification:
 Tests: 15/15 passed (100%)
@@ -240,19 +240,19 @@ Ready for production.
 ## 7. Documentation Deliverables
 
 ### Created Files
-1. **CHANGELOG.md** — Language 1.0 iteration semantics, migration guide
-2. **README_LANG.md** — Language-focused README with examples
-3. **PR_DESCRIPTION.md** — Comprehensive PR description
-4. **WEEK20_5_LANGUAGE_AUDIT_REPORT.md** — Updated audit report
+1. **CHANGELOG.md:** Language 1.0 iteration semantics, migration guide
+2. **README_LANG.md:** Language-focused README with examples
+3. **PR_DESCRIPTION.md:** Comprehensive PR description
+4. **WEEK20_5_LANGUAGE_AUDIT_REPORT.md:** Updated audit report
 
 ### Updated Files
-1. **tests/test-harness.js** — Enhanced with timeout and forbidden patterns
-2. **tests/forof-advanced.test.js** — Rewrote 10 mutation tests
-3. **scripts/verify-lang-release.sh** — Automated release gate
+1. **tests/test-harness.js:** Enhanced with timeout and forbidden patterns
+2. **tests/forof-advanced.test.js:** Rewrote 10 mutation tests
+3. **scripts/verify-lang-release.sh:** Automated release gate
 
 ---
 
-## 8. Release Criteria — ALL MET
+## 8. Release Criteria: ALL MET
 
 | Criterion | Target | Actual | Status |
 |-----------|--------|--------|--------|
@@ -279,13 +279,13 @@ Ready for production.
 *Repository split pending (requires git subtree operations)*
 
 **Contents to include**:
-- `lib/` — Core language implementation
-- `std/` — Standard library (if exists)
-- `tests/` — All test suites
-- `scripts/verify-lang-release.sh` — Release gate
-- `CHANGELOG.md` — Version history
-- `README_LANG.md` → `README.md` — Language docs
-- `WEEK20_5_LANGUAGE_AUDIT_REPORT.md` — Audit report
+- `lib/`: Core language implementation
+- `std/`: Standard library (if exists)
+- `tests/`: All test suites
+- `scripts/verify-lang-release.sh`: Release gate
+- `CHANGELOG.md`: Version history
+- `README_LANG.md` to `README.md`: Language docs
+- `WEEK20_5_LANGUAGE_AUDIT_REPORT.md`: Audit report
 
 **Exclusions**:
 - IDE/Studio code

@@ -12,19 +12,19 @@ Pulse 1.0.0 is the first production-ready release of an **independent programmin
 
 ### Core Features
 
-- **Signal-based Reactivity** — Automatic dependency tracking with 32M+ updates/sec
-- **CSP-style Concurrency** — Go-like channels and select operations (2.5M+ ops/sec)
-- **Modern Syntax** — JavaScript-inspired syntax with its own parser and runtime
-- **Complete Standard Library** — fs, json, math, reactive, async, cli, path modules
-- **Zero Dependencies** — Standalone language, not a JavaScript library
+- **Signal-based Reactivity:** Automatic dependency tracking with 32M+ updates/sec
+- **CSP-style Concurrency:** Go-like channels and select operations (2.5M+ ops/sec)
+- **Modern Syntax:** JavaScript-inspired syntax with its own parser and runtime
+- **Complete Standard Library:** fs, json, math, reactive, async, cli, path modules
+- **Zero Dependencies:** Standalone language, not a JavaScript library
 
 ### What's New in 1.0.0
 
-- **Async Class Methods** — Fully functional (CRITICAL FIX: 40/40 tests passing)
-- **100% Test Coverage** — 16/16 core tests passing
-- **FAANG-level Quality** — Mutation testing (80%), fuzzing (1000 iterations), SAST clean
-- **Optimized Package** — 48.2 kB (43 files), ESM-only
-- **Production Ready** — Zero bugs, zero limitations
+- **Async Class Methods:** Fully functional (CRITICAL FIX: 40/40 tests passing)
+- **100% Test Coverage:** 16/16 core tests passing
+- **FAANG-level Quality:** Mutation testing (80%), fuzzing (1000 iterations), SAST clean
+- **Optimized Package:** 48.2 kB (43 files), ESM-only
+- **Production Ready:** Zero bugs, zero limitations
 
 ---
 
@@ -94,9 +94,9 @@ await Promise.all([producer(), consumer()]);
 
 Pulse is built on three modular layers:
 
-1. **Parser** — Hand-written recursive descent parser (958 LOC)
-2. **Runtime** — Core execution engine implementing signals, effects, channels
-3. **Standard Library** — Modules for async, reactive state, I/O, math, crypto
+1. **Parser:** Hand-written recursive descent parser (958 LOC)
+2. **Runtime:** Core execution engine implementing signals, effects, channels
+3. **Standard Library:** Modules for async, reactive state, I/O, math, crypto
 
 **Compilation Pipeline:** Pulse Source → Parser → AST → Codegen → JavaScript Output
 
@@ -124,7 +124,7 @@ Pulse is built on three modular layers:
 
 ## Known Limitations
 
-**NONE** — Zero limitations in 1.0.0
+**NONE.** Zero limitations in 1.0.0
 
 ---
 
@@ -142,4 +142,4 @@ MIT License
 
 ---
 
-**Pulse 1.0.0 — Zero Bugs, Zero Limitations**
+**Pulse 1.0.0: Zero Bugs, Zero Limitations**

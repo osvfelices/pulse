@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.0.0] - 2025-11-09
 
-### Language 1.0 — Iteration Semantics & Testing Infrastructure
+### Language 1.0: Iteration Semantics & Testing Infrastructure
 
 This release establishes the foundation for Pulse 1.0 with robust testing, clear iteration semantics, and production-ready quality gates.
 

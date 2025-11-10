@@ -16,12 +16,12 @@
 
 ## Overview
 
-**Pulse** is an independent programming language designed for reactive and concurrent computing. It features its own lexer, parser, runtime, and standard library—completely separate from JavaScript engines or Node.js.
+**Pulse** is an independent programming language designed for reactive and concurrent computing. It features its own lexer, parser, runtime, and standard library, completely separate from JavaScript engines or Node.js.
 
 While Pulse syntax draws inspiration from JavaScript for familiarity, it implements distinct semantics with native support for:
-- **Signal-based reactivity** — Automatic dependency tracking without virtual DOM
-- **CSP-style concurrency** — Channels and select operations for deterministic scheduling
-- **Predictable performance** — Zero runtime introspection or dynamic patching
+- **Signal-based reactivity:** Automatic dependency tracking without virtual DOM
+- **CSP-style concurrency:** Channels and select operations for deterministic scheduling
+- **Predictable performance:** Zero runtime introspection or dynamic patching
 
 Pulse compiles to JavaScript as a compilation target (similar to how TypeScript, Kotlin, or Dart compile to JS), but it is not a JavaScript library or framework.
 
@@ -62,9 +62,9 @@ Pulse compiles to JavaScript as a compilation target (similar to how TypeScript,
 
 Pulse is built on three modular layers:
 
-1. **Parser** — Hand-written recursive descent parser (958 LOC) that generates Pulse-specific AST nodes
-2. **Runtime** — Core execution engine implementing signals, effects, channels, and memory safety
-3. **Standard Library (std/)** — Modules for async operations, reactive state, I/O, math, and crypto
+1. **Parser:** Hand-written recursive descent parser (958 LOC) that generates Pulse-specific AST nodes
+2. **Runtime:** Core execution engine implementing signals, effects, channels, and memory safety
+3. **Standard Library (std/):** Modules for async operations, reactive state, I/O, math, and crypto
 
 The compilation pipeline: **Pulse Source → Parser → AST → Codegen → JavaScript Output**
 
@@ -81,10 +81,10 @@ Pulse addresses a fundamental limitation in modern programming: reactive program
 - Complex mental models and steep learning curves
 
 Pulse solves this by making reactivity and concurrency **first-class language primitives**. This enables:
-- **Compile-time optimization** — The compiler understands reactive dependencies
-- **Deterministic execution** — Predictable scheduling with no hidden magic
-- **Zero-overhead abstractions** — Direct code generation without wrapper layers
-- **Portable semantics** — Language guarantees independent of runtime implementation
+- **Compile-time optimization:** The compiler understands reactive dependencies
+- **Deterministic execution:** Predictable scheduling with no hidden magic
+- **Zero-overhead abstractions:** Direct code generation without wrapper layers
+- **Portable semantics:** Language guarantees independent of runtime implementation
 
 ---
 
@@ -317,7 +317,7 @@ for (const x of arr) {
 }
 ```
 
-Pulse follows ECMAScript §13.7.5.13 — mutation during iteration is undefined but guaranteed not to crash or hang.
+Pulse follows ECMAScript §13.7.5.13. Mutation during iteration is undefined but guaranteed not to crash or hang.
 
 ---
 
@@ -363,17 +363,17 @@ bash scripts/verify-lang-release.sh
 
 ## Known Limitations
 
-- **Spread operator** in call arguments — not yet supported.
-- **Object spread** — partially implemented.
-- **Mutation during iteration** — undefined behavior (documented).
+- **Spread operator** in call arguments: not yet supported.
+- **Object spread:** partially implemented.
+- **Mutation during iteration:** undefined behavior (documented).
 
 ---
 
 ## Documentation & Verification
 
-- [CHANGELOG.md](CHANGELOG.md) — Version history and iteration semantics
-- [RELEASE_DELIVERABLES_1.0.md](RELEASE_DELIVERABLES_1.0.md) — Release verification report
-- [scripts/verify-lang-release.sh](scripts/verify-lang-release.sh) — Automated quality gates
+- [CHANGELOG.md](CHANGELOG.md): Version history and iteration semantics
+- [RELEASE_DELIVERABLES_1.0.md](RELEASE_DELIVERABLES_1.0.md): Release verification report
+- [scripts/verify-lang-release.sh](scripts/verify-lang-release.sh): Automated quality gates
 
 ---
 
@@ -397,7 +397,7 @@ npm run verify
 
 ## License
 
-MIT License — see [LICENSE](LICENSE)
+MIT License. See [LICENSE](LICENSE)
 
 - **Repository**: [github.com/osvfelices/pulse](https://github.com/osvfelices/pulse)
 - **Issues**: [github.com/osvfelices/pulse/issues](https://github.com/osvfelices/pulse/issues)

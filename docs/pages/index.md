@@ -4,7 +4,7 @@
 
 ## Overview
 
-Pulse is an independent programming language designed for reactive and concurrent computing. It features its own lexer, parser, runtime, and standard library—completely separate from JavaScript engines or Node.js.
+Pulse is an independent programming language designed for reactive and concurrent computing. It features its own lexer, parser, runtime, and standard library, completely separate from JavaScript engines or Node.js.
 
 While Pulse syntax draws inspiration from JavaScript for familiarity, it implements distinct semantics with native support for signal-based reactivity and CSP-style concurrency as first-class language primitives. Pulse compiles to JavaScript as a compilation target (similar to how TypeScript, Kotlin, or Dart compile to JS), but it is not a JavaScript library or framework.
 
