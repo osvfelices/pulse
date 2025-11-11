@@ -9,6 +9,7 @@ build/
 .pulse-build/
 dist/
 docs/build/
+docs/.proof/
 examples/fullstack-dist/
 
 # Native binaries
