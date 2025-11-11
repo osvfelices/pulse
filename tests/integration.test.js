@@ -1,8 +1,8 @@
 /**
  * Integration Tests - for...of + async class methods
  *
- * Tests combining both new features to ensure they work together correctly.
- * 30 comprehensive integration tests.
+ * Tests combining both new features to check they work together correctly.
+ * 30 integration tests.
  */
 
 import './test-harness.js';

@@ -1,5 +1,5 @@
 /**
- * Comprehensive Additional Tests
+ * Additional Tests
  *
  * Additional tests to reach 500+ test goal covering:
  * - Complex combinations of features

@@ -1083,7 +1083,7 @@ describe('for...of Advanced Tests', () => {
   //
   // 2. UNDEFINED BEHAVIOR: Mutation during iteration of the same array
   //    - Behavior is implementation-dependent (aligns with JavaScript spec)
-  //    - Tests verify NO CRASH and NO HANG (timeout guard)
+  //    - Tests check NO CRASH and NO HANG (timeout guard)
   //    - Results may vary - DO NOT assume specific order/length
   //    - Production code should AVOID these patterns
   //

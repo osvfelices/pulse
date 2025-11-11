@@ -1,7 +1,7 @@
 /**
  * Parser Fuzzer - 100k test cases
  *
- * Generates random Pulse code and tests parser robustness:
+ * Generates random Pulse code and tests parser stability:
  * - No crashes
  * - No infinite loops
  * - Consistent error handling

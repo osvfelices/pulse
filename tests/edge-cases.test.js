@@ -1,8 +1,8 @@
 /**
- * Edge Cases Tests - Comprehensive edge case coverage
+ * Edge Cases Tests - Edge case coverage
  *
  * Tests extreme values, boundary conditions, and unusual combinations
- * to ensure robustness in production scenarios.
+ * to check stability in edge cases.
  */
 
 import './test-harness.js';
