@@ -1,7 +1,7 @@
 /**
  * Test runner for Stryker mutation testing
  *
- * Runs all relevant tests to validate mutated code
+ * Runs all relevant tests to check mutated code
  */
 
 import { Parser } from '../../lib/parser.js';

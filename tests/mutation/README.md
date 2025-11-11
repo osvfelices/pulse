@@ -1,6 +1,6 @@
 # Mutation Testing
 
-Mutation testing validates test quality by introducing bugs and verifying tests catch them.
+Mutation testing checks test quality by introducing bugs and confirming tests catch them.
 
 ## Current Status
 
@@ -10,7 +10,7 @@ Mutation testing validates test quality by introducing bugs and verifying tests 
 
 ## Files
 
-- `stryker.config.mjs` - Full Stryker configuration (comprehensive, slow)
+- `stryker.config.mjs` - Full Stryker configuration (complete, slow)
 - `quick-mutation.js` - Quick mutation tester (18 mutations, fast)
 - `run-tests.js` - Test suite for mutation testing (21 tests)
 - `reports/` - Mutation testing reports
