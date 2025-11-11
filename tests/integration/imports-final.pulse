@@ -1,5 +1,5 @@
 // Final runtime test for ES6 imports/exports
-// Uses real std modules to verify everything works
+// Uses real std modules to check everything works
 
 // Test namespace import
 import * as crypto from 'std/crypto'
