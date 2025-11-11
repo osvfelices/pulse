@@ -54,20 +54,21 @@
       <article class="article">
         <h1>Getting Started Guide</h1>
 
-<p>Learn the fundamentals of Pulse programming in this comprehensive guide.</p>
+<p>Learn the fundamentals of Pulse programming in this guide.</p>
 
 <h2>Installation</h2>
 
-<p>Install Pulse from npm:</p>
+<p>Install Pulse locally in your project:</p>
 
-<pre><code class="language-bash">npm install -g pulselang
+<pre><code class="language-bash">npm install pulselang
 </code></pre>
 
-<p>Or clone the repository for development:</p>
+<p>Or clone the repository if you want to work on Pulse itself:</p>
 
 <pre><code class="language-bash">git clone https://github.com/osvfelices/pulse.git
 cd pulse
 npm install
+npm test  # Verify everything works
 </code></pre>
 
 <h2>Your First Program</h2>
@@ -81,10 +82,18 @@ npm install
 main()
 </code></pre>
 
-<p>Run it with:</p>
+<p>Compile and run it:</p>
 
-<pre><code class="language-bash">npm run parse hello.pulse
+<pre><code class="language-bash"># If you installed pulselang via npm:
+node_modules/.bin/pulselang hello.pulse
+node hello.mjs
+
+# If you are inside the pulse repo:
+node lib/run.js hello.pulse
+node hello.mjs
 </code></pre>
+
+<p>The compiler generates <code>hello.mjs</code> — a JavaScript ES module you can run with Node, import from other JS files, or bundle with Vite/Webpack/etc.</p>
 
 <h2>Basic Syntax</h2>
 
@@ -132,7 +141,7 @@ print(rect.area())
 
 <h2>Working with Files</h2>
 
-<p>Pulse provides a comprehensive file system API in the <code>std/fs</code> module:</p>
+<p>Pulse provides a file system API in the <code>std/fs</code> module:</p>
 
 <pre><code class="language-javascript">import fs from 'std/fs'
 
@@ -156,7 +165,7 @@ await main()
 
 <h2>Reactivity</h2>
 
-<p>Pulse includes a powerful reactive system inspired by modern frameworks:</p>
+<p>Pulse includes a reactive system inspired by modern frameworks:</p>
 
 <pre><code class="language-javascript">import { signal, effect, computed, batch } from 'std/reactive'
 
@@ -182,60 +191,92 @@ batch(() =&gt; {
 
 <h2>Concurrency with Channels</h2>
 
-<p>Write concurrent code using Go-style channels:</p>
+<p>Channels are how tasks communicate. Forget Promises — no <code>.then()</code>, no <code>.catch()</code>. A channel is just a pipe. One task writes, another reads.</p>
 
-<pre><code class="language-javascript">import { channel } from 'std/async'
+<p>The important part: <code>await ch.send(value)</code> <strong>blocks your task</strong> until someone does <code>await ch.recv()</code>. This is how determinism works - the scheduler knows exactly when each task is waiting and when to wake it up.</p>
 
-const ch = channel()
+<p>Example:</p>
+
+<pre><code class="language-javascript">import { DeterministicScheduler, channel } from '../../lib/runtime/index.js'
+
+const scheduler = new DeterministicScheduler()
+const ch = channel()  // Unbuffered channel (capacity 0)
 
 async fn producer() {
   for (let i = 0; i &lt; 5; i++) {
     await ch.send(i)
     print('Sent:', i)
   }
-  ch.close()
+  ch.close()  // Signal that no more values are coming
 }
 
 async fn consumer() {
-  while (true) {
-    const [value, ok] = await ch.recv()
-    if (!ok) break
+  for await (const value of ch) {
     print('Received:', value)
   }
+  print('Channel closed')
 }
 
-await Promise.all([producer(), consumer()])
+scheduler.spawn(producer)
+scheduler.spawn(consumer)
+await scheduler.run()
 </code></pre>
+
+<p>What happens:</p>
+<ul>
+<li>Producer sends 0, blocks</li>
+<li>Consumer receives 0, prints it, goes back to waiting</li>
+<li>Producer wakes up, sends 1, blocks again</li>
+<li>This ping-pongs until producer closes the channel</li>
+<li>Consumer's <code>for await</code> sees the close and exits</li>
+</ul>
+
+<p>Run this 100 times, you get the exact same output every time. That's the point.</p>
 
 <h3>Buffered Channels</h3>
 
-<pre><code class="language-javascript">const buffered = channel(10)
+<p>Unbuffered = handshake (both sides wait). Buffered = mailbox (you can drop stuff off and leave).</p>
 
+<pre><code class="language-javascript">const buffered = channel(10)  // holds 10 items
+
+// First 10 sends don't block
 for (let i = 0; i &lt; 10; i++) {
   await buffered.send(i)
 }
+
+// 11th send blocks until someone reads
+await buffered.send(11)
 </code></pre>
+
+<p>Useful when producer and consumer run at different speeds. Producer fills buffer, consumer drains it whenever.</p>
 
 <h3>Select Operations</h3>
 
-<pre><code class="language-javascript">import { select } from 'std/async'
+<p>Wait on multiple channels, first one ready wins:</p>
+
+<pre><code class="language-javascript">import { select, selectCase } from '../../lib/runtime/index.js'
 
 const ch1 = channel()
 const ch2 = channel()
 
-await select([
-  {
-    channel: ch1,
-    op: 'recv',
-    handler: (value) =&gt; print('ch1:', value)
-  },
-  {
-    channel: ch2,
-    op: 'recv',
-    handler: (value) =&gt; print('ch2:', value)
-  }
+const result = await select([
+  selectCase({ channel: ch1, op: 'recv' }),
+  selectCase({ channel: ch2, op: 'recv' })
+])
+
+print('Got from', result.caseIndex === 0 ? 'ch1' : 'ch2')
+print('Value:', result.value)
+</code></pre>
+
+<p>You can mix sends and receives:</p>
+
+<pre><code class="language-javascript">await select([
+  selectCase({ channel: ch1, op: 'send', value: 42 }),
+  selectCase({ channel: ch2, op: 'recv' })
 ])
 </code></pre>
+
+<p>Still deterministic — if multiple channels are ready, scheduler picks based on logical time. Same state = same choice.</p>
 
 <h2>Error Handling</h2>
 
@@ -291,16 +332,16 @@ import * as math from './math.pulse'
 <li><strong>path</strong>: Path manipulation utilities</li>
 </ul>
 
-<p>Explore the <a href="https://github.com/osvfelices/pulse">API Reference(api.html) for complete documentation.</p>
+<p>Explore the <a href="api.html">API Reference</a> for complete documentation.</p>
 
 <h2>Next Steps</h2>
 
 <p>Now that you understand the basics, explore:</p>
 
 <ul>
-<li>[API Reference(api.html) - Complete standard library documentation</li>
-<li>[Playground(playground.html) - Try Pulse in your browser</li>
-<li>[GitHub</a> - Contribute to the project</li>
+<li><a href="api.html">API Reference</a> - Complete standard library documentation</li>
+<li><a href="playground.html">Playground</a> - Try Pulse in your browser</li>
+<li><a href="https://github.com/osvfelices/pulse">GitHub</a> - Contribute to the project</li>
 </ul>
 
       </article>
