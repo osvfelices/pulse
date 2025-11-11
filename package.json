@@ -10,8 +10,8 @@
     ".": "./lib/parser.js",
     "./lexer": "./lib/lexer.js",
     "./parser": "./lib/parser.js",
-    "./runtime": "./lib/runtime/reactivity.js",
-    "./runtime/async": "./lib/runtime/async/index.js"
+    "./runtime": "./lib/runtime/index.js",
+    "./runtime/reactivity": "./lib/runtime/reactivity.js"
   },
   "files": [
     "lib/",
@@ -23,8 +23,11 @@
   ],
   "scripts": {
     "parse": "node lib/run.js",
-    "verify": "bash scripts/verify-lang-release.sh",
     "test": "bash scripts/verify-lang-release.sh",
+    "verify": "bash scripts/verify-lang-release.sh",
+    "verify:determinism": "node tests/extreme/determinism-100runs.test.js",
+    "bench:scheduler": "node tests/extreme/stress-1000tasks.test.js",
+    "run:quickstart": "node lib/run.js quickstart/ping.pulse",
     "prepublishOnly": "npm run verify && npm pack --dry-run",
     "docs": "node lib/run.js docs/scripts/build-docs.pulse",
     "docs:serve": "node lib/run.js docs/scripts/serve.pulse",
