@@ -69,24 +69,7 @@ npm install pulselang
 
 ### Install from Repository
 
-For development or to try the latest features:
-
-```bash
-# 1. Clone the repo
-git clone https://github.com/osvfelices/pulse.git
-
-# 2. Enter the project
-cd pulse
-
-# 3. Install dependencies
-npm install
-
-# 4. Run quickstart example
-npm run run:quickstart
-
-# 5. Verify determinism (100 runs, identical hash)
-npm run verify:determinism
-```
+For development setup and testing, see the [Development](#development) section below.
 
 ### Use in Your Projects
 
