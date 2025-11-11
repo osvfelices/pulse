@@ -58,7 +58,7 @@
 
 <h2>File System (std/fs)</h2>
 
-<p>The <code>fs</code> module provides comprehensive file system operations.</p>
+<p>The <code>fs</code> module provides file system operations.</p>
 
 <h3>Reading Files</h3>
 
@@ -351,32 +351,113 @@ math.clamp(value, min, max)
 math.lerp(start, end, t)
 </code></pre>
 
-<h2>Async (std/async)</h2>
+<h2>Runtime (pulselang/runtime)</h2>
 
-<p>Advanced async utilities and concurrency primitives.</p>
+<p>The core concurrency and reactivity primitives. Import these from JavaScript or use them in compiled Pulse code.</p>
+
+<h3>Scheduler</h3>
+
+<pre><code class="language-javascript">import { DeterministicScheduler } from 'pulselang/runtime'
+
+const scheduler = new DeterministicScheduler()
+</code></pre>
+
+<p>Creates a deterministic task scheduler. Tasks run in a predictable order based on logical time, not wall-clock time.</p>
+
+<strong>Methods:</strong>
+<ul>
+<li><code>scheduler.spawn(asyncFunction)</code>: Add a task to the scheduler</li>
+<li><code>await scheduler.run()</code>: Run all tasks to completion</li>
+<li><code>scheduler.getStats()</code>: Get internal metrics (tasks, queue sizes, etc.)</li>
+</ul>
 
 <h3>Channels</h3>
 
-<pre><code class="language-javascript">import { channel } from 'std/async'
+<pre><code class="language-javascript">import { channel } from 'pulselang/runtime'
 
 const ch = channel(bufferSize)
 </code></pre>
 
-<p>Creates a new channel for concurrent communication.</p>
+<p>Creates a channel for communication between tasks. Channels are <strong>not</strong> Promises - they're synchronization primitives.</p>
 
 <strong>Parameters:</strong>
 <ul>
-<li><code>bufferSize</code> (number): Buffer size (0 for unbuffered)</li>
+<li><code>bufferSize</code> (number): Buffer capacity</li>
 </ul>
+<p>  - <code>0</code> = unbuffered (sender blocks until receiver is ready)</p>
+<p>  - <code>> 0</code> = buffered (sender blocks only when buffer is full)</p>
 
 <strong>Returns:</strong> <code>Channel</code>
 
 <strong>Channel Methods:</strong>
 <ul>
-<li><code>await ch.send(value)</code>: Send a value</li>
-<li><code>await ch.recv()</code>: Receive a value</li>
-<li><code>ch.close()</code>: Close the channel</li>
+<li><code>await ch.send(value)</code>: Send a value. Blocks if unbuffered or buffer is full.</li>
+<li><code>await ch.recv()</code>: Receive a value. Blocks if channel is empty. Returns <code>{ value, ok }</code> where <code>ok</code> is <code>false</code> if channel is closed.</li>
+<li><code>for await (const val of ch)</code>: Iterate until channel closes.</li>
+<li><code>ch.close()</code>: Close the channel. Subsequent sends throw, receives drain remaining values then return <code>{ ok: false }</code>.</li>
 </ul>
+
+<strong>Why not just use Promises?</strong>
+
+<p>Promises don't actually block. When you <code>await fetch(url)</code>, your code pauses but the event loop keeps doing its thing. The order depends on network timing, OS scheduling, whatever.</p>
+
+<p>Channels are different - when you <code>send()</code>, your task <strong>stops</strong> until another task does <code>recv()</code>. The scheduler controls exactly when to wake tasks up. This is why execution order is predictable.</p>
+
+<h3>Select</h3>
+
+<pre><code class="language-javascript">import { select, selectCase } from 'pulselang/runtime'
+
+const result = await select([
+  selectCase({ channel: ch1, op: 'recv' }),
+  selectCase({ channel: ch2, op: 'send', value: 42 })
+])
+</code></pre>
+
+<p>Multiplexes multiple channel operations. Whichever channel becomes ready first (based on the scheduler's logical time), that case executes.</p>
+
+<strong>Parameters:</strong>
+<ul>
+<li><code>cases</code> (array): Array of <code>selectCase</code> objects</li>
+</ul>
+
+<strong>selectCase options:</strong>
+<ul>
+<li><code>channel</code>: The channel to operate on</li>
+<li><code>op</code>: Either <code>'recv'</code> or <code>'send'</code></li>
+<li><code>value</code>: (only for send) The value to send</li>
+</ul>
+
+<strong>Returns:</strong>
+<pre><code class="language-javascript">{
+  caseIndex: number,  // Which case matched (0-indexed)
+  value: any,         // For recv operations, the received value
+  ok: boolean         // For recv operations, false if channel closed
+}
+</code></pre>
+
+<strong>Example:</strong>
+<pre><code class="language-javascript">const ch1 = channel()
+const ch2 = channel()
+
+// Spawn tasks that will send to channels
+scheduler.spawn(async () =&gt; {
+  await sleep(10)  // Logical time, not real time
+  await ch1.send('hello')
+})
+
+scheduler.spawn(async () =&gt; {
+  const result = await select([
+    selectCase({ channel: ch1, op: 'recv' }),
+    selectCase({ channel: ch2, op: 'recv' })
+  ])
+
+  if (result.caseIndex === 0) {
+    console.log('ch1 ready:', result.value)
+  } else {
+    console.log('ch2 ready:', result.value)
+  }
+})
+</code></pre>
 
 <h3>Async Utilities</h3>
 
