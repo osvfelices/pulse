@@ -1,0 +1,18 @@
+// Pulse 1.0.0 Quickstart: Simple deterministic execution
+
+fn main() {
+  print('Pulse 1.0.0 - Deterministic Runtime');
+  print('Same inputs -> same outputs, every time');
+
+  const values = [1, 2, 3, 4, 5];
+  let sum = 0;
+
+  for (const v of values) {
+    sum = sum + v;
+  }
+
+  print('Sum:', sum);
+  print('Expected: 15');
+}
+
+main();
