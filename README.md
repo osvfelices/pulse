@@ -61,7 +61,15 @@ Compilation: Pulse Source → Parser → AST → Codegen → JavaScript
 
 ## Quick Start
 
+### Install with npm
+
+```bash
+npm install pulselang
+```
+
 ### Install from Repository
+
+For development or to try the latest features:
 
 ```bash
 # 1. Clone the repo
@@ -78,12 +86,6 @@ npm run run:quickstart
 
 # 5. Verify determinism (100 runs, identical hash)
 npm run verify:determinism
-```
-
-### npm Install
-
-```bash
-npm install pulselang
 ```
 
 ### Use in Your Projects
