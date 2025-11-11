@@ -1,6 +1,6 @@
 {
   "name": "pulselang",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "private": false,
   "license": "MIT",
   "description": "Pulse Language core: lexer, parser, reactivity runtime, and standard library",
