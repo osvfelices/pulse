@@ -53,6 +53,9 @@
   "engines": {
     "node": ">=18"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "devDependencies": {
     "shiki": "^1.0.0"
   }
