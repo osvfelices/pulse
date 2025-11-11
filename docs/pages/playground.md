@@ -115,16 +115,58 @@ await main()
 
 ## Try It Locally
 
-To run these examples locally:
+To run these examples:
 
-1. Save the code to a `.pulse` file
-2. Run it with: `npm run parse your-file.pulse`
-
-Example:
-
+**If you installed pulselang via npm:**
 ```bash
-npm run parse examples/fullstack/server/index.pulse
+# Create a file, e.g., test.pulse
+node_modules/.bin/pulselang test.pulse
+node test.mjs
 ```
+
+**If you cloned the Pulse repo:**
+```bash
+# From the repo root
+node lib/run.js test.pulse
+node test.mjs
+```
+
+**Using the runtime directly from JavaScript:**
+
+You don't even need `.pulse` files. Just import the runtime:
+
+```javascript
+// test.mjs
+import { DeterministicScheduler, channel } from 'pulselang/runtime';
+
+const scheduler = new DeterministicScheduler();
+const ch = channel(5);
+
+async function producer() {
+  for (let i = 0; i < 3; i++) {
+    await ch.send(i);
+    console.log('Sent:', i);
+  }
+  ch.close();
+}
+
+async function consumer() {
+  for await (const val of ch) {
+    console.log('Received:', val);
+  }
+}
+
+scheduler.spawn(producer);
+scheduler.spawn(consumer);
+await scheduler.run();
+```
+
+Then just:
+```bash
+node test.mjs
+```
+
+This is how I use it in Next.js/Express/whatever.
 
 ## Community Examples
 

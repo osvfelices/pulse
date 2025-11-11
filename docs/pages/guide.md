@@ -1,21 +1,22 @@
 # Getting Started Guide
 
-Learn the fundamentals of Pulse programming in this comprehensive guide.
+Learn the fundamentals of Pulse programming in this guide.
 
 ## Installation
 
-Install Pulse from npm:
+Install Pulse locally in your project:
 
 ```bash
-npm install -g pulselang
+npm install pulselang
 ```
 
-Or clone the repository for development:
+Or clone the repository if you want to work on Pulse itself:
 
 ```bash
 git clone https://github.com/osvfelices/pulse.git
 cd pulse
 npm install
+npm test  # Verify everything works
 ```
 
 ## Your First Program
@@ -30,11 +31,19 @@ fn main() {
 main()
 ```
 
-Run it with:
+Compile and run it:
 
 ```bash
-npm run parse hello.pulse
+# If you installed pulselang via npm:
+node_modules/.bin/pulselang hello.pulse
+node hello.mjs
+
+# If you are inside the pulse repo:
+node lib/run.js hello.pulse
+node hello.mjs
 ```
+
+The compiler generates `hello.mjs` — a JavaScript ES module you can run with Node, import from other JS files, or bundle with Vite/Webpack/etc.
 
 ## Basic Syntax
 
@@ -85,7 +94,7 @@ print(rect.area())
 
 ## Working with Files
 
-Pulse provides a comprehensive file system API in the `std/fs` module:
+Pulse provides a file system API in the `std/fs` module:
 
 ```pulse
 import fs from 'std/fs'
@@ -110,7 +119,7 @@ await main()
 
 ## Reactivity
 
-Pulse includes a powerful reactive system inspired by modern frameworks:
+Pulse includes a reactive system inspired by modern frameworks:
 
 ```pulse
 import { signal, effect, computed, batch } from 'std/reactive'
@@ -137,63 +146,94 @@ batch(() => {
 
 ## Concurrency with Channels
 
-Write concurrent code using Go-style channels:
+Channels are how tasks communicate. Forget Promises — no `.then()`, no `.catch()`. A channel is just a pipe. One task writes, another reads.
+
+The important part: `await ch.send(value)` **blocks your task** until someone does `await ch.recv()`. This is how determinism works - the scheduler knows exactly when each task is waiting and when to wake it up.
+
+Example:
 
 ```pulse
-import { channel } from 'std/async'
+import { DeterministicScheduler, channel } from '../../lib/runtime/index.js'
 
-const ch = channel()
+const scheduler = new DeterministicScheduler()
+const ch = channel()  // Unbuffered channel (capacity 0)
 
 async fn producer() {
   for (let i = 0; i < 5; i++) {
     await ch.send(i)
     print('Sent:', i)
   }
-  ch.close()
+  ch.close()  // Signal that no more values are coming
 }
 
 async fn consumer() {
-  while (true) {
-    const [value, ok] = await ch.recv()
-    if (!ok) break
+  for await (const value of ch) {
     print('Received:', value)
   }
+  print('Channel closed')
 }
 
-await Promise.all([producer(), consumer()])
+scheduler.spawn(producer)
+scheduler.spawn(consumer)
+await scheduler.run()
 ```
+
+What happens:
+- Producer sends 0, blocks
+- Consumer receives 0, prints it, goes back to waiting
+- Producer wakes up, sends 1, blocks again
+- This ping-pongs until producer closes the channel
+- Consumer's `for await` sees the close and exits
+
+Run this 100 times, you get the exact same output every time. That's the point.
 
 ### Buffered Channels
 
-```pulse
-const buffered = channel(10)
+Unbuffered = handshake (both sides wait). Buffered = mailbox (you can drop stuff off and leave).
 
+```pulse
+const buffered = channel(10)  // holds 10 items
+
+// First 10 sends don't block
 for (let i = 0; i < 10; i++) {
   await buffered.send(i)
 }
+
+// 11th send blocks until someone reads
+await buffered.send(11)
 ```
+
+Useful when producer and consumer run at different speeds. Producer fills buffer, consumer drains it whenever.
 
 ### Select Operations
 
+Wait on multiple channels, first one ready wins:
+
 ```pulse
-import { select } from 'std/async'
+import { select, selectCase } from '../../lib/runtime/index.js'
 
 const ch1 = channel()
 const ch2 = channel()
 
+const result = await select([
+  selectCase({ channel: ch1, op: 'recv' }),
+  selectCase({ channel: ch2, op: 'recv' })
+])
+
+print('Got from', result.caseIndex === 0 ? 'ch1' : 'ch2')
+print('Value:', result.value)
+```
+
+You can mix sends and receives:
+
+```pulse
 await select([
-  {
-    channel: ch1,
-    op: 'recv',
-    handler: (value) => print('ch1:', value)
-  },
-  {
-    channel: ch2,
-    op: 'recv',
-    handler: (value) => print('ch2:', value)
-  }
+  selectCase({ channel: ch1, op: 'send', value: 42 }),
+  selectCase({ channel: ch2, op: 'recv' })
 ])
 ```
+
+Still deterministic — if multiple channels are ready, scheduler picks based on logical time. Same state = same choice.
 
 ## Error Handling
 
