@@ -1,0 +1,16 @@
+# Dependencies
+node_modules/
+
+# Next.js build output
+.next/
+out/
+
+# Generated files
+next-env.d.ts
+tsconfig.json
+verify-output.txt
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
