@@ -26,8 +26,13 @@ The syntax is similar to JavaScript for familiarity, but Pulse has built-in supp
 ### Concurrency
 - CSP channels (buffered and unbuffered)
 - select() for concurrent operations
-- Deterministic scheduling
+- Deterministic scheduling with logical time
 - Safe resource cleanup
+
+**Deterministic Runtime:**
+Tasks run in the same order every time based on logical time, not whatever the OS decides. No `setTimeout`, `setImmediate`, or `Promise.race`. Just channels and blocking. Same inputs = same outputs, verified by running tests 100+ times and hashing the output.
+
+Tested on Node 18+. Should work on Deno/Bun but I haven't tried. Browser probably works too.
 
 ### Language Support
 - JavaScript-compatible syntax with extensions
@@ -56,8 +61,6 @@ Compilation: Pulse Source → Parser → AST → Codegen → JavaScript
 
 ## Quick Start
 
-**Note**: npm package temporarily unavailable - will be republished tomorrow. For now, please clone the repository to use Pulse.
-
 ### Install from Repository
 
 ```bash
@@ -69,22 +72,60 @@ cd pulse
 
 # 3. Install dependencies
 npm install
+
+# 4. Run quickstart example
+npm run run:quickstart
+
+# 5. Verify determinism (100 runs, identical hash)
+npm run verify:determinism
 ```
 
-Then you can use Pulse in your projects by importing from the `lib/` directory:
-
-```javascript
-import { signal, effect } from './pulse/lib/runtime/reactivity.js';
-import { channel } from './pulse/lib/runtime/async/index.js';
-```
-
-### npm Install (available tomorrow)
+### npm Install
 
 ```bash
 npm install pulselang
 ```
 
-Basic usage:
+### Use in Your Projects
+
+Import the runtime directly in JavaScript:
+
+```javascript
+import { DeterministicScheduler, channel } from 'pulselang/runtime';
+
+const scheduler = new DeterministicScheduler();
+const ch = channel(5);
+
+async function producer() {
+  for (let i = 0; i < 3; i++) {
+    await ch.send(i);
+    console.log('Sent:', i);
+  }
+  ch.close();
+}
+
+async function consumer() {
+  for await (const value of ch) {
+    console.log('Received:', value);
+  }
+}
+
+scheduler.spawn(producer);
+scheduler.spawn(consumer);
+await scheduler.run();
+```
+
+Output (deterministic, same every run):
+```
+Sent: 0
+Received: 0
+Sent: 1
+Received: 1
+Sent: 2
+Received: 2
+```
+
+Reactivity example:
 
 ```javascript
 import { signal, effect } from 'pulselang/runtime';
@@ -96,28 +137,6 @@ effect(() => {
 });
 
 setCount(5); // Output: Count: 5
-```
-
-Channels example:
-
-```javascript
-import { channel } from 'pulselang/runtime/async';
-
-const ch = channel();
-
-async function producer() {
-  await ch.send('hello');
-  await ch.send('world');
-  ch.close();
-}
-
-async function consumer() {
-  for await (const value of ch) {
-    console.log('Got:', value);
-  }
-}
-
-await Promise.all([producer(), consumer()]);
 ```
 
 ## Language Examples
@@ -189,6 +208,20 @@ npm run coverage
 | Channel Operations | 2.2M+ ops/sec | Buffered and unbuffered |
 | Parse Time | <5ms/file | Average source file |
 | Memory Usage | Stable | No leaks detected |
+
+## Known Limitations
+
+v1.0 with more features planned:
+
+- **Platforms** — Tested on Node 18+. Deno/Bun/Browser support not verified yet.
+- **Types** — No TypeScript integration yet. Runtime errors instead of compile-time checks. Planning .d.ts files.
+- **Errors** — Parser error messages could be clearer. Working on better diagnostics.
+- **Debugging** — No source maps yet. You'll be debugging the compiled JavaScript output.
+- **Channels** — No timeout or cancellation for blocked operations. No task priorities (FIFO only).
+- **JS interop** — Calling JavaScript from Pulse works, but mixing schedulers requires care. Channels don't auto-bridge to Promises.
+- **Stdlib** — File operations are basic wrappers around Node's fs. No HTTP client (use fetch). Minimal CLI utilities.
+
+Hit an issue? Open a GitHub issue. Some limitations are on the roadmap, others might be design tradeoffs.
 
 ## Contributing
 
