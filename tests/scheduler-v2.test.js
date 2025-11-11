@@ -16,7 +16,7 @@ import {
   PRIORITY_HIGH,
   PRIORITY_NORMAL,
   PRIORITY_LOW
-} from '../lib/runtime/scheduler-v2.js';
+} from '../lib/runtime/scheduler-deterministic.js';
 
 async function testBasicExecution() {
   const scheduler = new DeterministicScheduler();
