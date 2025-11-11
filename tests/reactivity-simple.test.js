@@ -1,6 +1,6 @@
 /**
  * Simple Reactivity Test
- * Quick smoke test to verify basic functionality
+ * Quick smoke test to check basic functionality
  */
 
 import { signal, computed, effect } from '../lib/runtime/reactivity.js';

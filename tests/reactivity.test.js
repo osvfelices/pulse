@@ -2,7 +2,7 @@
  * Pulse Reactivity Tests
  *
  * Comprehensive test suite for the reactivity engine
- * Tests EVERY feature to ensure production readiness
+ * Tests EVERY feature to check production readiness
  */
 
 import { signal, computed, effect, batch, store, resource, untrack, createRoot } from '../lib/runtime/reactivity.js';
