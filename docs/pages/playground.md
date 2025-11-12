@@ -64,7 +64,7 @@ received 3
 ### Select
 
 ```pulse
-import { DeterministicScheduler, channel, select } from 'pulselang/runtime'
+import { DeterministicScheduler, channel, select, selectCase } from 'pulselang/runtime'
 
 const scheduler = new DeterministicScheduler()
 const fast = channel()
@@ -157,7 +157,13 @@ await main()
 
 To run these examples:
 
-**Run directly:**
+**Using CLI commands (after `npm install pulselang`):**
+```bash
+pulse test.pulse
+# or: pulselang test.pulse
+```
+
+**Or run directly:**
 ```bash
 node node_modules/pulselang/lib/run.js test.pulse
 ```
@@ -171,8 +177,9 @@ node dist/test.mjs
 If working from the repository:
 
 ```bash
-node lib/run.js test.pulse
-# Or: node tools/build/build.mjs --src . --out ./dist
+pulse test.pulse
+# or: node lib/run.js test.pulse
+# or: node tools/build/build.mjs --src . --out ./dist
 ```
 
 ## Next Steps

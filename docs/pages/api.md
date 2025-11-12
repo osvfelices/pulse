@@ -418,7 +418,7 @@ Channels block tasks. When you `send()`, your task stops until another task does
 Multiplexes multiple channel operations. Whichever channel becomes ready first (based on the scheduler's logical time), that case executes.
 
 ```pulse
-import { DeterministicScheduler, channel, select } from 'pulselang/runtime'
+import { DeterministicScheduler, channel, select, selectCase } from 'pulselang/runtime'
 
 const scheduler = new DeterministicScheduler()
 const ch1 = channel()

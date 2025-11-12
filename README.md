@@ -73,7 +73,7 @@ received 3
 ### Example 3: Select
 
 ```pulse
-import { DeterministicScheduler, channel, select } from 'pulselang/runtime'
+import { DeterministicScheduler, channel, select, selectCase } from 'pulselang/runtime'
 
 const scheduler = new DeterministicScheduler()
 const fast = channel()
@@ -160,10 +160,11 @@ fn add(a, b) {
 print(add(2, 3))
 ```
 
-**Option 1: Compile and run in one step** (temporary execution):
+**Option 1: Using CLI commands** (recommended):
 
 ```bash
-node node_modules/pulselang/lib/run.js hello.pulse
+pulse hello.pulse
+# or: pulselang hello.pulse
 ```
 
 Expected output:
@@ -171,7 +172,13 @@ Expected output:
 5
 ```
 
-**Option 2: Compile to .mjs** (permanent file):
+**Option 2: Direct node execution**:
+
+```bash
+node node_modules/pulselang/lib/run.js hello.pulse
+```
+
+**Option 3: Compile to .mjs** (permanent file):
 
 ```bash
 node node_modules/pulselang/tools/build/build.mjs --src . --out ./dist
@@ -181,7 +188,10 @@ node dist/hello.mjs
 If working from the repository:
 
 ```bash
-# Run directly:
+# Run using CLI:
+pulse hello.pulse
+
+# Or run directly:
 node lib/run.js hello.pulse
 
 # Or compile:
