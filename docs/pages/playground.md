@@ -1,32 +1,16 @@
 # Playground
 
-Try Pulse in your browser (coming soon).
+## Interactive Example
 
-## Interactive Examples
-
-The Pulse playground will allow you to write and execute Pulse code directly in your browser without any installation.
-
-### Features (Coming Soon)
-
-- **Live Editor**: Syntax highlighting and autocomplete
-- **Instant Execution**: Run code with a single click
-- **Example Library**: Pre-loaded examples demonstrating key features
-- **REPL Mode**: Interactive read-eval-print loop
-- **Sharing**: Share your code with others via URL
-
-## Example Programs
-
-While we build the interactive playground, here are some examples you can try locally:
-
-### Reactive Counter
+Run this code to see Pulse in action:
 
 ```pulse
-import { signal, effect } from 'std/reactive'
+import { signal, effect } from 'pulselang/runtime'
 
 const [count, setCount] = signal(0)
 
 effect(() => {
-  print('Count is now:', count())
+  print('count is', count())
 })
 
 setCount(1)
@@ -34,26 +18,82 @@ setCount(2)
 setCount(3)
 ```
 
-### Concurrent Data Processing
+Click Run. Expected output:
+```
+count is 0
+count is 1
+count is 2
+count is 3
+```
+
+## Example Programs
+
+Try these examples locally:
+
+### Channels
 
 ```pulse
-import { channel, parallel } from 'std/async'
+import { DeterministicScheduler, channel } from 'pulselang/runtime'
 
-async fn processData(data) {
-  print('Processing:', data)
-  await sleep(100)
-  return data * 2
-}
+const scheduler = new DeterministicScheduler()
+const ch = channel()
 
-async fn main() {
-  const inputs = [1, 2, 3, 4, 5]
-  const results = await parallel(
-    inputs.map(x => () => processData(x))
-  )
-  print('Results:', results)
-}
+scheduler.spawn(async () => {
+  for (let i = 1; i <= 3; i++) {
+    await ch.send(i)
+  }
+  ch.close()
+})
 
-await main()
+scheduler.spawn(async () => {
+  for await (const x of ch) {
+    print('received', x)
+  }
+})
+
+await scheduler.run()
+```
+
+Expected output:
+```
+received 1
+received 2
+received 3
+```
+
+### Select
+
+```pulse
+import { DeterministicScheduler, channel, select } from 'pulselang/runtime'
+
+const scheduler = new DeterministicScheduler()
+const fast = channel()
+const slow = channel()
+
+scheduler.spawn(async () => {
+  await scheduler.sleep(5)
+  await fast.send('fast')
+})
+
+scheduler.spawn(async () => {
+  await scheduler.sleep(10)
+  await slow.send('slow')
+})
+
+scheduler.spawn(async () => {
+  const result = await select {
+    case recv fast
+    case recv slow
+  }
+  print('got:', result.value)
+})
+
+await scheduler.run()
+```
+
+Expected output:
+```
+got: fast
 ```
 
 ### File System Operations
@@ -117,63 +157,26 @@ await main()
 
 To run these examples:
 
-**If you installed pulselang via npm:**
+**Run directly:**
 ```bash
-# Create a file, e.g., test.pulse
-node_modules/.bin/pulselang test.pulse
-node test.mjs
+node node_modules/pulselang/lib/run.js test.pulse
 ```
 
-**If you cloned the Pulse repo:**
+**Or compile first:**
 ```bash
-# From the repo root
+node node_modules/pulselang/tools/build/build.mjs --src . --out ./dist
+node dist/test.mjs
+```
+
+If working from the repository:
+
+```bash
 node lib/run.js test.pulse
-node test.mjs
+# Or: node tools/build/build.mjs --src . --out ./dist
 ```
-
-**Using the runtime directly from JavaScript:**
-
-You don't even need `.pulse` files. Just import the runtime:
-
-```javascript
-// test.mjs
-import { DeterministicScheduler, channel } from 'pulselang/runtime';
-
-const scheduler = new DeterministicScheduler();
-const ch = channel(5);
-
-async function producer() {
-  for (let i = 0; i < 3; i++) {
-    await ch.send(i);
-    console.log('Sent:', i);
-  }
-  ch.close();
-}
-
-async function consumer() {
-  for await (const val of ch) {
-    console.log('Received:', val);
-  }
-}
-
-scheduler.spawn(producer);
-scheduler.spawn(consumer);
-await scheduler.run();
-```
-
-Then just:
-```bash
-node test.mjs
-```
-
-This is how I use it in Next.js/Express/whatever.
-
-## Community Examples
-
-Want to share your Pulse creations? Submit them to our [GitHub repository](https://github.com/osvfelices/pulse/tree/main/examples).
 
 ## Next Steps
 
-- Check out the [API Reference](api.html) for complete documentation
-- Read the [Getting Started Guide](guide.html) to learn more
-- Star us on [GitHub](https://github.com/osvfelices/pulse)
+- [API Reference](api.html) - Complete documentation
+- [Getting Started Guide](guide.html) - Learn more
+- [GitHub](https://github.com/osvfelices/pulse) - Source code and examples

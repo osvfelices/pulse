@@ -2,48 +2,58 @@
 
 Learn the fundamentals of Pulse programming in this guide.
 
-## Installation
+## Quickstart (1.0.2)
 
-Install Pulse locally in your project:
+### Installation
 
 ```bash
 npm install pulselang
 ```
 
-Or clone the repository if you want to work on Pulse itself:
-
-```bash
-git clone https://github.com/osvfelices/pulse.git
-cd pulse
-npm install
-npm test  # Verify everything works
-```
-
-## Your First Program
+### Running a single .pulse file
 
 Create a file called `hello.pulse`:
 
 ```pulse
-fn main() {
-  print('Hello, Pulse!')
+fn add(a, b) {
+  return a + b
 }
 
-main()
+print(add(2, 3))
 ```
 
-Compile and run it:
+**Run directly** (temporary execution):
 
 ```bash
-# If you installed pulselang via npm:
-node_modules/.bin/pulselang hello.pulse
-node hello.mjs
-
-# If you are inside the pulse repo:
-node lib/run.js hello.pulse
-node hello.mjs
+node node_modules/pulselang/lib/run.js hello.pulse
 ```
 
-The compiler generates `hello.mjs` — a JavaScript ES module you can run with Node, import from other JS files, or bundle with Vite/Webpack/etc.
+**Compile to .mjs** (permanent file):
+
+```bash
+node node_modules/pulselang/tools/build/build.mjs --src . --out ./dist
+node dist/hello.mjs
+```
+
+Expected output:
+```
+5
+```
+
+If working from the repository:
+
+```bash
+node lib/run.js hello.pulse
+# Or: node tools/build/build.mjs --src . --out ./dist
+```
+
+### Compilation
+
+Source → AST → JS (ESM).
+
+Two modes:
+- `lib/run.js` compiles and runs immediately (temporary .mjs file)
+- `tools/build/build.mjs` generates permanent .mjs files you can deploy
 
 ## Basic Syntax
 
@@ -122,7 +132,7 @@ await main()
 Pulse includes a reactive system inspired by modern frameworks:
 
 ```pulse
-import { signal, effect, computed, batch } from 'std/reactive'
+import { signal, effect, computed, batch } from 'pulselang/runtime'
 
 const [count, setCount] = signal(0)
 const [name, setName] = signal('Alice')
@@ -144,26 +154,34 @@ batch(() => {
 })
 ```
 
-## Concurrency with Channels
+Expected output:
+```
+Alice has 0 items
+Alice has 5 items
+Bob has 5 items
+Charlie has 10 items
+```
 
-Channels are how tasks communicate. Forget Promises — no `.then()`, no `.catch()`. A channel is just a pipe. One task writes, another reads.
+## Concurrency Intro
 
-The important part: `await ch.send(value)` **blocks your task** until someone does `await ch.recv()`. This is how determinism works - the scheduler knows exactly when each task is waiting and when to wake it up.
+Channels are how tasks communicate. A channel is a pipe. One task writes, another reads.
+
+`await ch.send(value)` blocks your task until someone does `await ch.recv()`. This is how determinism works - the scheduler knows exactly when each task is waiting and when to wake it up.
 
 Example:
 
 ```pulse
-import { DeterministicScheduler, channel } from '../../lib/runtime/index.js'
+import { DeterministicScheduler, channel } from 'pulselang/runtime'
 
 const scheduler = new DeterministicScheduler()
-const ch = channel()  // Unbuffered channel (capacity 0)
+const ch = channel()
 
 async fn producer() {
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < 3; i++) {
     await ch.send(i)
     print('Sent:', i)
   }
-  ch.close()  // Signal that no more values are coming
+  ch.close()
 }
 
 async fn consumer() {
@@ -178,6 +196,17 @@ scheduler.spawn(consumer)
 await scheduler.run()
 ```
 
+Expected output:
+```
+Sent: 0
+Received: 0
+Sent: 1
+Received: 1
+Sent: 2
+Received: 2
+Channel closed
+```
+
 What happens:
 - Producer sends 0, blocks
 - Consumer receives 0, prints it, goes back to waiting
@@ -185,55 +214,74 @@ What happens:
 - This ping-pongs until producer closes the channel
 - Consumer's `for await` sees the close and exits
 
-Run this 100 times, you get the exact same output every time. That's the point.
+Run this 100 times, you get the exact same output every time.
 
 ### Buffered Channels
 
 Unbuffered = handshake (both sides wait). Buffered = mailbox (you can drop stuff off and leave).
 
 ```pulse
-const buffered = channel(10)  // holds 10 items
+import { channel } from 'pulselang/runtime'
 
-// First 10 sends don't block
-for (let i = 0; i < 10; i++) {
-  await buffered.send(i)
+const buffered = channel(10)
+
+async fn producer() {
+  for (let i = 0; i < 12; i++) {
+    await buffered.send(i)
+    print('Sent:', i)
+  }
 }
-
-// 11th send blocks until someone reads
-await buffered.send(11)
 ```
 
-Useful when producer and consumer run at different speeds. Producer fills buffer, consumer drains it whenever.
+Expected output (first 10 sends don't block):
+```
+Sent: 0
+Sent: 1
+...
+Sent: 9
+(blocks on 11th send until someone reads)
+```
+
+Useful when producer and consumer run at different speeds.
 
 ### Select Operations
 
 Wait on multiple channels, first one ready wins:
 
 ```pulse
-import { select, selectCase } from '../../lib/runtime/index.js'
+import { DeterministicScheduler, channel, select } from 'pulselang/runtime'
 
+const scheduler = new DeterministicScheduler()
 const ch1 = channel()
 const ch2 = channel()
 
-const result = await select([
-  selectCase({ channel: ch1, op: 'recv' }),
-  selectCase({ channel: ch2, op: 'recv' })
-])
+scheduler.spawn(async () => {
+  await scheduler.sleep(5)
+  await ch1.send('from ch1')
+})
 
-print('Got from', result.caseIndex === 0 ? 'ch1' : 'ch2')
-print('Value:', result.value)
+scheduler.spawn(async () => {
+  await scheduler.sleep(10)
+  await ch2.send('from ch2')
+})
+
+scheduler.spawn(async () => {
+  const result = await select {
+    case recv ch1
+    case recv ch2
+  }
+  print('Got:', result.value)
+})
+
+await scheduler.run()
 ```
 
-You can mix sends and receives:
-
-```pulse
-await select([
-  selectCase({ channel: ch1, op: 'send', value: 42 }),
-  selectCase({ channel: ch2, op: 'recv' })
-])
+Expected output:
+```
+Got: from ch1
 ```
 
-Still deterministic — if multiple channels are ready, scheduler picks based on logical time. Same state = same choice.
+Still deterministic. If multiple channels are ready, scheduler picks based on logical time and source order. Same state = same choice.
 
 ## Error Handling
 
@@ -282,21 +330,20 @@ import * as math from './math.pulse'
 
 ## Standard Library
 
-Pulse includes a rich standard library:
+Pulse includes a standard library:
 
 - **fs**: File system operations
 - **json**: JSON parsing and stringification
 - **math**: Mathematical functions and constants
-- **async**: Advanced async utilities
 - **cli**: Command-line interface helpers
 - **path**: Path manipulation utilities
 
-Explore the [API Reference(api.html) for complete documentation.
+Explore the [API Reference](api.html) for complete documentation.
 
 ## Next Steps
 
 Now that you understand the basics, explore:
 
-- [API Reference(api.html) - Complete standard library documentation
-- [Playground(playground.html) - Try Pulse in your browser
+- [API Reference](api.html) - Complete standard library documentation
+- [Playground](playground.html) - Example programs
 - [GitHub](https://github.com/osvfelices/pulse) - Contribute to the project
