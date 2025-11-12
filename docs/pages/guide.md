@@ -22,17 +22,10 @@ fn add(a, b) {
 print(add(2, 3))
 ```
 
-**Run directly** (temporary execution):
+**Run it:**
 
 ```bash
-node node_modules/pulselang/lib/run.js hello.pulse
-```
-
-**Compile to .mjs** (permanent file):
-
-```bash
-node node_modules/pulselang/tools/build/build.mjs --src . --out ./dist
-node dist/hello.mjs
+pulse hello.pulse
 ```
 
 Expected output:
@@ -40,11 +33,18 @@ Expected output:
 5
 ```
 
-If working from the repository:
+Or compile to JavaScript first:
 
 ```bash
-node lib/run.js hello.pulse
-# Or: node tools/build/build.mjs --src . --out ./dist
+node node_modules/pulselang/tools/build/build.mjs --src . --out ./dist
+node dist/hello.mjs
+```
+
+From the repo:
+
+```bash
+pulse hello.pulse
+# or: node lib/run.js hello.pulse
 ```
 
 ### Compilation
@@ -249,7 +249,7 @@ Useful when producer and consumer run at different speeds.
 Wait on multiple channels, first one ready wins:
 
 ```pulse
-import { DeterministicScheduler, channel, select } from 'pulselang/runtime'
+import { DeterministicScheduler, channel, select, selectCase } from 'pulselang/runtime'
 
 const scheduler = new DeterministicScheduler()
 const ch1 = channel()
