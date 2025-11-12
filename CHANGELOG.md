@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.0.3] - 2025-11-12
+
+### Fixed
+- Codegen: Removed auto-inject logic that caused duplicate import errors
+- Docs: Added missing `selectCase` import in all select examples (README, guide, index, api, playground)
+- Examples: All repository examples now compile and run without errors
+
+### Added
+- CLI commands: `pulse` and `pulselang` now available after `npm install pulselang`
+- `bin` field in package.json for global command access
+
+### Changed
+- Documentation updated to show CLI commands as primary usage method
+- All tooling instructions simplified and human-readable
+
 ## [1.0.2] - 2025-11-11
 
 ### Added

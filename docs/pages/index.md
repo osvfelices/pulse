@@ -60,7 +60,7 @@ received 3
 ### Select
 
 ```pulse
-import { DeterministicScheduler, channel, select } from 'pulselang/runtime'
+import { DeterministicScheduler, channel, select, selectCase } from 'pulselang/runtime'
 
 const scheduler = new DeterministicScheduler()
 const fast = channel()
@@ -143,15 +143,9 @@ fn main() {
 main()
 ```
 
-Run directly:
+Run it:
 ```bash
-node node_modules/pulselang/lib/run.js hello.pulse
-```
-
-Or compile to .mjs:
-```bash
-node node_modules/pulselang/tools/build/build.mjs --src . --out ./dist
-node dist/hello.mjs
+pulse hello.pulse
 ```
 
 Expected output:
@@ -169,7 +163,7 @@ Ready to start? Check out the [Getting Started Guide](guide.html) to write your 
 
 ## Known Limitations
 
-v1.0.2 with more features planned:
+v1.0.3 with more features planned:
 
 **Platforms** - Tested on Node 18+. Deno/Bun/Browser support not verified yet.
 
@@ -193,4 +187,4 @@ Pulse is open source.
 
 - GitHub: [github.com/osvfelices/pulse](https://github.com/osvfelices/pulse)
 - License: MIT
-- Version: 1.0.2
+- Version: 1.0.3

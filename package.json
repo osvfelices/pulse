@@ -1,11 +1,15 @@
 {
   "name": "pulselang",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "private": false,
   "license": "MIT",
   "description": "Pulse Language core: lexer, parser, reactivity runtime, and standard library",
   "type": "module",
   "main": "lib/parser.js",
+  "bin": {
+    "pulse": "./lib/run.js",
+    "pulselang": "./lib/run.js"
+  },
   "exports": {
     ".": "./lib/parser.js",
     "./lexer": "./lib/lexer.js",
