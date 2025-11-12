@@ -15,6 +15,90 @@ The syntax is similar to JavaScript for familiarity, but Pulse has built-in supp
 - CSP-style concurrency with channels and select operations
 - Predictable performance without runtime patching
 
+## Quick Examples
+
+### Example 1: Reactivity
+
+```pulse
+import { signal, effect } from 'pulselang/runtime'
+
+const [count, setCount] = signal(0)
+
+effect(() => {
+  print('count is', count())
+})
+
+setCount(1)
+setCount(2)
+```
+
+Expected output:
+```
+count is 0
+count is 1
+count is 2
+```
+
+### Example 2: Channels (deterministic order)
+
+```pulse
+import { DeterministicScheduler, channel } from 'pulselang/runtime'
+
+const scheduler = new DeterministicScheduler()
+const ch = channel()
+
+scheduler.spawn(async () => {
+  for (let i = 1; i <= 3; i++) {
+    await ch.send(i)
+  }
+  ch.close()
+})
+
+scheduler.spawn(async () => {
+  for await (const x of ch) {
+    print('received', x)
+  }
+})
+
+await scheduler.run()
+```
+
+Expected output:
+```
+received 1
+received 2
+received 3
+```
+
+### Example 3: Select
+
+```pulse
+import { DeterministicScheduler, channel, select } from 'pulselang/runtime'
+
+const scheduler = new DeterministicScheduler()
+const fast = channel()
+const slow = channel()
+
+scheduler.spawn(async () => { await fast.send('fast') })
+scheduler.spawn(async () => { await slow.send('slow') })
+
+scheduler.spawn(async () => {
+  const result = await select {
+    case recv fast
+    case recv slow
+  }
+  print(result.value)
+})
+
+await scheduler.run()
+```
+
+Note: Selection priority is deterministic and source-ordered. The scheduler evaluates channels in the order they appear in the select block.
+
+## Determinism
+
+Same inputs, same outputs. No `Promise.race`, no `setTimeout`, no `setImmediate`. Channels and scheduling are cooperative and deterministic.
+
 ## Features
 
 ### Reactivity
@@ -29,10 +113,7 @@ The syntax is similar to JavaScript for familiarity, but Pulse has built-in supp
 - Deterministic scheduling with logical time
 - Safe resource cleanup
 
-**Deterministic Runtime:**
-Tasks run in the same order every time based on logical time, not whatever the OS decides. No `setTimeout`, `setImmediate`, or `Promise.race`. Just channels and blocking. Same inputs = same outputs, verified by running tests 100+ times and hashing the output.
-
-Tested on Node 18+. Should work on Deno/Bun but I haven't tried. Browser probably works too.
+Tested on Node 18+. Should work on Deno/Bun but not verified yet. Browser support untested.
 
 ### Language Support
 - JavaScript-compatible syntax with extensions
@@ -61,19 +142,85 @@ Compilation: Pulse Source → Parser → AST → Codegen → JavaScript
 
 ## Quick Start
 
-### Install with npm
+### Installation
 
 ```bash
 npm install pulselang
 ```
 
-### Install from Repository
+### Running a single file
 
-For development setup and testing, see the [Development](#development) section below.
+Create `hello.pulse`:
 
-### Use in Your Projects
+```pulse
+fn add(a, b) {
+  return a + b
+}
 
-Import the runtime directly in JavaScript:
+print(add(2, 3))
+```
+
+**Option 1: Compile and run in one step** (temporary execution):
+
+```bash
+node node_modules/pulselang/lib/run.js hello.pulse
+```
+
+Expected output:
+```
+5
+```
+
+**Option 2: Compile to .mjs** (permanent file):
+
+```bash
+node node_modules/pulselang/tools/build/build.mjs --src . --out ./dist
+node dist/hello.mjs
+```
+
+If working from the repository:
+
+```bash
+# Run directly:
+node lib/run.js hello.pulse
+
+# Or compile:
+node tools/build/build.mjs --src . --out ./dist
+node dist/hello.mjs
+```
+
+### Language syntax
+
+Functions and classes:
+
+```pulse
+fn add(a, b) {
+  return a + b
+}
+
+class Counter {
+  constructor(initial) {
+    this.value = initial
+  }
+
+  increment() {
+    this.value++
+  }
+}
+```
+
+Async operations:
+
+```pulse
+async fn fetchData(url) {
+  const response = await fetch(url)
+  return await response.json()
+}
+```
+
+## JavaScript Interop
+
+The compiled output is ES Modules. You can import the runtime directly in JavaScript:
 
 ```javascript
 import { DeterministicScheduler, channel } from 'pulselang/runtime';
@@ -100,7 +247,7 @@ scheduler.spawn(consumer);
 await scheduler.run();
 ```
 
-Output (deterministic, same every run):
+Expected output (deterministic, same every run):
 ```
 Sent: 0
 Received: 0
@@ -108,49 +255,6 @@ Sent: 1
 Received: 1
 Sent: 2
 Received: 2
-```
-
-Reactivity example:
-
-```javascript
-import { signal, effect } from 'pulselang/runtime';
-
-const [count, setCount] = signal(0);
-
-effect(() => {
-  console.log('Count:', count());
-});
-
-setCount(5); // Output: Count: 5
-```
-
-## Language Examples
-
-Functions and classes:
-
-```javascript
-fn add(a, b) {
-  return a + b;
-}
-
-class Counter {
-  constructor(initial) {
-    this.value = signal(initial);
-  }
-  
-  increment() {
-    this.value.value++;
-  }
-}
-```
-
-Async operations:
-
-```javascript
-async function fetchData(url) {
-  const response = await fetch(url);
-  return await response.json();
-}
 ```
 
 ## Standard Library
@@ -187,12 +291,7 @@ npm run coverage
 
 ## Performance
 
-| Operation | Performance | Notes |
-|-----------|-------------|-------|
-| Signal Updates | 1.4M+ updates/sec | Automatic dependency tracking |
-| Channel Operations | 2.2M+ ops/sec | Buffered and unbuffered |
-| Parse Time | <5ms/file | Average source file |
-| Memory Usage | Stable | No leaks detected |
+Designed for low-overhead updates, FIFO channels, and stable memory under load. Benchmarks published with the test rig.
 
 ## Known Limitations
 

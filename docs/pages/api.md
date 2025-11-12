@@ -286,75 +286,172 @@ math.lerp(start, end, t)
 
 ## Runtime (pulselang/runtime)
 
-The core concurrency and reactivity primitives. Import these from JavaScript or use them in compiled Pulse code.
+The core concurrency and reactivity primitives.
 
-### Scheduler
+### Reactivity
 
-```javascript
+**signal**
+
+Creates a reactive signal.
+
+```pulse
+import { signal } from 'pulselang/runtime'
+
+const [count, setCount] = signal(0)
+print(count())
+setCount(5)
+print(count())
+```
+
+Expected output:
+```
+0
+5
+```
+
+**effect**
+
+Runs code whenever its dependencies change.
+
+```pulse
+import { signal, effect } from 'pulselang/runtime'
+
+const [count, setCount] = signal(0)
+
+effect(() => {
+  print('count is', count())
+})
+
+setCount(1)
+setCount(2)
+```
+
+Expected output:
+```
+count is 0
+count is 1
+count is 2
+```
+
+**computed**
+
+Creates a derived reactive value.
+
+```pulse
+import { signal, computed } from 'pulselang/runtime'
+
+const [count, setCount] = signal(5)
+const doubled = computed(() => count() * 2)
+
+print(doubled())
+setCount(10)
+print(doubled())
+```
+
+Expected output:
+```
+10
+20
+```
+
+### Concurrency
+
+**DeterministicScheduler**
+
+Creates a deterministic task scheduler. Tasks run in a predictable order based on logical time, not wall-clock time.
+
+```pulse
 import { DeterministicScheduler } from 'pulselang/runtime'
 
 const scheduler = new DeterministicScheduler()
 ```
 
-Creates a deterministic task scheduler. Tasks run in a predictable order based on logical time, not wall-clock time.
-
 **Methods:**
 - `scheduler.spawn(asyncFunction)`: Add a task to the scheduler
 - `await scheduler.run()`: Run all tasks to completion
-- `scheduler.getStats()`: Get internal metrics (tasks, queue sizes, etc.)
+- `scheduler.sleep(ms)`: Pause for logical time duration
 
-### Channels
+**channel**
 
-```javascript
-import { channel } from 'pulselang/runtime'
+Creates a channel for communication between tasks. Channels are not Promises, they're synchronization primitives.
 
-const ch = channel(bufferSize)
+```pulse
+import { DeterministicScheduler, channel } from 'pulselang/runtime'
+
+const scheduler = new DeterministicScheduler()
+const ch = channel()
+
+scheduler.spawn(async () => {
+  await ch.send(42)
+  print('sent 42')
+})
+
+scheduler.spawn(async () => {
+  const msg = await ch.recv()
+  print('received', msg.value)
+})
+
+await scheduler.run()
 ```
 
-Creates a channel for communication between tasks. Channels are **not** Promises, they're synchronization primitives.
+Expected output:
+```
+sent 42
+received 42
+```
 
 **Parameters:**
-- `bufferSize` (number): Buffer capacity
-  - `0` = unbuffered (sender blocks until receiver is ready)
+- `bufferSize` (number, optional): Buffer capacity
+  - `0` or omitted = unbuffered (sender blocks until receiver is ready)
   - `> 0` = buffered (sender blocks only when buffer is full)
-
-**Returns:** `Channel`
 
 **Channel Methods:**
 - `await ch.send(value)`: Send a value. Blocks if unbuffered or buffer is full.
-- `await ch.recv()`: Receive a value. Blocks if channel is empty. Returns `{ value, ok }` where `ok` is `false` if channel is closed.
+- `await ch.recv()`: Receive a value. Returns `{ value, ok }` where `ok` is `false` if channel is closed.
 - `for await (const val of ch)`: Iterate until channel closes.
-- `ch.close()`: Close the channel. Subsequent sends throw, receives drain remaining values then return `{ ok: false }`.
+- `ch.close()`: Close the channel.
 
-**Why not just use Promises?**
+Channels block tasks. When you `send()`, your task stops until another task does `recv()`. The scheduler controls exactly when to wake tasks up. This is why execution order is predictable.
 
-Promises don't actually block. When you `await fetch(url)`, your code pauses but the event loop keeps doing its thing. The order depends on network timing, OS scheduling, whatever.
-
-Channels are different - when you `send()`, your task **stops** until another task does `recv()`. The scheduler controls exactly when to wake tasks up. This is why execution order is predictable.
-
-### Select
-
-```javascript
-import { select, selectCase } from 'pulselang/runtime'
-
-const result = await select([
-  selectCase({ channel: ch1, op: 'recv' }),
-  selectCase({ channel: ch2, op: 'send', value: 42 })
-])
-```
+**select**
 
 Multiplexes multiple channel operations. Whichever channel becomes ready first (based on the scheduler's logical time), that case executes.
 
-**Parameters:**
-- `cases` (array): Array of `selectCase` objects
+```pulse
+import { DeterministicScheduler, channel, select } from 'pulselang/runtime'
 
-**selectCase options:**
-- `channel`: The channel to operate on
-- `op`: Either `'recv'` or `'send'`
-- `value`: (only for send) The value to send
+const scheduler = new DeterministicScheduler()
+const ch1 = channel()
+const ch2 = channel()
+
+scheduler.spawn(async () => {
+  await scheduler.sleep(5)
+  await ch1.send('hello')
+})
+
+scheduler.spawn(async () => {
+  await scheduler.sleep(10)
+  await ch2.send('world')
+})
+
+scheduler.spawn(async () => {
+  const result = await select {
+    case recv ch1
+    case recv ch2
+  }
+  print('got:', result.value, 'from case', result.caseIndex)
+})
+
+await scheduler.run()
+```
+
+Expected output:
+```
+got: hello from case 0
+```
 
 **Returns:**
-```javascript
+```
 {
   caseIndex: number,  // Which case matched (0-indexed)
   value: any,         // For recv operations, the received value
@@ -362,133 +459,31 @@ Multiplexes multiple channel operations. Whichever channel becomes ready first (
 }
 ```
 
-**Example:**
-```javascript
-const ch1 = channel()
-const ch2 = channel()
+**sleep**
 
-// Spawn tasks that will send to channels
-scheduler.spawn(async () => {
-  await sleep(10)  // Logical time, not real time
-  await ch1.send('hello')
-})
+Pauses execution for a logical time duration.
+
+```pulse
+import { DeterministicScheduler } from 'pulselang/runtime'
+
+const scheduler = new DeterministicScheduler()
 
 scheduler.spawn(async () => {
-  const result = await select([
-    selectCase({ channel: ch1, op: 'recv' }),
-    selectCase({ channel: ch2, op: 'recv' })
-  ])
-
-  if (result.caseIndex === 0) {
-    console.log('ch1 ready:', result.value)
-  } else {
-    console.log('ch2 ready:', result.value)
-  }
+  print('start')
+  await scheduler.sleep(100)
+  print('end')
 })
+
+await scheduler.run()
 ```
 
-### Async Utilities
-
-```pulse
-await sleep(ms)
+Expected output:
+```
+start
+end
 ```
 
-Pauses execution for a duration.
-
-**Parameters:**
-- `ms` (number): Milliseconds to sleep
-
-**Returns:** `Promise<void>`
-
----
-
-```pulse
-await parallel(tasks, options)
-```
-
-Executes tasks in parallel.
-
-**Parameters:**
-- `tasks` (function[]): Array of async functions
-- `options` (object): Optional configuration
-
-**Returns:** `Promise<results[]>`
-
----
-
-```pulse
-await race(tasks)
-```
-
-Returns the result of the first completed task.
-
-**Parameters:**
-- `tasks` (function[]): Array of async functions
-
-**Returns:** `Promise<result>`
-
----
-
-```pulse
-await timeout(task, ms)
-```
-
-Executes a task with a timeout.
-
-**Parameters:**
-- `task` (function): Async function to execute
-- `ms` (number): Timeout in milliseconds
-
-**Returns:** `Promise<result>`
-
----
-
-```pulse
-await retry(task, options)
-```
-
-Retries a task on failure.
-
-**Parameters:**
-- `task` (function): Async function to retry
-- `options` (object): `{ maxAttempts, delay, backoff }`
-
-**Returns:** `Promise<result>`
-
----
-
-```pulse
-await sequence(tasks)
-```
-
-Executes tasks sequentially.
-
-**Parameters:**
-- `tasks` (function[]): Array of async functions
-
-**Returns:** `Promise<results[]>`
-
-### Control Flow
-
-```pulse
-debounce(fn, delay)
-throttle(fn, interval)
-```
-
-Rate limiting utilities.
-
----
-
-```pulse
-await select(cases)
-```
-
-Multiplexes multiple channel operations.
-
-**Parameters:**
-- `cases` (array): Array of `{ channel, op, handler }`
-
-**Returns:** `Promise<result>`
+Note: `sleep` uses logical time, not wall-clock time. It's deterministic.
 
 ## Path (std/path)
 
@@ -536,68 +531,27 @@ cli.colors.yellow('Warning')
 cli.colors.bold('Important')
 ```
 
-## Reactive (std/reactive)
+## Reactive
 
-Fine-grained reactivity system.
-
-```pulse
-import { signal, effect, computed, batch } from 'std/reactive'
-```
-
-### Signals
-
-```pulse
-const [getter, setter] = signal(initialValue)
-```
-
-Creates a reactive signal.
-
-**Example:**
-```pulse
-const [count, setCount] = signal(0)
-print(count())
-setCount(5)
-```
-
-### Effects
-
-```pulse
-effect(() => {
-  // Reactive code
-})
-```
-
-Runs code whenever its dependencies change.
-
-### Computed Values
-
-```pulse
-const computed = computed(() => {
-  return someSignal() * 2
-})
-```
-
-Creates a derived reactive value.
-
-### Batch Updates
-
-```pulse
-batch(() => {
-  setSignal1(value1)
-  setSignal2(value2)
-})
-```
-
-Batches multiple updates to trigger effects only once.
+Fine-grained reactivity system. See the Runtime section above for `signal`, `effect`, `computed`, and `batch` examples with expected outputs.
 
 ## Global Functions
 
-```pulse
-print(...args)
-```
+**print**
 
 Outputs values to the console.
 
+```pulse
+print('hello', 'world')
+print(42)
+```
+
+Expected output:
+```
+hello world
+42
+```
+
 ---
 
-For more examples and tutorials, visit the [Getting Started Guide(guide.html).
+For more examples and tutorials, visit the [Getting Started Guide](guide.html).
