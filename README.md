@@ -305,7 +305,7 @@ Designed for low-overhead updates, FIFO channels, and stable memory under load. 
 
 ## Known Limitations
 
-v1.0.2 with more features planned:
+v1.0.3 with more features planned:
 
 - **Platforms** — Tested on Node 18+. Deno/Bun/Browser support not verified yet.
 - **Types** — No TypeScript integration yet. Runtime errors instead of compile-time checks. Planning .d.ts files.
