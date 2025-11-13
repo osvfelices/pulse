@@ -353,198 +353,262 @@ math.lerp(start, end, t)
 
 <h2>Runtime (pulselang/runtime)</h2>
 
-<p>The core concurrency and reactivity primitives. Import these from JavaScript or use them in compiled Pulse code.</p>
+<p>The core concurrency and reactivity primitives.</p>
 
-<h3>Scheduler</h3>
+<h3>Reactivity</h3>
+
+<strong>signal</strong>
+
+<p>Creates a reactive signal.</p>
+
+<pre><code class="language-javascript">import { signal } from 'pulselang/runtime'
+
+const [count, setCount] = signal(0)
+print(count())
+setCount(5)
+print(count())
+</code></pre>
+
+<p>Expected output:</p>
+<pre><code>0
+5
+</code></pre>
+
+<strong>effect</strong>
+
+<p>Runs code whenever its dependencies change.</p>
+
+<pre><code class="language-javascript">import { signal, effect } from 'pulselang/runtime'
+
+const [count, setCount] = signal(0)
+
+effect(() =&gt; {
+  print('count is', count())
+})
+
+setCount(1)
+setCount(2)
+</code></pre>
+
+<p>Expected output:</p>
+<pre><code>count is 0
+count is 1
+count is 2
+</code></pre>
+
+<strong>computed</strong>
+
+<p>Creates a derived reactive value.</p>
+
+<pre><code class="language-javascript">import { signal, computed } from 'pulselang/runtime'
+
+const [count, setCount] = signal(5)
+const doubled = computed(() =&gt; count() * 2)
+
+print(doubled())
+setCount(10)
+print(doubled())
+</code></pre>
+
+<p>Expected output:</p>
+<pre><code>10
+20
+</code></pre>
+
+<h3>Concurrency</h3>
+
+<strong>DeterministicScheduler</strong>
+
+<p>Creates a deterministic task scheduler. Tasks run in a predictable order based on logical time, not wall-clock time.</p>
 
 <pre><code class="language-javascript">import { DeterministicScheduler } from 'pulselang/runtime'
 
 const scheduler = new DeterministicScheduler()
 </code></pre>
 
-<p>Creates a deterministic task scheduler. Tasks run in a predictable order based on logical time, not wall-clock time.</p>
-
 <strong>Methods:</strong>
 <ul>
 <li><code>scheduler.spawn(asyncFunction)</code>: Add a task to the scheduler</li>
 <li><code>await scheduler.run()</code>: Run all tasks to completion</li>
-<li><code>scheduler.getStats()</code>: Get internal metrics (tasks, queue sizes, etc.)</li>
+<li><code>scheduler.sleep(ms)</code>: Pause for logical time duration</li>
 </ul>
 
-<h3>Channels</h3>
+<strong>channel</strong>
 
-<pre><code class="language-javascript">import { channel } from 'pulselang/runtime'
+<p>Creates a channel for communication between tasks. Channels are not Promises, they're synchronization primitives.</p>
 
-const ch = channel(bufferSize)
+<pre><code class="language-javascript">import { DeterministicScheduler, channel } from 'pulselang/runtime'
+
+const scheduler = new DeterministicScheduler()
+const ch = channel()
+
+scheduler.spawn(async () =&gt; {
+  await ch.send(42)
+  print('sent 42')
+})
+
+scheduler.spawn(async () =&gt; {
+  const msg = await ch.recv()
+  print('received', msg.value)
+})
+
+await scheduler.run()
 </code></pre>
 
-<p>Creates a channel for communication between tasks. Channels are <strong>not</strong> Promises, they're synchronization primitives.</p>
+<p>Expected output:</p>
+<pre><code>sent 42
+received 42
+</code></pre>
 
 <strong>Parameters:</strong>
 <ul>
-<li><code>bufferSize</code> (number): Buffer capacity</li>
+<li><code>bufferSize</code> (number, optional): Buffer capacity</li>
 </ul>
-<p>  - <code>0</code> = unbuffered (sender blocks until receiver is ready)</p>
+<p>  - <code>0</code> or omitted = unbuffered (sender blocks until receiver is ready)</p>
 <p>  - <code>> 0</code> = buffered (sender blocks only when buffer is full)</p>
-
-<strong>Returns:</strong> <code>Channel</code>
 
 <strong>Channel Methods:</strong>
 <ul>
 <li><code>await ch.send(value)</code>: Send a value. Blocks if unbuffered or buffer is full.</li>
-<li><code>await ch.recv()</code>: Receive a value. Blocks if channel is empty. Returns <code>{ value, ok }</code> where <code>ok</code> is <code>false</code> if channel is closed.</li>
+<li><code>await ch.recv()</code>: Receive a value. Returns <code>{ value, ok }</code> where <code>ok</code> is <code>false</code> if channel is closed.</li>
 <li><code>for await (const val of ch)</code>: Iterate until channel closes.</li>
-<li><code>ch.close()</code>: Close the channel. Subsequent sends throw, receives drain remaining values then return <code>{ ok: false }</code>.</li>
+<li><code>ch.close()</code>: Close the channel.</li>
 </ul>
 
-<strong>Why not just use Promises?</strong>
+<p>Channels block tasks. When you <code>send()</code>, your task stops until another task does <code>recv()</code>. The scheduler controls exactly when to wake tasks up. This is why execution order is predictable.</p>
 
-<p>Promises don't actually block. When you <code>await fetch(url)</code>, your code pauses but the event loop keeps doing its thing. The order depends on network timing, OS scheduling, whatever.</p>
-
-<p>Channels are different - when you <code>send()</code>, your task <strong>stops</strong> until another task does <code>recv()</code>. The scheduler controls exactly when to wake tasks up. This is why execution order is predictable.</p>
-
-<h3>Select</h3>
-
-<pre><code class="language-javascript">import { select, selectCase } from 'pulselang/runtime'
-
-const result = await select([
-  selectCase({ channel: ch1, op: 'recv' }),
-  selectCase({ channel: ch2, op: 'send', value: 42 })
-])
-</code></pre>
+<strong>select</strong>
 
 <p>Multiplexes multiple channel operations. Whichever channel becomes ready first (based on the scheduler's logical time), that case executes.</p>
 
-<strong>Parameters:</strong>
-<ul>
-<li><code>cases</code> (array): Array of <code>selectCase</code> objects</li>
-</ul>
+<pre><code class="language-javascript">import { DeterministicScheduler, channel, select, selectCase } from 'pulselang/runtime'
 
-<strong>selectCase options:</strong>
-<ul>
-<li><code>channel</code>: The channel to operate on</li>
-<li><code>op</code>: Either <code>'recv'</code> or <code>'send'</code></li>
-<li><code>value</code>: (only for send) The value to send</li>
-</ul>
+const scheduler = new DeterministicScheduler()
+const ch1 = channel()
+const ch2 = channel()
+
+scheduler.spawn(async () =&gt; {
+  await scheduler.sleep(5)
+  await ch1.send('hello')
+})
+
+scheduler.spawn(async () =&gt; {
+  await scheduler.sleep(10)
+  await ch2.send('world')
+})
+
+scheduler.spawn(async () =&gt; {
+  const result = await select {
+    case recv ch1
+    case recv ch2
+  }
+  print('got:', result.value, 'from case', result.caseIndex)
+})
+
+await scheduler.run()
+</code></pre>
+
+<p>Expected output:</p>
+<pre><code>got: hello from case 0
+</code></pre>
 
 <strong>Returns:</strong>
-<pre><code class="language-javascript">{
+<pre><code>{
   caseIndex: number,  // Which case matched (0-indexed)
   value: any,         // For recv operations, the received value
   ok: boolean         // For recv operations, false if channel closed
 }
 </code></pre>
 
-<strong>Example:</strong>
-<pre><code class="language-javascript">const ch1 = channel()
-const ch2 = channel()
+<strong>sleep</strong>
 
-// Spawn tasks that will send to channels
-scheduler.spawn(async () =&gt; {
-  await sleep(10)  // Logical time, not real time
-  await ch1.send('hello')
-})
+<p>Pauses execution for a logical time duration.</p>
+
+<pre><code class="language-javascript">import { DeterministicScheduler } from 'pulselang/runtime'
+
+const scheduler = new DeterministicScheduler()
 
 scheduler.spawn(async () =&gt; {
-  const result = await select([
-    selectCase({ channel: ch1, op: 'recv' }),
-    selectCase({ channel: ch2, op: 'recv' })
-  ])
-
-  if (result.caseIndex === 0) {
-    console.log('ch1 ready:', result.value)
-  } else {
-    console.log('ch2 ready:', result.value)
-  }
+  print('start')
+  await scheduler.sleep(100)
+  print('end')
 })
+
+await scheduler.run()
 </code></pre>
 
-<h3>Async Utilities</h3>
-
-<pre><code class="language-javascript">await sleep(ms)
+<p>Expected output:</p>
+<pre><code>start
+end
 </code></pre>
 
-<p>Pauses execution for a duration.</p>
+<p>Note: <code>sleep</code> uses logical time, not wall-clock time. It's deterministic.</p>
 
-<strong>Parameters:</strong>
-<ul>
-<li><code>ms</code> (number): Milliseconds to sleep</li>
-</ul>
+<h2>Path (std/path)</h2>
 
-<strong>Returns:</strong> <code>Promise<void></code>
+<p>Path manipulation utilities.</p>
+
+<pre><code class="language-javascript">import path from 'std/path'
+
+path.join(...paths)
+path.basename(path, ext)
+path.dirname(path)
+path.extname(path)
+path.normalize(path)
+path.resolve(...paths)
+path.relative(fromPath, toPath)
+path.parse(path)
+path.format(pathObject)
+path.isAbsolute(path)
+path.separator()
+path.delimiter()
+</code></pre>
+
+<h2>CLI (std/cli)</h2>
+
+<p>Command-line interface utilities.</p>
+
+<pre><code class="language-javascript">import cli from 'std/cli'
+
+cli.parseArgs(args, options)
+cli.getEnv(name, defaultValue)
+cli.prompt(message, options)
+cli.spinner(message)
+cli.progressBar(options)
+cli.table(data)
+</code></pre>
+
+<h3>Colors</h3>
+
+<pre><code class="language-javascript">cli.colors.red('Error message')
+cli.colors.green('Success')
+cli.colors.blue('Info')
+cli.colors.yellow('Warning')
+cli.colors.bold('Important')
+</code></pre>
+
+<h2>Reactive</h2>
+
+<p>Fine-grained reactivity system. See the Runtime section above for <code>signal</code>, <code>effect</code>, <code>computed</code>, and <code>batch</code> examples with expected outputs.</p>
+
+<h2>Global Functions</h2>
+
+<strong>print</strong>
+
+<p>Outputs values to the console.</p>
+
+<pre><code class="language-javascript">print('hello', 'world')
+print(42)
+</code></pre>
+
+<p>Expected output:</p>
+<pre><code>hello world
+42
+</code></pre>
 
 <hr>
 
-<pre><code class="language-javascript">await parallel(tasks, options)
-</code></pre>
-
-<p>Executes tasks in parallel.</p>
-
-<strong>Parameters:</strong>
-<ul>
-<li><code>tasks</code> (function[]): Array of async functions</li>
-<li><code>options</code> (object): Optional configuration</li>
-</ul>
-
-<strong>Returns:</strong> <code>Promise<results[]></code>
-
-<hr>
-
-<pre><code class="language-javascript">await race(tasks)
-</code></pre>
-
-<p>Returns the result of the first completed task.</p>
-
-<strong>Parameters:</strong>
-<ul>
-<li><code>tasks</code> (function[]): Array of async functions</li>
-</ul>
-
-<strong>Returns:</strong> <code>Promise<result></code>
-
-<hr>
-
-<pre><code class="language-javascript">await timeout(task, ms)
-</code></pre>
-
-<p>Executes a task with a timeout.</p>
-
-<strong>Parameters:</strong>
-<ul>
-<li><code>task</code> (function): Async function to execute</li>
-<li><code>ms</code> (number): Timeout in milliseconds</li>
-</ul>
-
-<strong>Returns:</strong> <code>Promise<result></code>
-
-<hr>
-
-<pre><code class="language-javascript">await retry(task, options)
-</code></pre>
-
-<p>Retries a task on failure.</p>
-
-<strong>Parameters:</strong>
-<ul>
-<li><code>task</code> (function): Async function to retry</li>
-<li><code>options</code> (object): <code>{ maxAttempts, delay, backoff }</code></li>
-</ul>
-
-<strong>Returns:</strong> <code>Promise<result></code>
-
-<hr>
-
-<pre><code class="language-javascript">await sequence(tasks)
-</code></pre>
-
-<p>Executes tasks sequentially.</p>
-
-<strong>Parameters:</strong>
-<ul>
-<li><code>tasks</code> (function[]): Array of async functions</li>
-</ul>
-
-<strong>Returns:</strong> <code>Promise<results[][Getting Started Guide(guide.html).
+<p>For more examples and tutorials, visit the <a href="guide.html">Getting Started Guide</a>.</p>
 
       </article>
     </main>

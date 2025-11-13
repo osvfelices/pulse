@@ -1,0 +1,34 @@
+{
+  "name": "@pulselang/react",
+  "version": "1.0.4",
+  "description": "React hooks for Pulse language primitives",
+  "type": "module",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js"
+  },
+  "files": [
+    "index.js",
+    "README.md"
+  ],
+  "keywords": [
+    "react",
+    "hooks",
+    "pulse",
+    "pulselang",
+    "signals",
+    "reactivity"
+  ],
+  "author": "",
+  "license": "MIT",
+  "peerDependencies": {
+    "react": "^18.0.0 || ^19.0.0",
+    "pulselang": "^1.0.4"
+  },
+  "devDependencies": {
+    "react": "^19.0.0"
+  },
+  "comments": {
+    "pulselang-peer": "pulselang devDependency removed for local dev - will be re-added when 1.0.4 is published to npm"
+  }
+}

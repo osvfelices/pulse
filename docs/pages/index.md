@@ -163,7 +163,7 @@ Ready to start? Check out the [Getting Started Guide](guide.html) to write your 
 
 ## Known Limitations
 
-v1.0.3 with more features planned:
+v1.0.4 with more features planned:
 
 **Platforms** - Tested on Node 18+. Deno/Bun/Browser support not verified yet.
 
@@ -187,4 +187,4 @@ Pulse is open source.
 
 - GitHub: [github.com/osvfelices/pulse](https://github.com/osvfelices/pulse)
 - License: MIT
-- Version: 1.0.3
+- Version: 1.0.4
