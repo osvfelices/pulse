@@ -1,0 +1,293 @@
+@import "tailwindcss";
+
+/**
+ * Dark theme optimized for financial data visualization
+ * Custom spacing system and interaction states for trading interface
+ */
+@theme {
+  /* Core background colors - dark theme palette */
+  --color-black: #0a0a0a;
+  --color-gray-950: #0f0f0f;
+  --color-gray-900: #141414;
+  --color-gray-850: #1a1a1a;
+  --color-gray-800: #1f1f1f;
+  --color-gray-700: #2a2a2a;
+  --color-gray-600: #3f3f3f;
+  --color-gray-500: #6b7280;
+  --color-gray-400: #9ca3af;
+  --color-gray-300: #d1d5db;
+  --color-gray-200: #e5e7eb;
+  --color-gray-100: #f3f4f6;
+  --color-white: #ffffff;
+
+  /* Accent colors - orange for highlights */
+  --color-orange-500: #ff8c42;
+  --color-orange-600: #ff7829;
+  --color-orange-400: #ffa055;
+
+  /* Status colors - green positive, red negative */
+  --color-green-500: #10b981;
+  --color-green-600: #059669;
+  --color-green-400: #34d399;
+  --color-red-500: #ef4444;
+  --color-red-600: #dc2626;
+  --color-red-400: #f87171;
+
+  /* Warning/caution */
+  --color-yellow-500: #fbbf24;
+  --color-yellow-400: #fcd34d;
+
+  /* Crypto brand colors for icons */
+  --color-btc: #f7931a;
+  --color-eth: #627eea;
+  --color-usdt: #26a17b;
+
+  /* Spacing system - 8px base scale */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* Border radius values */
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-xl: 32px;
+
+  /* Animation timing */
+  --duration-fast: 120ms;
+  --duration-normal: 200ms;
+  --duration-slow: 350ms;
+
+  /* Surface levels */
+  --surface-0: #000000;
+  --surface-1: #0a0a0a;
+  --surface-2: #141414;
+  --surface-3: #1a1a1a;
+}
+
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--surface-0);
+  color: var(--color-white);
+  /* Font stack for clean rendering */
+  font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'SF Pro Display', 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  overflow-x: hidden;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+/* Custom scrollbar styling - only show when needed */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-gray-700);
+  border-radius: 4px;
+  transition: background var(--duration-fast) ease-out;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-gray-600);
+}
+
+/* Hide scrollbar when not scrolling */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-gray-700) transparent;
+}
+
+/* For Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-gray-700) transparent;
+}
+
+/* Interactive element transitions */
+button, a, [role="button"], .interactive-element {
+  transition: all var(--duration-normal) cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Typography utilities */
+.text-display {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.text-body {
+  font-weight: 400;
+  line-height: 1.6;
+}
+
+.text-data {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+  letter-spacing: 0.01em;
+}
+
+/* Number formatting */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+/* Elevated surface styling */
+.surface-elevated {
+  background: linear-gradient(135deg, 
+    rgba(255, 255, 255, 0.02) 0%, 
+    rgba(255, 255, 255, 0.01) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 
+    0 1px 0 rgba(255, 255, 255, 0.05),
+    0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* Interactive states with micro-animations */
+.interactive-element:hover {
+  transform: translateY(-0.5px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.interactive-element:active {
+  transform: translateY(0);
+  transition-duration: var(--duration-fast);
+}
+
+/* Price change animations */
+.price-change {
+  transition: color var(--duration-slow) ease-out;
+}
+
+.price-up {
+  color: var(--color-green-500);
+  animation: pulse-green 0.6s ease-out;
+}
+
+.price-down {
+  color: var(--color-red-500);
+  animation: pulse-red 0.6s ease-out;
+}
+
+@keyframes pulse-green {
+  0% { background-color: rgba(16, 185, 129, 0.2); }
+  100% { background-color: transparent; }
+}
+
+@keyframes pulse-red {
+  0% { background-color: rgba(239, 68, 68, 0.2); }
+  100% { background-color: transparent; }
+}
+
+/* Data table improvements */
+.data-row {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  transition: all var(--duration-normal) ease-out;
+}
+
+.data-row:hover {
+  background-color: rgba(255, 255, 255, 0.015);
+  transform: translateY(-0.25px);
+}
+
+.data-row:nth-child(even) {
+  background-color: rgba(255, 255, 255, 0.005);
+}
+
+/* Status indicators */
+.status-indicator {
+  position: relative;
+}
+
+.status-indicator::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
+  opacity: 0.3;
+  animation: status-pulse 2s infinite;
+}
+
+.status-live::before {
+  background: var(--color-green-500);
+}
+
+@keyframes status-pulse {
+  0%, 100% { transform: scale(1); opacity: 0.3; }
+  50% { transform: scale(1.2); opacity: 0.1; }
+}
+
+/* Icon system */
+.icon {
+  width: 20px;
+  height: 20px;
+  stroke-width: 2;
+  stroke: currentColor;
+  fill: none;
+}
+
+.icon-small { width: 16px; height: 16px; }
+.icon-large { width: 24px; height: 24px; }
+
+/* Chart improvements */
+.chart-container {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: var(--radius-sm);
+  padding: var(--space-3);
+}
+
+.chart-grid {
+  stroke: rgba(255, 255, 255, 0.05);
+  stroke-width: 0.5;
+}
+
+.chart-line {
+  stroke-width: 2;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Responsive design improvements */
+@media (max-width: 768px) {
+  .market-table {
+    font-size: 14px;
+  }
+  
+  .price-display {
+    font-size: 18px;
+  }
+
+  .text-display {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .surface-elevated {
+    padding: var(--space-3);
+  }
+  
+  .interactive-element:hover {
+    transform: none;
+  }
+}

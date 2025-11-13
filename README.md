@@ -15,6 +15,23 @@ The syntax is similar to JavaScript for familiarity, but Pulse has built-in supp
 - CSP-style concurrency with channels and select operations
 - Predictable performance without runtime patching
 
+## See It In Action
+
+Here's a real-time crypto market dashboard built with Pulse. It shows how channels handle concurrent data streams while signals update the UI efficiently:
+
+<p align="center">
+  <img src="assets/crypto-dashboard.png" alt="Crypto Market Dashboard" width="100%">
+</p>
+
+This demo uses:
+- **Channels** to stream price updates from multiple data sources
+- **Signals** for fine-grained UI updates (only changed prices re-render)
+- **Deterministic scheduling** so every run behaves exactly the same
+
+The UI stays smooth even with hundreds of updates per second because Pulse only re-renders what actually changed. No virtual DOM diffing, no unnecessary re-renders.
+
+Want to build something like this? Check out `apps/stock-dashboard/` in this repo or run `npx create-pulse-app my-app` to get started.
+
 ## Quick Examples
 
 ### Example 1: Reactivity

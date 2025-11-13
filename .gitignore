@@ -51,7 +51,6 @@ smoke-app/
 cloud-demo/
 
 # Scaffolded apps (created by create-pulse-app)
-apps/
 apps/*/node_modules/
 
 # Runtime files

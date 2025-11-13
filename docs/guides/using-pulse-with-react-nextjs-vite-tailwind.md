@@ -593,7 +593,8 @@ function ItemList() {
 ## Next steps
 
 - Read the full Pulse language docs at https://osvfelices.github.io/pulse/
-- Check out example projects in the templates directory
+- Check out the crypto market dashboard demo in `apps/stock-dashboard/` to see channels and signals in action
+- Look at example projects in the templates directory
 - Experiment with channels and spawn for concurrent operations
 - Try building a real app with deterministic state management
 
