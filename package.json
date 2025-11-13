@@ -1,6 +1,6 @@
 {
   "name": "pulselang",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "private": false,
   "license": "MIT",
   "description": "Pulse Language core: lexer, parser, reactivity runtime, and standard library",
@@ -14,6 +14,7 @@
     ".": "./lib/parser.js",
     "./lexer": "./lib/lexer.js",
     "./parser": "./lib/parser.js",
+    "./codegen": "./lib/codegen.js",
     "./runtime": "./lib/runtime/index.js",
     "./runtime/reactivity": "./lib/runtime/reactivity.js"
   },
