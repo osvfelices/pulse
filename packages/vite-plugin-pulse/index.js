@@ -5,10 +5,9 @@
  * Supports both dev and production builds with source maps
  */
 
-// During development: use relative imports
-// After npm publish: use 'pulselang/parser' and 'pulselang/codegen'
-import { Parser } from '../../lib/parser.js';
-import { emitProgram } from '../../lib/codegen.js';
+// Use pulselang package imports for npm compatibility
+import { Parser } from 'pulselang/parser';
+import { emitProgram } from 'pulselang/codegen';
 import { relative } from 'node:path';
 
 /**

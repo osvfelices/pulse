@@ -6,10 +6,9 @@
  */
 
 import { useState, useEffect, useRef } from 'react';
-// During development: use relative imports
-// After npm publish: use 'pulselang/runtime/reactivity' and 'pulselang/runtime'
-import { signal, computed, effect } from '../../lib/runtime/reactivity.js';
-import { channel } from '../../lib/runtime/index.js';
+// Use pulselang package imports for npm compatibility
+import { signal, computed, effect } from 'pulselang/runtime/reactivity';
+import { channel } from 'pulselang/runtime';
 
 /**
  * useSignal(initialValue)
