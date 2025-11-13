@@ -1,10 +1,10 @@
 {
-  "name": "create-pulse-app",
-  "version": "1.0.4",
+  "name": "create-pulselang-app",
+  "version": "1.0.5",
   "description": "Scaffold a new Pulse application",
   "type": "module",
   "bin": {
-    "create-pulse-app": "./index.js"
+    "create-pulselang-app": "./index.js"
   },
   "files": [
     "index.js",

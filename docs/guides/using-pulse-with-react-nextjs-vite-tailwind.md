@@ -7,7 +7,7 @@ This guide shows you how to integrate Pulse into modern JavaScript frameworks an
 The fastest way to get started:
 
 ```bash
-npx create-pulse-app my-app
+npx create-pulselang-app my-app
 cd my-app
 npm install
 npm run dev

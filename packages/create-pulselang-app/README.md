@@ -1,11 +1,11 @@
-# create-pulse-app
+# create-pulselang-app
 
 Scaffold a new Pulse application with React 19 + Vite + Tailwind CSS 4.
 
 ## Usage
 
 ```bash
-npx create-pulse-app my-app
+npx create-pulselang-app my-app
 cd my-app
 npm install
 npm run dev
