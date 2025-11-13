@@ -1,6 +1,6 @@
 {
   "name": "@pulselang/react",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "React hooks for Pulse language primitives",
   "type": "module",
   "main": "index.js",
@@ -19,6 +19,11 @@
     "signals",
     "reactivity"
   ],
+  "repository": "https://github.com/osvfelices/pulse",
+  "bugs": {
+    "url": "https://github.com/osvfelices/pulse/issues"
+  },
+  "homepage": "https://osvfelices.github.io/pulse/",
   "author": "",
   "license": "MIT",
   "peerDependencies": {

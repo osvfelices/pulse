@@ -1,6 +1,6 @@
 {
   "name": "create-pulselang-app",
-  "version": "1.0.8",
+  "version": "1.0.12",
   "description": "Scaffold a new Pulse application",
   "type": "module",
   "bin": {
@@ -16,6 +16,11 @@
     "create-app",
     "scaffold"
   ],
+  "repository": "https://github.com/osvfelices/pulse",
+  "bugs": {
+    "url": "https://github.com/osvfelices/pulse/issues"
+  },
+  "homepage": "https://osvfelices.github.io/pulse/",
   "author": "",
   "license": "MIT"
 }
