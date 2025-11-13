@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
 /**
- * create-pulse-app
+ * create-pulselang-app
  *
  * CLI tool to scaffold new Pulse applications
- * Usage: npx create-pulse-app my-app
+ * Usage: npx create-pulselang-app my-app
  */
 
 import { spawn } from 'node:child_process';
@@ -17,13 +17,13 @@ const __dirname = dirname(__filename);
 
 function showUsage() {
   console.log(`
-Usage: npx create-pulse-app <project-name>
+Usage: npx create-pulselang-app <project-name>
 
 Creates a new Pulse project with React 19 + Vite + Tailwind CSS 4
 
 Examples:
-  npx create-pulse-app my-app
-  npx create-pulse-app my-pulse-project
+  npx create-pulselang-app my-app
+  npx create-pulselang-app my-pulse-project
 `);
 }
 

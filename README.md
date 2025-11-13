@@ -30,7 +30,7 @@ This demo uses:
 
 The UI stays smooth even with hundreds of updates per second because Pulse only re-renders what actually changed. No virtual DOM diffing, no unnecessary re-renders.
 
-Want to build something like this? Check out `apps/stock-dashboard/` in this repo or run `npx create-pulse-app my-app` to get started.
+Want to build something like this? Check out `apps/stock-dashboard/` in this repo or run `npx create-pulselang-app my-app` to get started.
 
 ## Quick Examples
 
@@ -168,7 +168,7 @@ npm install pulselang
 ### Create a new project
 
 ```bash
-npx create-pulse-app my-app
+npx create-pulselang-app my-app
 cd my-app
 npm install
 npm run dev
