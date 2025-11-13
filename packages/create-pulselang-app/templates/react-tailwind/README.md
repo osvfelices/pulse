@@ -20,10 +20,10 @@ npm run preview
 
 ```
 src/
-├── App.jsx          - Main component
-├── PulseCounter.jsx - Signal example
-├── main.jsx         - Entry point
-└── index.css        - Styles
+├── App.jsx    - Main component with hero page
+├── main.jsx   - Entry point
+├── App.css    - Component styles
+└── index.css  - Global styles
 ```
 
 ## Using Pulse Signals
@@ -97,7 +97,7 @@ This is required even though you don't call `selectCase` directly. The compiler 
 
 ## Documentation
 
-- [Pulse](https://github.com/osvfelices/pulse)
+- [Pulse](https://osvfelices.github.io/pulse/)
 - [Vite](https://vitejs.dev/)
 - [React](https://react.dev/)
 - [Tailwind](https://tailwindcss.com/)

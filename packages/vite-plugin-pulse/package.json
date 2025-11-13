@@ -1,6 +1,6 @@
 {
   "name": "vite-plugin-pulse",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Vite plugin for loading Pulse language files",
   "type": "module",
   "main": "index.js",
@@ -17,6 +17,11 @@
     "pulse",
     "pulselang"
   ],
+  "repository": "https://github.com/osvfelices/pulse",
+  "bugs": {
+    "url": "https://github.com/osvfelices/pulse/issues"
+  },
+  "homepage": "https://osvfelices.github.io/pulse/",
   "author": "",
   "license": "MIT",
   "peerDependencies": {

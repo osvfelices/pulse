@@ -1,6 +1,6 @@
 {
   "name": "pulselang",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "private": false,
   "license": "MIT",
   "description": "Pulse Language core: lexer, parser, reactivity runtime, and standard library",
@@ -55,7 +55,7 @@
   "bugs": {
     "url": "https://github.com/osvfelices/pulse/issues"
   },
-  "homepage": "https://github.com/osvfelices/pulse#readme",
+  "homepage": "https://osvfelices.github.io/pulse/",
   "engines": {
     "node": ">=18"
   },
