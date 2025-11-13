@@ -2,7 +2,7 @@ import './App.css'
 
 function App() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-black via-gray-950 to-black text-white flex items-center justify-center">
+    <div className="min-h-screen bg-linear-to-b from-black via-gray-950 to-black text-white flex items-center justify-center">
       {/* Radial glow effect */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] bg-blue-600/20 rounded-full blur-[200px]" />
@@ -18,7 +18,7 @@ function App() {
             className="w-16 h-16 mx-auto mb-4 drop-shadow-2xl"
           />
 
-          <h1 className="text-4xl font-bold tracking-tight mb-3 bg-gradient-to-b from-white via-white to-gray-500 bg-clip-text text-transparent">
+          <h1 className="text-4xl font-bold tracking-tight mb-3 bg-linear-to-b from-white via-white to-gray-500 bg-clip-text text-transparent">
             Pulse
           </h1>
 
