@@ -1,0 +1,21 @@
+{
+  "name": "create-pulse-app",
+  "version": "1.0.4",
+  "description": "Scaffold a new Pulse application",
+  "type": "module",
+  "bin": {
+    "create-pulse-app": "./index.js"
+  },
+  "files": [
+    "index.js",
+    "templates/"
+  ],
+  "keywords": [
+    "pulse",
+    "pulselang",
+    "create-app",
+    "scaffold"
+  ],
+  "author": "",
+  "license": "MIT"
+}

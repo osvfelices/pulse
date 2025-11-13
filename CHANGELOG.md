@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.0.4] - 2025-11-13
+
+### Added
+- React integration: New @pulselang/react package with useSignal hook for fine-grained reactivity
+- Vite plugin: vite-plugin-pulse for automatic .pulse file compilation
+- Project scaffolding: create-pulse-app for quick project setup with React 19 + Vite + Tailwind CSS 4
+- Demo apps showing React integration patterns
+
+### Changed
+- Template design: Modern dark theme with compact layout optimized for MacBook 13" screens
+- Button styling: Consistent sizing across all demo components
+
+### Fixed
+- Logo sizing in starter templates now properly centered
+
 ## [1.0.3] - 2025-11-12
 
 ### Fixed

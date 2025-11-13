@@ -148,6 +148,17 @@ Compilation: Pulse Source → Parser → AST → Codegen → JavaScript
 npm install pulselang
 ```
 
+### Create a new project
+
+```bash
+npx create-pulse-app my-app
+cd my-app
+npm install
+npm run dev
+```
+
+This scaffolds a React 19 + Vite + Tailwind CSS 4 project with Pulse integration.
+
 ### Running a single file
 
 Create `hello.pulse`:
@@ -228,6 +239,29 @@ async fn fetchData(url) {
 }
 ```
 
+## React Integration
+
+Pulse signals work seamlessly with React through the @pulselang/react package:
+
+```jsx
+import { useSignal } from '@pulselang/react'
+
+function Counter() {
+  const [count, setCount] = useSignal(0)
+
+  return (
+    <div>
+      <p>Count: {count()}</p>
+      <button onClick={() => setCount(count() + 1)}>
+        Increment
+      </button>
+    </div>
+  )
+}
+```
+
+The useSignal hook returns a getter function and a setter. Call the getter as a function to read the value. React automatically re-renders when the signal changes.
+
 ## JavaScript Interop
 
 The compiled output is ES Modules. You can import the runtime directly in JavaScript:
@@ -305,7 +339,7 @@ Designed for low-overhead updates, FIFO channels, and stable memory under load. 
 
 ## Known Limitations
 
-v1.0.3 with more features planned:
+v1.0.4 with more features planned:
 
 - **Platforms** — Tested on Node 18+. Deno/Bun/Browser support not verified yet.
 - **Types** — No TypeScript integration yet. Runtime errors instead of compile-time checks. Planning .d.ts files.

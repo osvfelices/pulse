@@ -2,7 +2,7 @@
 
 Learn the fundamentals of Pulse programming in this guide.
 
-## Quickstart (1.0.3)
+## Quickstart (1.0.4)
 
 ### Installation
 
