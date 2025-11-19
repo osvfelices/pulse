@@ -68,3 +68,9 @@ scripts/verify-lang-release.sh
 
 # NPM config
 .npmrc
+
+# Internal planning documents
+ROADMAP.md
+
+# Tests directory
+tests/

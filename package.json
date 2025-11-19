@@ -1,14 +1,14 @@
 {
   "name": "pulselang",
-  "version": "1.0.6",
+  "version": "1.5.0",
   "private": false,
   "license": "MIT",
-  "description": "Pulse Language core: lexer, parser, reactivity runtime, and standard library",
+  "description": "Pulse Language v1.5.0 - Developer-Ready: deterministic runtime, stdlib, debugger, LSP, package manager, and PRS",
   "type": "module",
   "main": "lib/parser.js",
   "bin": {
-    "pulse": "./lib/run.js",
-    "pulselang": "./lib/run.js"
+    "pulse": "./bin/pulse",
+    "pulselang": "./bin/pulse"
   },
   "exports": {
     ".": "./lib/parser.js",
@@ -16,11 +16,28 @@
     "./parser": "./lib/parser.js",
     "./codegen": "./lib/codegen.js",
     "./runtime": "./lib/runtime/index.js",
-    "./runtime/reactivity": "./lib/runtime/reactivity.js"
+    "./runtime/reactivity": "./lib/runtime/reactivity.js",
+    "./runtime/scheduler": "./lib/runtime/scheduler-deterministic.js",
+    "./runtime/channels": "./lib/runtime/channel-deterministic.js",
+    "./runtime/debugger": "./lib/runtime/debugger.js",
+    "./runtime/inspector": "./lib/runtime/inspector.js",
+    "./prs": "./lib/prs/server.js",
+    "./prs/logger": "./lib/prs/logger.js",
+    "./prs/runtime-instance": "./lib/prs/runtime-instance.js",
+    "./package-manager": "./lib/package-manager/package-manager.js",
+    "./lsp": "./lsp/server.js",
+    "./std/*": "./std/*"
   },
   "files": [
+    "bin/",
     "lib/",
     "std/",
+    "lsp/",
+    "tools/vscode-pulse/",
+    "scripts/",
+    "docs/",
+    "examples/",
+    "benchmarks/",
     "LICENSE",
     "README.md",
     "CHANGELOG.md",
@@ -62,7 +79,16 @@
   "publishConfig": {
     "access": "public"
   },
+  "dependencies": {
+    "source-map": "^0.7.4"
+  },
+  "optionalDependencies": {
+    "pg": "^8.11.0",
+    "mysql2": "^3.6.0",
+    "redis": "^4.6.0"
+  },
   "devDependencies": {
+    "fast-check": "^3.0.0",
     "shiki": "^1.0.0"
   }
 }
