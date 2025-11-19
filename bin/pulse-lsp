@@ -1,0 +1,28 @@
+#!/usr/bin/env node
+
+/**
+ * pulse lsp
+ *
+ * Start Pulse Language Server Protocol (LSP) server.
+ */
+
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+import { spawn } from 'child_process';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const lspServerPath = join(__dirname, '../lsp/server.js');
+
+// Forward all stdio to the LSP server
+const lspProcess = spawn(process.execPath, [lspServerPath], {
+  stdio: 'inherit'
+});
+
+lspProcess.on('error', (error) => {
+  console.error('Failed to start LSP server:', error.message);
+  process.exit(1);
+});
+
+lspProcess.on('exit', (code) => {
+  process.exit(code || 0);
+});
