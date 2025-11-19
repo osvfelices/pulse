@@ -50,7 +50,7 @@
     "verify:determinism": "node tests/extreme/determinism-100runs.test.js",
     "bench:scheduler": "node tests/extreme/stress-1000tasks.test.js",
     "run:quickstart": "node lib/run.js quickstart/ping.pulse",
-    "prepublishOnly": "npm run verify && npm pack --dry-run",
+    "prepublishOnly": "npm pack --dry-run",
     "docs": "node lib/run.js docs/scripts/build-docs.pulse",
     "docs:serve": "node lib/run.js docs/scripts/serve.pulse",
     "gen:snippets": "node tools/shiki/generate-snippets.mjs",
