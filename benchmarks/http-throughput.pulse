@@ -1,0 +1,69 @@
+// Benchmark: HTTP Server Throughput
+// Measures HTTP request/response performance
+
+import { createServer, get } from 'std/http';
+import { spawn, sleep } from 'std/async';
+import { log } from 'std/console';
+
+async function benchmarkHTTPThroughput() {
+  let port = 8765;
+  let requestCount = 100;
+
+  // Create simple echo server
+  let server = createServer((req, res) => {
+    res.writeHead(200, { 'Content-Type': 'text/plain' });
+    res.end('ok');
+  });
+
+  // Start server
+  server.listen(port, async () => {
+    log('HTTP Throughput Benchmark');
+    log('  Starting benchmark with', requestCount, 'requests...');
+
+    let startTime = Date.now();
+    let completed = 0;
+    let errors = 0;
+
+    // Send concurrent requests
+    for (let i = 0; i < requestCount; i++) {
+      spawn(async () => {
+        try {
+          let response = await get(`http://localhost:${port}/`);
+          if (response.statusCode == 200) {
+            completed = completed + 1;
+          } else {
+            errors = errors + 1;
+          }
+        } catch (e) {
+          errors = errors + 1;
+        }
+      });
+    }
+
+    // Wait for all requests to complete
+    await sleep(5000);
+
+    let endTime = Date.now();
+    let duration = endTime - startTime;
+    let throughput = (completed / duration) * 1000;
+
+    log('  Completed:', completed);
+    log('  Errors:', errors);
+    log('  Duration:', duration, 'ms');
+    log('  Throughput:', Math.floor(throughput), 'req/sec');
+
+    // Cleanup
+    server.close();
+
+    if (completed >= requestCount * 0.9) {  // Allow 10% tolerance
+      log(' Benchmark passed');
+    } else {
+      log(' Benchmark failed - too many errors');
+    }
+  });
+
+  // Keep process alive for server
+  await sleep(6000);
+}
+
+benchmarkHTTPThroughput();

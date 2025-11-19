@@ -1,0 +1,99 @@
+// Benchmark: Database Roundtrip (Mock)
+// Measures database query roundtrip time using in-memory mock
+
+import { spawn, sleep } from 'std/async';
+import { log } from 'std/console';
+
+// Mock database client for benchmarking
+// (In production, use std/db with real database)
+class MockDBClient {
+  constructor() {
+    this.data = [];
+  }
+
+  async query(sql, params) {
+    // Simulate network latency
+    await sleep(1);
+
+    // Mock query execution
+    if (sql.indexOf('INSERT') >= 0) {
+      let id = this.data.length + 1;
+      this.data.push({ id, params });
+      return { rows: [{ id }] };
+    } else if (sql.indexOf('SELECT') >= 0) {
+      return { rows: this.data };
+    } else if (sql.indexOf('UPDATE') >= 0) {
+      return { rows: [{ updated: true }] };
+    } else if (sql.indexOf('DELETE') >= 0) {
+      this.data = [];
+      return { rows: [] };
+    }
+
+    return { rows: [] };
+  }
+
+  release() {
+    // Mock release
+  }
+}
+
+// Mock pool
+class MockPool {
+  async connect() {
+    return new MockDBClient();
+  }
+
+  async end() {
+    // Mock cleanup
+  }
+}
+
+async function benchmarkDBRoundtrip() {
+  let pool = new MockPool();
+  let queryCount = 1000;
+
+  log('Database Roundtrip Benchmark (Mock)');
+  log('  Running', queryCount, 'queries...');
+
+  let startTime = Date.now();
+  let completed = 0;
+
+  // Run queries concurrently
+  for (let i = 0; i < queryCount; i++) {
+    spawn(async () => {
+      let client = await pool.connect();
+      try {
+        // Simulate a typical CRUD operation
+        await client.query('INSERT INTO users (name) VALUES ($1)', ['user' + i]);
+        await client.query('SELECT * FROM users WHERE id = $1', [i]);
+        await client.query('UPDATE users SET name = $1 WHERE id = $2', ['updated', i]);
+
+        completed = completed + 1;
+      } finally {
+        client.release();
+      }
+    });
+  }
+
+  // Wait for completion
+  await sleep(5000);
+
+  let endTime = Date.now();
+  let duration = endTime - startTime;
+  let throughput = (completed / duration) * 1000;
+
+  log('  Completed:', completed);
+  log('  Duration:', duration, 'ms');
+  log('  Throughput:', Math.floor(throughput), 'queries/sec');
+  log('  Avg latency:', Math.floor(duration / completed), 'ms');
+
+  await pool.end();
+
+  if (completed >= queryCount * 0.9) {  // Allow 10% tolerance
+    log(' Benchmark passed');
+  } else {
+    log(' Benchmark failed - too many incomplete queries');
+  }
+}
+
+benchmarkDBRoundtrip();

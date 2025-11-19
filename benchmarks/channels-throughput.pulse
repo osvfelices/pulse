@@ -1,0 +1,54 @@
+// Benchmark: Channel Throughput
+// Measures message passing performance with buffered channels
+
+import { spawn, sleep } from 'std/async';
+import { createChannel } from 'std/channels';
+import { log } from 'std/console';
+
+async function benchmarkChannelThroughput() {
+  let messageCount = 10000;
+  let ch = createChannel(100);  // Buffered channel
+
+  let startTime = Date.now();
+
+  // Producer
+  spawn(async () => {
+    for (let i = 0; i < messageCount; i++) {
+      await ch.send(i);
+    }
+    ch.close();
+  });
+
+  // Consumer
+  let received = 0;
+  spawn(async () => {
+    while (true) {
+      let value = await ch.receive();
+      if (value == null) {
+        break;
+      }
+      received = received + 1;
+    }
+  });
+
+  // Wait for completion
+  await sleep(5000);
+
+  let endTime = Date.now();
+  let duration = endTime - startTime;
+  let throughput = (received / duration) * 1000;
+
+  log('Channel Throughput Benchmark');
+  log('  Messages sent:', messageCount);
+  log('  Messages received:', received);
+  log('  Duration:', duration, 'ms');
+  log('  Throughput:', Math.floor(throughput), 'msg/sec');
+
+  if (received == messageCount) {
+    log(' Benchmark passed - all messages delivered');
+  } else {
+    log(' Benchmark incomplete');
+  }
+}
+
+benchmarkChannelThroughput();
