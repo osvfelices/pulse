@@ -82,7 +82,7 @@ The `pulse` CLI is for running `.pulse` files directly, not for starting web ser
 
 ## selectCase Requirement
 
-When using `select` statements in Pulse v1.0.4, you must explicitly import `selectCase`:
+When using `select` statements in Pulse v1.5.0, you must explicitly import `selectCase`:
 
 ```pulse
 import { select, selectCase } from 'pulselang/runtime'
