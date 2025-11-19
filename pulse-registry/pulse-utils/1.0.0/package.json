@@ -1,0 +1,9 @@
+{
+  "name": "pulse-utils",
+  "version": "1.0.0",
+  "description": "Utility functions for Pulse applications",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js"
+  }
+}

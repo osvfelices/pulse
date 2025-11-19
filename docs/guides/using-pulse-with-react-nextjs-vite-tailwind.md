@@ -106,7 +106,7 @@ function compilePulseFile(filePath) {
 
   const mjsPath = filePath.replace('.pulse', '.mjs');
   writeFileSync(mjsPath, js, 'utf8');
-  console.log(`✓ Compiled ${relative(process.cwd(), filePath)}`);
+  console.log(` Compiled ${relative(process.cwd(), filePath)}`);
 }
 
 function findPulseFiles(dir) {
@@ -132,7 +132,7 @@ function findPulseFiles(dir) {
 console.log('Compiling Pulse files...\n');
 const files = findPulseFiles(srcDir);
 files.forEach(compilePulseFile);
-console.log(`\n✓ Compiled ${files.length} file(s)`);
+console.log(`\n Compiled ${files.length} file(s)`);
 ```
 
 Update your `package.json` scripts:

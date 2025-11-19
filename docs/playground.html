@@ -71,7 +71,7 @@ setCount(2)
 setCount(3)
 </code></pre>
 
-<p>Click Run. Expected output:</p>
+<p>Expected output:</p>
 <pre><code>count is 0
 count is 1
 count is 2
@@ -80,29 +80,32 @@ count is 3
 
 <h2>Example Programs</h2>
 
-<p>Try these examples locally:</p>
+<p>Try these examples locally with <code>pulse run <file></code>.</p>
 
 <h3>Channels</h3>
 
-<pre><code class="language-javascript">import { DeterministicScheduler, channel } from 'pulselang/runtime'
+<pre><code class="language-javascript">import { spawn, sleep, channel } from 'std/async'
 
-const scheduler = new DeterministicScheduler()
-const ch = channel()
+async fn main() {
+  const ch = channel(0)
 
-scheduler.spawn(async () =&gt; {
-  for (let i = 1; i &lt;= 3; i++) {
-    await ch.send(i)
-  }
-  ch.close()
-})
+  spawn(async () =&gt; {
+    for (let i = 1; i &lt;= 3; i++) {
+      await ch.send(i)
+    }
+    ch.close()
+  })
 
-scheduler.spawn(async () =&gt; {
-  for await (const x of ch) {
-    print('received', x)
-  }
-})
+  spawn(async () =&gt; {
+    for await (const x of ch) {
+      print('received', x)
+    }
+  })
 
-await scheduler.run()
+  await sleep(100)
+}
+
+spawn(main())
 </code></pre>
 
 <p>Expected output:</p>
@@ -113,31 +116,31 @@ received 3
 
 <h3>Select</h3>
 
-<pre><code class="language-javascript">import { DeterministicScheduler, channel, select, selectCase } from 'pulselang/runtime'
+<pre><code class="language-javascript">import { spawn, sleep, channel, select, selectCase } from 'std/async'
 
-const scheduler = new DeterministicScheduler()
-const fast = channel()
-const slow = channel()
+async fn main() {
+  const fast = channel(1)
+  const slow = channel(1)
 
-scheduler.spawn(async () =&gt; {
-  await scheduler.sleep(5)
-  await fast.send('fast')
-})
+  spawn(async () =&gt; {
+    await sleep(5)
+    await fast.send('fast')
+  })
 
-scheduler.spawn(async () =&gt; {
-  await scheduler.sleep(10)
-  await slow.send('slow')
-})
+  spawn(async () =&gt; {
+    await sleep(10)
+    await slow.send('slow')
+  })
 
-scheduler.spawn(async () =&gt; {
-  const result = await select {
-    case recv fast
-    case recv slow
-  }
+  const result = await select([
+    selectCase({ channel: fast, op: 'recv', handler: ([msg]) =&gt; msg }),
+    selectCase({ channel: slow, op: 'recv', handler: ([msg]) =&gt; msg })
+  ])
+
   print('got:', result.value)
-})
+}
 
-await scheduler.run()
+spawn(main())
 </code></pre>
 
 <p>Expected output:</p>
@@ -146,89 +149,132 @@ await scheduler.run()
 
 <h3>File System Operations</h3>
 
-<pre><code class="language-javascript">import fs from 'std/fs'
-import path from 'std/path'
+<pre><code class="language-javascript">import { readDir, stat } from 'std/fs'
+import { join } from 'std/path'
+import { spawn } from 'std/async'
 
 async fn listFiles(dir) {
-  const files = await fs.readDir(dir)
+  const result = await readDir(dir)
 
-  for (const file of files) {
-    const fullPath = path.join(dir, file)
-    const stats = await fs.stat(fullPath)
+  if (!result.ok) {
+    print('Error reading directory:', result.error)
+    return
+  }
 
-    if (stats.isFile) {
-      print(`File: ${file} (${stats.size} bytes)`)
+  for (const file of result.entries) {
+    const fullPath = join(dir, file)
+    const statResult = await stat(fullPath)
+
+    if (!statResult.ok) {
+      print(`Error reading ${file}:`, statResult.error)
+      continue
+    }
+
+    if (statResult.stats.isFile) {
+      print(`File: ${file} (${statResult.stats.size} bytes)`)
     } else {
       print(`Dir: ${file}`)
     }
   }
 }
 
-await listFiles('./')
+spawn(async () =&gt; {
+  await listFiles('./')
+})
 </code></pre>
 
-<h3>Building a CLI Tool</h3>
+<h3>Signals and Effects</h3>
 
-<pre><code class="language-javascript">import cli from 'std/cli'
-import fs from 'std/fs'
+<pre><code class="language-javascript">import { signal, computed, effect, batch } from 'pulselang/runtime'
 
-async fn main() {
-  const args = cli.parseArgs(process.argv, {
-    flags: ['verbose', 'help'],
-    options: ['output']
-  })
+const [firstName, setFirstName] = signal('Alice')
+const [lastName, setLastName] = signal('Smith')
 
-  if (args.help) {
-    print('Usage: pulse run tool.pulse [options]')
-    print('Options:')
-    print('  --verbose    Enable verbose output')
-    print('  --output     Output file path')
-    print('  --help       Show this help')
-    return
-  }
+const fullName = computed(() =&gt; {
+  return `${firstName()} ${lastName()}`
+})
 
-  const spinner = cli.spinner('Processing...')
-  spinner.start()
+effect(() =&gt; {
+  print('Full name:', fullName())
+})
 
-  await sleep(2000)
+setFirstName('Bob')
+setLastName('Jones')
 
-  spinner.stop()
-  print(cli.colors.green('Done!'))
-}
-
-await main()
+batch(() =&gt; {
+  setFirstName('Charlie')
+  setLastName('Brown')
+})
 </code></pre>
+
+<p>Expected output:</p>
+<pre><code>Full name: Alice Smith
+Full name: Bob Smith
+Full name: Bob Jones
+Full name: Charlie Brown
+</code></pre>
+
+<h3>HTTP Server (v1.5.0)</h3>
+
+<p>HTTP handlers in v1.5.0 run on Node's event loop and can use async/await and signals, but cannot use spawn(), sleep(), or channels(). Full scheduler integration is planned for Runtime 2.0.</p>
+
+<pre><code class="language-javascript">import { createServer } from 'std/http'
+import { signal } from 'pulselang/runtime'
+
+const [requestCount, setRequestCount] = signal(0)
+
+const server = createServer((req, res) =&gt; {
+  setRequestCount(c =&gt; c + 1)
+
+  res.writeHead(200, { 'Content-Type': 'application/json' })
+  res.end(JSON.stringify({
+    count: requestCount(),
+    message: 'Hello from Pulse'
+  }))
+})
+
+server.listen(3000, () =&gt; {
+  print('Server running on http://localhost:3000')
+})
+</code></pre>
+
+<p>This works because it only uses signals. Do NOT use spawn/sleep/channels in HTTP handlers in v1.5.0.</p>
 
 <h2>Try It Locally</h2>
 
-<p>To run these examples:</p>
+<p>Save any example to a file (e.g., <code>test.pulse</code>) and run:</p>
 
-<strong>Using CLI commands (after <code>npm install pulselang</code>):</strong>
-<pre><code class="language-bash">pulse test.pulse
-# or: pulselang test.pulse
+<pre><code class="language-bash">pulse run test.pulse
 </code></pre>
 
-<strong>Or run directly:</strong>
-<pre><code class="language-bash">node node_modules/pulselang/lib/run.js test.pulse
+<p>Or using npx (no installation):</p>
+
+<pre><code class="language-bash">npx pulselang test.pulse
 </code></pre>
 
-<strong>Or compile first:</strong>
-<pre><code class="language-bash">node node_modules/pulselang/tools/build/build.mjs --src . --out ./dist
-node dist/test.mjs
+<p>If you installed globally:</p>
+
+<pre><code class="language-bash">npm install -g pulselang
+pulse run test.pulse
 </code></pre>
 
-<p>If working from the repository:</p>
+<h3>Building for Deployment</h3>
 
-<pre><code class="language-bash">pulse test.pulse
-# or: node lib/run.js test.pulse
-# or: node tools/build/build.mjs --src . --out ./dist
+<p>Compile your .pulse files to .mjs for deployment:</p>
+
+<pre><code class="language-bash">pulse build src/ dist/
+</code></pre>
+
+<p>This generates JavaScript ES modules in <code>dist/</code> that you can run with Node:</p>
+
+<pre><code class="language-bash">node dist/main.mjs
 </code></pre>
 
 <h2>Next Steps</h2>
 
 <ul>
-<li><a href="api.html">API Reference</a> - Complete documentation</li>
-<li><a href="guide.html">Getting Started Guide</a> - Learn more</li>
+<li><a href="api.html">API Reference</a> - Complete standard library documentation</li>
+<li><a href="guide.html">Getting Started Guide</a> - Learn Pulse fundamentals</li>
 <li><a href="https://github.com/osvfelices/pulse">GitHub</a> - Source code and examples</li>
 </ul>
 

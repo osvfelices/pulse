@@ -235,7 +235,7 @@ async function parseWithTimeout(code, timeout = MAX_PARSE_TIME) {
 
 // Main fuzzer
 async function runFuzzer() {
-  console.log(`\n🔬 Parser Fuzzer - ${TOTAL_CASES.toLocaleString()} test cases\n`);
+  console.log(`\n Parser Fuzzer - ${TOTAL_CASES.toLocaleString()} test cases\n`);
 
   const stats = {
     total: 0,

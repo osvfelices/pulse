@@ -2,12 +2,21 @@
 
 Learn the fundamentals of Pulse programming in this guide.
 
-## Quickstart (1.0.4)
+## Quickstart (v1.5.0)
 
 ### Installation
 
 ```bash
-npm install pulselang
+npm install -g pulselang
+```
+
+Or create a new project:
+
+```bash
+npx create-pulselang-app my-app
+cd my-app
+npm install
+npm run dev
 ```
 
 ### Running a single .pulse file
@@ -22,10 +31,10 @@ fn add(a, b) {
 print(add(2, 3))
 ```
 
-**Run it:**
+Run it:
 
 ```bash
-pulse hello.pulse
+pulse run hello.pulse
 ```
 
 Expected output:
@@ -33,27 +42,14 @@ Expected output:
 5
 ```
 
-Or compile to JavaScript first:
-
-```bash
-node node_modules/pulselang/tools/build/build.mjs --src . --out ./dist
-node dist/hello.mjs
-```
-
-From the repo:
-
-```bash
-pulse hello.pulse
-# or: node lib/run.js hello.pulse
-```
-
 ### Compilation
 
-Source → AST → JS (ESM).
+Pulse compiles to JavaScript ES modules. Two modes:
 
-Two modes:
-- `lib/run.js` compiles and runs immediately (temporary .mjs file)
-- `tools/build/build.mjs` generates permanent .mjs files you can deploy
+1. **Run mode** (`pulse run <file>`) - Compiles and executes immediately using a temporary .mjs file
+2. **Build mode** (`pulse build <src> <out>`) - Generates permanent .mjs files you can deploy
+
+The compilation pipeline: Source → AST → JavaScript (ESM)
 
 ## Basic Syntax
 
@@ -102,34 +98,36 @@ const rect = new Rectangle(10, 20)
 print(rect.area())
 ```
 
+Expected output:
+```
+200
+```
+
 ## Working with Files
 
 Pulse provides a file system API in the `std/fs` module:
 
 ```pulse
-import fs from 'std/fs'
+import { readFile, writeFile, exists } from 'std/fs'
 
 async fn main() {
-  const content = await fs.readText('./data.txt')
+  const content = await readFile('./data.txt', 'utf8')
   print(content)
 
-  await fs.writeText('./output.txt', 'Hello World')
+  await writeFile('./output.txt', 'Hello World')
 
-  const data = await fs.readJson('./config.json')
-  print('Version:', data.version)
-
-  const files = await fs.readDir('./')
-  for (const file of files) {
-    print(file)
+  if (await exists('./config.json')) {
+    const data = JSON.parse(await readFile('./config.json', 'utf8'))
+    print('Version:', data.version)
   }
 }
 
-await main()
+spawn(main())
 ```
 
 ## Reactivity
 
-Pulse includes a reactive system inspired by modern frameworks:
+Pulse includes a reactive system inspired by Solid.js:
 
 ```pulse
 import { signal, effect, computed, batch } from 'pulselang/runtime'
@@ -162,21 +160,20 @@ Bob has 5 items
 Charlie has 10 items
 ```
 
-## Concurrency Intro
+Signals provide fine-grained reactivity - when a signal changes, only its direct subscribers run. No virtual DOM, no reconciliation.
 
-Channels are how tasks communicate. A channel is a pipe. One task writes, another reads.
+## Concurrency
+
+Channels are how tasks communicate. A channel is a pipe - one task writes, another reads.
 
 `await ch.send(value)` blocks your task until someone does `await ch.recv()`. This is how determinism works - the scheduler knows exactly when each task is waiting and when to wake it up.
 
-Example:
+### Basic Channel Example
 
 ```pulse
-import { DeterministicScheduler, channel } from 'pulselang/runtime'
+import { spawn, sleep, channel } from 'std/async'
 
-const scheduler = new DeterministicScheduler()
-const ch = channel()
-
-async fn producer() {
+async fn producer(ch) {
   for (let i = 0; i < 3; i++) {
     await ch.send(i)
     print('Sent:', i)
@@ -184,16 +181,23 @@ async fn producer() {
   ch.close()
 }
 
-async fn consumer() {
+async fn consumer(ch) {
   for await (const value of ch) {
     print('Received:', value)
   }
   print('Channel closed')
 }
 
-scheduler.spawn(producer)
-scheduler.spawn(consumer)
-await scheduler.run()
+async fn main() {
+  const ch = channel(0)  // Unbuffered channel
+
+  spawn(producer(ch))
+  spawn(consumer(ch))
+
+  await sleep(100)
+}
+
+spawn(main())
 ```
 
 Expected output:
@@ -221,16 +225,22 @@ Run this 100 times, you get the exact same output every time.
 Unbuffered = handshake (both sides wait). Buffered = mailbox (you can drop stuff off and leave).
 
 ```pulse
-import { channel } from 'pulselang/runtime'
+import { spawn, channel } from 'std/async'
 
-const buffered = channel(10)
+async fn main() {
+  const buffered = channel(10)  // Buffer size 10
 
-async fn producer() {
-  for (let i = 0; i < 12; i++) {
-    await buffered.send(i)
-    print('Sent:', i)
-  }
+  spawn(async () => {
+    for (let i = 0; i < 12; i++) {
+      await buffered.send(i)
+      print('Sent:', i)
+    }
+  })
+
+  await sleep(50)
 }
+
+spawn(main())
 ```
 
 Expected output (first 10 sends don't block):
@@ -249,31 +259,31 @@ Useful when producer and consumer run at different speeds.
 Wait on multiple channels, first one ready wins:
 
 ```pulse
-import { DeterministicScheduler, channel, select, selectCase } from 'pulselang/runtime'
+import { spawn, sleep, channel, select, selectCase } from 'std/async'
 
-const scheduler = new DeterministicScheduler()
-const ch1 = channel()
-const ch2 = channel()
+async fn main() {
+  const ch1 = channel(1)
+  const ch2 = channel(1)
 
-scheduler.spawn(async () => {
-  await scheduler.sleep(5)
-  await ch1.send('from ch1')
-})
+  spawn(async () => {
+    await sleep(5)
+    await ch1.send('from ch1')
+  })
 
-scheduler.spawn(async () => {
-  await scheduler.sleep(10)
-  await ch2.send('from ch2')
-})
+  spawn(async () => {
+    await sleep(10)
+    await ch2.send('from ch2')
+  })
 
-scheduler.spawn(async () => {
-  const result = await select {
-    case recv ch1
-    case recv ch2
-  }
+  const result = await select([
+    selectCase({ channel: ch1, op: 'recv', handler: ([msg]) => msg }),
+    selectCase({ channel: ch2, op: 'recv', handler: ([msg]) => msg })
+  ])
+
   print('Got:', result.value)
-})
+}
 
-await scheduler.run()
+spawn(main())
 ```
 
 Expected output:
@@ -288,9 +298,11 @@ Still deterministic. If multiple channels are ready, scheduler picks based on lo
 Use try-catch blocks for error handling:
 
 ```pulse
+import { readFile } from 'std/fs'
+
 async fn riskyOperation() {
   try {
-    const data = await fs.readJson('./config.json')
+    const data = JSON.parse(await readFile('./config.json', 'utf8'))
     return data
   } catch (error) {
     print('Error:', error.message)
@@ -328,17 +340,70 @@ import Calculator from './calculator.pulse'
 import * as math from './math.pulse'
 ```
 
+### Standard Library Imports
+
+```pulse
+import { spawn, sleep, channel } from 'std/async'
+import { createServer } from 'std/http'
+import { signal, effect } from 'pulselang/runtime'
+import { readFile, writeFile } from 'std/fs'
+```
+
 ## Standard Library
 
 Pulse includes a standard library:
 
-- **fs**: File system operations
-- **json**: JSON parsing and stringification
-- **math**: Mathematical functions and constants
-- **cli**: Command-line interface helpers
-- **path**: Path manipulation utilities
+- **std/async** - spawn, sleep, channel, select, asyncAll, asyncRace
+- **std/http** - createServer, serve, json, text, redirect (Note: HTTP handlers cannot use spawn/sleep/channels in v1.5.0)
+- **std/fs** - File system operations (readFile, writeFile, exists, mkdir, etc.)
+- **std/json** - JSON parsing and stringification with error handling
+- **std/math** - Mathematical functions (abs, min, max, clamp, etc.)
+- **std/path** - Path manipulation (join, resolve, basename, dirname)
+- **std/signal** - Signal primitives export
+- **std/console** - Console logging (log, error, warn)
+- **std/crypto** - Cryptographic utilities
+- **std/db** - Database clients (SQLite, MySQL, PostgreSQL, Redis)
 
 Explore the [API Reference](api.html) for complete documentation.
+
+## HTTP Limitation in v1.5.0
+
+HTTP handlers run on Node's event loop and cannot use `spawn()`, `sleep()`, or `channels()`. Handlers can use `async/await` and signals.
+
+This works in v1.5.0:
+
+```pulse
+import { createServer } from 'std/http'
+import { signal } from 'pulselang/runtime'
+
+const [counter, setCounter] = signal(0)
+
+const server = createServer((req, res) => {
+  setCounter(c => c + 1)
+  res.writeHead(200, { 'Content-Type': 'text/plain' })
+  res.end(`Request ${counter()}`)
+})
+
+server.listen(3000)
+```
+
+This does NOT work in v1.5.0 (will hang):
+
+```pulse
+import { createServer } from 'std/http'
+import { spawn, channel } from 'std/async'
+
+const server = createServer(async (req, res) => {
+  const ch = channel(1)
+  spawn(async () => {  // DON'T DO THIS
+    await ch.send('data')
+  })
+  const [data] = await ch.recv()  // WILL HANG
+  res.end(data)
+})
+```
+
+See [RUNTIME-2.0.md](https://github.com/osvfelices/pulse/blob/main/RUNTIME-2.0.md) for technical details. Full integration is planned for Runtime 2.0.
 
 ## Next Steps
 

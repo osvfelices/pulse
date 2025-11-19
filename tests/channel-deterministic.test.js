@@ -23,7 +23,7 @@ async function testBasicSendReceive() {
 
   assert.strictEqual(value, 42, 'Should receive sent value');
   assert.strictEqual(ok, true, 'Channel should be open');
-  console.log('✓ Basic send/receive test passed');
+  console.log(' Basic send/receive test passed');
 }
 
 // Test: FIFO ordering
@@ -45,7 +45,7 @@ async function testFIFOOrdering() {
   }
 
   assert.deepEqual(values, [1, 2, 3, 4, 5], 'Should receive in FIFO order');
-  console.log('✓ FIFO ordering test passed');
+  console.log(' FIFO ordering test passed');
 }
 
 // Test: Buffered channel
@@ -71,7 +71,7 @@ async function testBufferedChannel() {
   await new Promise(resolve => setTimeout(resolve, 10));
   assert.strictEqual(fourthSendResolved, true, 'Fourth send should complete after receive');
 
-  console.log('✓ Buffered channel test passed');
+  console.log(' Buffered channel test passed');
 }
 
 // Test: Unbuffered channel (rendezvous)
@@ -98,7 +98,7 @@ async function testUnbufferedChannel() {
   assert.deepEqual(results, ['before-recv', 'recv-complete', 'send-complete'],
     'Unbuffered channel should block sender until receiver ready');
 
-  console.log('✓ Unbuffered channel test passed');
+  console.log(' Unbuffered channel test passed');
 }
 
 // Test: Close channel
@@ -129,7 +129,7 @@ async function testCloseChannel() {
     assert(error instanceof SendOnClosedChannelError, 'Should throw SendOnClosedChannelError');
   }
 
-  console.log('✓ Close channel test passed');
+  console.log(' Close channel test passed');
 }
 
 // Test: Async iteration
@@ -151,7 +151,7 @@ async function testAsyncIteration() {
   }
 
   assert.deepEqual(values, [1, 2, 3, 4, 5], 'Async iteration should receive all values');
-  console.log('✓ Async iteration test passed');
+  console.log(' Async iteration test passed');
 }
 
 // Test: Multiple senders and receivers
@@ -178,7 +178,7 @@ async function testMultipleSendersReceivers() {
   assert.deepEqual(received, ['r1:a', 'r2:b', 'r3:c'],
     'Multiple receivers should get values in FIFO order');
 
-  console.log('✓ Multiple senders/receivers test passed');
+  console.log(' Multiple senders/receivers test passed');
 }
 
 // Test: Ping-pong pattern
@@ -209,7 +209,7 @@ async function testPingPong() {
   await Promise.all([ping(), pong()]);
 
   // Should alternate deterministically
-  console.log('✓ Ping-pong test passed');
+  console.log(' Ping-pong test passed');
 }
 
 // Run all tests
@@ -226,10 +226,10 @@ async function runTests() {
     await testMultipleSendersReceivers();
     await testPingPong();
 
-    console.log('\n✅ All channel tests passed!');
+    console.log('\n All channel tests passed!');
     process.exit(0);
   } catch (error) {
-    console.error('\n❌ Test failed:', error);
+    console.error('\n Test failed:', error);
     console.error(error.stack);
     process.exit(1);
   }

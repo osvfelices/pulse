@@ -75,7 +75,7 @@ export function it(name, fn, options = {}) {
         })
         .catch(e => {
           clearTimeout(timeoutTimer);
-          console.error(`✗ ${currentSuite} > ${name}`);
+          console.error(` ${currentSuite} > ${name}`);
           console.error(`  ${e.message}`);
           testsFailed++;
         });
@@ -87,7 +87,7 @@ export function it(name, fn, options = {}) {
       testsPassed++;
     }
   } catch (e) {
-    console.error(`✗ ${currentSuite} > ${name}`);
+    console.error(` ${currentSuite} > ${name}`);
     console.error(`  ${e.message}`);
     testsFailed++;
   }
@@ -95,28 +95,28 @@ export function it(name, fn, options = {}) {
 
 // Forbidden patterns - these should cause test suite to fail
 it.skip = function(name, fn) {
-  console.error(`✗ FORBIDDEN: it.skip() detected in "${currentSuite} > ${name}"`);
+  console.error(` FORBIDDEN: it.skip() detected in "${currentSuite} > ${name}"`);
   console.error(`  Tests must not use it.skip() - remove or fix the test`);
   testsFailed++;
   process.exit(1);
 };
 
 it.only = function(name, fn) {
-  console.error(`✗ FORBIDDEN: it.only() detected in "${currentSuite} > ${name}"`);
+  console.error(` FORBIDDEN: it.only() detected in "${currentSuite} > ${name}"`);
   console.error(`  Tests must not use it.only() - this breaks CI`);
   testsFailed++;
   process.exit(1);
 };
 
 describe.skip = function(name, fn) {
-  console.error(`✗ FORBIDDEN: describe.skip() detected in suite "${name}"`);
+  console.error(` FORBIDDEN: describe.skip() detected in suite "${name}"`);
   console.error(`  Tests must not use describe.skip() - remove or fix the suite`);
   testsFailed++;
   process.exit(1);
 };
 
 describe.only = function(name, fn) {
-  console.error(`✗ FORBIDDEN: describe.only() detected in suite "${name}"`);
+  console.error(` FORBIDDEN: describe.only() detected in suite "${name}"`);
   console.error(`  Tests must not use describe.only() - this breaks CI`);
   testsFailed++;
   process.exit(1);

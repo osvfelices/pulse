@@ -263,7 +263,7 @@ async function generateFixtures() {
           }
         } catch (error) {
           results.failed++;
-          console.error(`  ✗ Failed to generate ${fixtureId}: ${error.message}`);
+          console.error(`   Failed to generate ${fixtureId}: ${error.message}`);
         }
       }
     }

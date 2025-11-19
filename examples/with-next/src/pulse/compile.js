@@ -55,11 +55,11 @@ for (const file of files) {
     // Calculate checksum
     const checksum = createHash('sha256').update(js).digest('hex');
 
-    console.log(`  ✓ Generated ${file.replace('.pulse', '.mjs')}`);
+    console.log(`   Generated ${file.replace('.pulse', '.mjs')}`);
     console.log(`  Checksum: ${checksum.substring(0, 16)}...`);
     console.log();
   } catch (error) {
-    console.error(`  ✗ Failed to compile ${file}`);
+    console.error(`   Failed to compile ${file}`);
     console.error(`  Error: ${error.message}`);
     console.error();
     allSuccess = false;
@@ -67,9 +67,9 @@ for (const file of files) {
 }
 
 if (allSuccess) {
-  console.log('✓ All files compiled successfully');
+  console.log(' All files compiled successfully');
   process.exit(0);
 } else {
-  console.error('✗ Some files failed to compile');
+  console.error(' Some files failed to compile');
   process.exit(1);
 }

@@ -117,7 +117,7 @@ async function testDeterminismUnderLoad() {
   const allSame = results.every(r => r === results[0]);
   assert(allSame, 'Results should be deterministic under load');
 
-  console.log(`  ✓ All 3 runs produced identical output`);
+  console.log(`   All 3 runs produced identical output`);
 }
 
 // Run tests
@@ -127,9 +127,9 @@ try {
   await stressTest1000Tasks();
   await testDeterminismUnderLoad();
 
-  console.log('\n✅ All stress tests passed!\n');
+  console.log('\n All stress tests passed!\n');
   process.exit(0);
 } catch (error) {
-  console.error('\n❌ Stress test failed:', error.message);
+  console.error('\n Stress test failed:', error.message);
   process.exit(1);
 }

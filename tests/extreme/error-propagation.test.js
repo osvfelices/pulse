@@ -55,8 +55,8 @@ async function testTaskErrors() {
   assert(errorTask.error, 'Error should be captured');
   assert.strictEqual(errorTask.error.message, 'Task error');
 
-  console.log(`  ✓ Tasks with errors do not crash scheduler`);
-  console.log(`  ✓ Successful tasks complete despite errors in others`);
+  console.log(`   Tasks with errors do not crash scheduler`);
+  console.log(`   Successful tasks complete despite errors in others`);
 }
 
 async function testCancelledTasks() {
@@ -92,8 +92,8 @@ async function testCancelledTasks() {
   assert(results.includes('normal-task'), 'Other tasks should continue');
   assert.strictEqual(task1.state, 'cancelled', 'Task should be marked cancelled');
 
-  console.log(`  ✓ Cancelled tasks do not complete`);
-  console.log(`  ✓ Other tasks continue after cancellation`);
+  console.log(`   Cancelled tasks do not complete`);
+  console.log(`   Other tasks continue after cancellation`);
 }
 
 async function testClosedChannelErrors() {
@@ -127,8 +127,8 @@ async function testClosedChannelErrors() {
     assert(error instanceof SendOnClosedChannelError);
   }
 
-  console.log(`  ✓ Closed channels handle receives correctly`);
-  console.log(`  ✓ Sends on closed channels throw appropriate errors`);
+  console.log(`   Closed channels handle receives correctly`);
+  console.log(`   Sends on closed channels throw appropriate errors`);
 }
 
 async function testErrorInChannelPipeline() {
@@ -188,9 +188,9 @@ async function testErrorInChannelPipeline() {
   assert(results.includes(2), 'Should process value before error');
   assert(!results.includes(3), 'Should not process value that caused error');
 
-  console.log(`  ✓ Errors in pipeline are caught`);
-  console.log(`  ✓ Pipeline stops at error point`);
-  console.log(`  ✓ Channels are properly closed on error`);
+  console.log(`   Errors in pipeline are caught`);
+  console.log(`   Pipeline stops at error point`);
+  console.log(`   Channels are properly closed on error`);
 }
 
 async function testMixedErrorScenarios() {
@@ -255,8 +255,8 @@ async function testMixedErrorScenarios() {
   assert(results.includes('channel-closed'), 'Channel should be closed');
   assert(results.includes('self-cancel-continues'), 'Task continues synchronously even after self-cancel');
 
-  console.log(`  ✓ Complex error scenarios do not hang scheduler`);
-  console.log(`  ✓ System remains stable with mixed errors`);
+  console.log(`   Complex error scenarios do not hang scheduler`);
+  console.log(`   System remains stable with mixed errors`);
 }
 
 // Run all tests
@@ -269,10 +269,10 @@ try {
   await testErrorInChannelPipeline();
   await testMixedErrorScenarios();
 
-  console.log('\n✅ All error propagation tests passed!\n');
+  console.log('\n All error propagation tests passed!\n');
   process.exit(0);
 } catch (error) {
-  console.error('\n❌ Test failed:', error.message);
+  console.error('\n Test failed:', error.message);
   console.error(error.stack);
   process.exit(1);
 }

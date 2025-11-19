@@ -60,9 +60,9 @@ async function testTimingAccuracy() {
 
   // Logical time should be very accurate (deterministic)
   if (maxDeviation <= 1) {
-    console.log(`  ✅ Logical time is accurate (max ${maxDeviation}ms deviation)`);
+    console.log(`   Logical time is accurate (max ${maxDeviation}ms deviation)`);
   } else {
-    console.log(`  ⚠️  Logical time has some deviation (max ${maxDeviation}ms)`);
+    console.log(`    Logical time has some deviation (max ${maxDeviation}ms)`);
   }
 
   // Wall clock time will vary due to setImmediate
@@ -77,9 +77,9 @@ async function testTimingAccuracy() {
   console.log(`    Avg: ${avgWallDeviation.toFixed(2)}ms`);
 
   if (maxWallDeviation < 20) {
-    console.log(`  ✅ Wall clock timing is reasonable`);
+    console.log(`   Wall clock timing is reasonable`);
   } else {
-    console.log(`  ⚠️  Wall clock timing has high variance (${maxWallDeviation}ms)`);
+    console.log(`    Wall clock timing has high variance (${maxWallDeviation}ms)`);
   }
 
   return { maxDeviation, avgDeviation, maxWallDeviation, avgWallDeviation };
@@ -111,10 +111,10 @@ async function testConcurrentTimingDeterminism() {
   const allSame = runs.every(r => r === runs[0]);
 
   if (allSame) {
-    console.log(`  ✅ Concurrent timing is deterministic across runs`);
+    console.log(`   Concurrent timing is deterministic across runs`);
     console.log(`  Order: [${runs[0].split(',').slice(0, 5).join(', ')}...]`);
   } else {
-    console.log(`  ❌ Concurrent timing is NON-DETERMINISTIC`);
+    console.log(`   Concurrent timing is NON-DETERMINISTIC`);
     runs.forEach((r, i) => console.log(`    Run ${i + 1}: ${r.substring(0, 30)}...`));
   }
 
@@ -132,19 +132,19 @@ try {
 
   console.log('\n' + '='.repeat(50));
   console.log('VERDICT:');
-  console.log(`  Logical time determinism: ${maxDeviation <= 1 ? '✅ EXCELLENT' : '⚠️ ACCEPTABLE'}`);
-  console.log(`  Concurrent determinism: ${isDeterministic ? '✅ PERFECT' : '❌ FAILED'}`);
-  console.log(`  Wall-clock accuracy: ⚠️ VARIES (JS event loop dependent)`);
+  console.log(`  Logical time determinism: ${maxDeviation <= 1 ? ' EXCELLENT' : ' ACCEPTABLE'}`);
+  console.log(`  Concurrent determinism: ${isDeterministic ? ' PERFECT' : ' FAILED'}`);
+  console.log(`  Wall-clock accuracy:  VARIES (JS event loop dependent)`);
   console.log('='.repeat(50));
 
   if (isDeterministic) {
-    console.log('\n✅ Timing tests passed (deterministic ordering)\n');
+    console.log('\n Timing tests passed (deterministic ordering)\n');
     process.exit(0);
   } else {
-    console.log('\n❌ Non-deterministic behavior detected\n');
+    console.log('\n Non-deterministic behavior detected\n');
     process.exit(1);
   }
 } catch (error) {
-  console.error('\n❌ Test failed:', error.message);
+  console.error('\n Test failed:', error.message);
   process.exit(1);
 }

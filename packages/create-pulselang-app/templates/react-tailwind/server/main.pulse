@@ -1,0 +1,31 @@
+import { createServer } from 'std/http';
+import { log } from 'std/console';
+
+// API server for Pulse + React application
+let server = createServer((req, res) => {
+  log(`${req.method} ${req.url}`);
+
+  if (req.url == '/api/health') {
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({
+      status: 'ok',
+      timestamp: Date.now()
+    }));
+  } else if (req.url == '/api/data') {
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({
+      message: 'Backend API response',
+      version: '1.5.0'
+    }));
+  } else {
+    res.writeHead(404, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'Not found' }));
+  }
+});
+
+server.listen(3001, () => {
+  log('Backend API listening on http://localhost:3001');
+  log('Endpoints:');
+  log('  GET /api/health');
+  log('  GET /api/data');
+});

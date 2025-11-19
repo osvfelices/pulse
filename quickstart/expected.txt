@@ -1,0 +1,8 @@
+
+> pulselang@1.0.0 parse
+> node lib/run.js quickstart/ping.pulse
+
+Pulse 1.0.0 - Deterministic Runtime
+Same inputs -> same outputs, every time
+Sum: 15
+Expected: 15

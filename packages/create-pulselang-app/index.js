@@ -19,11 +19,17 @@ function showUsage() {
   console.log(`
 Usage: npx create-pulselang-app <project-name>
 
-Creates a new Pulse project with React 19 + Vite + Tailwind CSS 4
+Creates Pulse 1.5.0 full-stack application with React 19, Vite, and Tailwind CSS 4.
+
+Includes:
+  - Backend API server (Pulse runtime with std/http)
+  - Frontend React application with Vite dev server
+  - VS Code debugging configuration
+  - PRS hot reload support
 
 Examples:
   npx create-pulselang-app my-app
-  npx create-pulselang-app my-pulse-project
+  npx create-pulselang-app my-project
 `);
 }
 
@@ -43,7 +49,7 @@ function copyTemplate(targetDir) {
   // Copy template files
   cpSync(templateDir, targetDir, { recursive: true });
 
-  console.log('✓ Project created');
+  console.log('Project created');
 }
 
 function updatePackageJson(targetDir, projectName) {
@@ -56,16 +62,26 @@ function updatePackageJson(targetDir, projectName) {
   }
 }
 
+function updatePulseJson(targetDir, projectName) {
+  const pulsePath = join(targetDir, 'pulse.json');
+
+  if (existsSync(pulsePath)) {
+    const pulseConfig = JSON.parse(readFileSync(pulsePath, 'utf8'));
+    pulseConfig.name = projectName;
+    writeFileSync(pulsePath, JSON.stringify(pulseConfig, null, 2) + '\n');
+  }
+}
+
 async function installDependencies(targetDir) {
   if (process.env.SKIP_INSTALL === 'true') {
-    console.log('\n✓ Skipping dependency installation (SKIP_INSTALL=true)');
+    console.log('\nSkipping dependency installation (SKIP_INSTALL=true)');
     return;
   }
 
   console.log('\nInstalling dependencies...');
 
   return new Promise((resolve, reject) => {
-    const child = spawn('npm', ['install'], {
+    const child = spawn('npm', ['install', '--legacy-peer-deps'], {
       cwd: targetDir,
       stdio: 'inherit',
       shell: true
@@ -97,26 +113,37 @@ async function main() {
     process.exit(1);
   }
 
-  console.log('\nScaffolding Pulse app with React 19 + Vite + Tailwind CSS 4...\n');
+  console.log('\nCreating Pulse 1.5.0 full-stack application...\n');
 
   copyTemplate(targetDir);
   updatePackageJson(targetDir, projectName);
+  updatePulseJson(targetDir, projectName);
 
   try {
     await installDependencies(targetDir);
 
     console.log(`
-✓ Done! Created ${projectName}
+Project created: ${projectName}
 
-Next steps:
+Directory structure:
+  ${projectName}/
+  ├── server/main.pulse      Backend API server
+  ├── src/                   React frontend
+  ├── .vscode/launch.json    Debug configuration
+  └── pulse.json             Pulse project config
+
+Start development:
   cd ${projectName}
-  npm run dev
+  npm run dev                Frontend (http://localhost:5173)
+  npm run backend            Backend API (http://localhost:3001)
+  npm run backend:dev        Backend with hot reload (PRS)
 
-Happy coding!
+Debug in VS Code:
+  Press F5 or use Run and Debug panel
 `);
   } catch (error) {
-    console.error('\nFailed to install dependencies');
-    console.error('You can install them manually by running:');
+    console.error('\nDependency installation failed');
+    console.error('Install manually:');
     console.error(`  cd ${projectName}`);
     console.error('  npm install');
   }

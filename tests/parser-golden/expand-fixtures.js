@@ -243,7 +243,7 @@ async function expandFixtures() {
         }
       } catch (error) {
         results.failed++;
-        console.error(`  ✗ Failed ${fixtureId}: ${error.message}`);
+        console.error(`   Failed ${fixtureId}: ${error.message}`);
       }
     }
   }

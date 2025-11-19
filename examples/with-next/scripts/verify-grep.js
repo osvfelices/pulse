@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 /**
  * Verify Grep Script
- * 
+ *
  * Searches for forbidden asynchronous APIs in the deterministic runtime:
  * - setImmediate
- * - setTimeout  
+ * - setTimeout
  * - Promise.race
- * 
+ *
  * These are not allowed in the deterministic runtime.
  */
 
@@ -36,14 +36,14 @@ let foundIssues = false;
 for (const api of forbidden) {
   console.log(`Checking for: ${api}`);
   let foundInCode = false;
-  
+
   for (const file of deterministicFiles) {
     const filePath = `/home/user/pulse-private/lib/runtime/${file}`;
-    
+
     try {
       const content = readFileSync(filePath, 'utf8');
       const lines = content.split('\n');
-      
+
       lines.forEach((line, index) => {
         const trimmed = line.trim();
         // Skip comments
@@ -52,7 +52,7 @@ for (const api of forbidden) {
         }
         // Check if line contains the forbidden API
         if (line.includes(api)) {
-          console.log(`  ✗ FOUND in ${file}:${index + 1}`);
+          console.log(`   FOUND in ${file}:${index + 1}`);
           console.log(`    ${line.trim()}`);
           foundIssues = true;
           foundInCode = true;
@@ -62,20 +62,20 @@ for (const api of forbidden) {
       console.error(`  Error reading ${file}:`, error.message);
     }
   }
-  
+
   if (!foundInCode) {
-    console.log(`  ✓ Not found in code`);
+    console.log(`   Not found in code`);
   }
-  
+
   console.log();
 }
 
 console.log('='.repeat(60));
 if (foundIssues) {
-  console.error('✗ FAILED: Found forbidden APIs in deterministic runtime');
+  console.error(' FAILED: Found forbidden APIs in deterministic runtime');
   console.error('The deterministic runtime must not use setImmediate, setTimeout, or Promise.race');
   process.exit(1);
 } else {
-  console.log('✓ PASSED: No forbidden APIs found in deterministic runtime code');
+  console.log(' PASSED: No forbidden APIs found in deterministic runtime code');
   process.exit(0);
 }

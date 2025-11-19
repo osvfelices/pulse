@@ -1,6 +1,6 @@
 /**
  * End-to-End Test
- * Tests full compilation pipeline: parse → AST → codegen → execute
+ * Tests full compilation pipeline: parse -> AST -> codegen -> execute
  */
 
 import { strict as assert } from 'assert';
@@ -45,7 +45,7 @@ export const result = x + y;`;
 
   const module = await compileAndRun(code);
   assert.strictEqual(module.result, 15, 'Semicolons should work');
-  console.log('✓ Semicolons test passed');
+  console.log(' Semicolons test passed');
 }
 
 // Test: Semicolons mixed
@@ -57,7 +57,7 @@ export const result = a + b + c;`;
 
   const module = await compileAndRun(code);
   assert.strictEqual(module.result, 6, 'Mixed semicolons should work');
-  console.log('✓ Mixed semicolons test passed');
+  console.log(' Mixed semicolons test passed');
 }
 
 // Test: Basic parsing without execution
@@ -72,7 +72,7 @@ const result = add(5, 3)`;
 
   assert(ast.body.length > 0, 'Should parse statements');
   assert(ast.body[0].kind === 'FnDecl', 'Should parse function');
-  console.log('✓ Basic parsing test passed');
+  console.log(' Basic parsing test passed');
 }
 
 // Test: For await parsing
@@ -92,7 +92,7 @@ async function testForAwaitParsing() {
 
   const forAwait = fnDecl.body.statements[0];
   assert(forAwait.kind === 'ForAwaitStmt', 'Should parse for await');
-  console.log('✓ For await parsing test passed');
+  console.log(' For await parsing test passed');
 }
 
 // Test: Spawn parsing
@@ -107,7 +107,7 @@ async function testSpawnParsing() {
   const varDecl = ast.body[0];
   // The spawn should create a SpawnExpr
   assert(varDecl.kind === 'VarDecl', 'Should parse var decl');
-  console.log('✓ Spawn parsing test passed');
+  console.log(' Spawn parsing test passed');
 }
 
 // Test: Yield parsing
@@ -123,7 +123,7 @@ async function testYieldParsing() {
   const fnDecl = ast.body[0];
   const yieldStmt = fnDecl.body.statements[0];
   assert(yieldStmt.kind === 'ExprStmt', 'Should parse yield statement');
-  console.log('✓ Yield parsing test passed');
+  console.log(' Yield parsing test passed');
 }
 
 // Test: Complex example with multiple features
@@ -137,7 +137,7 @@ export const fib10 = result`;
 
   const module = await compileAndRun(code);
   assert.strictEqual(module.fib10, 55, 'Should compute fibonacci correctly');
-  console.log('✓ Complex example test passed');
+  console.log(' Complex example test passed');
 }
 
 // Test: Arrow functions with async
@@ -153,7 +153,7 @@ export const result2Fn = asyncDouble`;
   assert.strictEqual(module.result1, 10, 'Arrow function should work');
   const result2 = await module.result2Fn(5);
   assert.strictEqual(result2, 10, 'Async arrow function should work');
-  console.log('✓ Arrow functions test passed');
+  console.log(' Arrow functions test passed');
 }
 
 // Test: Destructuring
@@ -166,7 +166,7 @@ export const result = a + b + x + y`;
 
   const module = await compileAndRun(code);
   assert.strictEqual(module.result, 33, 'Destructuring should work');
-  console.log('✓ Destructuring test passed');
+  console.log(' Destructuring test passed');
 }
 
 // Run all tests
@@ -184,10 +184,10 @@ async function runTests() {
     await testArrowFunctions();
     await testDestructuring();
 
-    console.log('\n✅ All end-to-end tests passed!');
+    console.log('\n All end-to-end tests passed!');
     process.exit(0);
   } catch (error) {
-    console.error('\n❌ Test failed:', error);
+    console.error('\n Test failed:', error);
     console.error(error.stack);
     process.exit(1);
   }

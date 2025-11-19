@@ -34,7 +34,7 @@ async function testBasicExecution() {
   await scheduler.run();
 
   assert.deepEqual(results, [1, 2, 3], 'Tasks should execute in spawn order');
-  console.log('✓ Basic execution test passed');
+  console.log(' Basic execution test passed');
 }
 
 // Test: Deterministic ordering with sleep
@@ -70,7 +70,7 @@ async function testSleepOrdering() {
     'B-after-sleep',
     'A-after-sleep'
   ], 'Sleep should wake tasks in logical time order');
-  console.log('✓ Sleep ordering test passed');
+  console.log(' Sleep ordering test passed');
 }
 
 // Test: Yield behavior (round-robin)
@@ -103,7 +103,7 @@ async function testYieldRoundRobin() {
     'A1', 'B1', 'C1',  // First round
     'A2', 'B2', 'C2'   // After yields
   ], 'Yield should provide round-robin execution');
-  console.log('✓ Yield round-robin test passed');
+  console.log(' Yield round-robin test passed');
 }
 
 // Test: Priority ordering
@@ -127,7 +127,7 @@ async function testPriorityOrdering() {
 
   // High priority should run first, then normal, then low
   assert.deepEqual(results, ['high', 'normal', 'low'], 'Priority should be respected');
-  console.log('✓ Priority ordering test passed');
+  console.log(' Priority ordering test passed');
 }
 
 // Test: Determinism across multiple runs
@@ -154,7 +154,7 @@ async function testDeterminism() {
 
   assert.deepEqual(results1, results2, 'Run 1 and 2 should be identical');
   assert.deepEqual(results2, results3, 'Run 2 and 3 should be identical');
-  console.log('✓ Determinism test passed');
+  console.log(' Determinism test passed');
 }
 
 // Test: Task cancellation
@@ -176,7 +176,7 @@ async function testCancellation() {
   await scheduler.run();
 
   assert.deepEqual(results, ['start', 'canceller'], 'Cancelled task should not complete');
-  console.log('✓ Cancellation test passed');
+  console.log(' Cancellation test passed');
 }
 
 // Test: Complex interleaving
@@ -211,7 +211,7 @@ async function testComplexInterleaving() {
   // This should be deterministic
   const expected = ['1a', '2a', '3a', '1b', '3b', '2b', '2c', '1c'];
   assert.deepEqual(results, expected, 'Complex interleaving should be deterministic');
-  console.log('✓ Complex interleaving test passed');
+  console.log(' Complex interleaving test passed');
 }
 
 // Run all tests
@@ -227,10 +227,10 @@ async function runTests() {
     await testCancellation();
     await testComplexInterleaving();
 
-    console.log('\n✅ All scheduler tests passed!');
+    console.log('\n All scheduler tests passed!');
     process.exit(0);
   } catch (error) {
-    console.error('\n❌ Test failed:', error);
+    console.error('\n Test failed:', error);
     process.exit(1);
   }
 }

@@ -1,7 +1,7 @@
 /**
  * EXTREME TEST: Nested channel chains with backpressure
  *
- * Tests: A → B → C → D pipeline
+ * Tests: A -> B -> C -> D pipeline
  * - Messages flow through 4 channels
  * - Backpressure propagates correctly
  * - No deadlocks
@@ -13,7 +13,7 @@ import { strict as assert } from 'assert';
 import { channel } from '../../lib/runtime/channel-deterministic.js';
 
 async function testLinearPipeline() {
-  console.log('Testing A → B → C → D pipeline...');
+  console.log('Testing A -> B -> C -> D pipeline...');
 
   // Create 4 channels with different capacities
   const chA = channel(0);  // Unbuffered (rendezvous)
@@ -24,7 +24,7 @@ async function testLinearPipeline() {
   const results = [];
   const events = [];
 
-  // Stage A → B
+  // Stage A -> B
   const stageAB = (async () => {
     for (let i = 0; i < 10; i++) {
       events.push(`A-send-${i}`);
@@ -34,7 +34,7 @@ async function testLinearPipeline() {
     chA.close();
   })();
 
-  // Stage B → C
+  // Stage B -> C
   const stageBC = (async () => {
     for await (const value of chA) {
       events.push(`B-recv-${value}`);
@@ -44,7 +44,7 @@ async function testLinearPipeline() {
     chB.close();
   })();
 
-  // Stage C → D
+  // Stage C -> D
   const stageCD = (async () => {
     for await (const value of chB) {
       events.push(`C-recv-${value}`);
@@ -72,7 +72,7 @@ async function testLinearPipeline() {
   // Verify all messages arrived
   assert.strictEqual(results.length, 10, 'All messages should arrive');
 
-  // Verify transformation: i → i*2 → i*2+1
+  // Verify transformation: i -> i*2 -> i*2+1
   const expected = Array.from({ length: 10 }, (_, i) => i * 2 + 1);
   assert.deepStrictEqual(results, expected, 'Transformations should be correct');
 
@@ -80,7 +80,7 @@ async function testLinearPipeline() {
   const isOrdered = results.every((val, idx) => idx === 0 || val > results[idx - 1]);
   assert(isOrdered, 'FIFO ordering should be maintained');
 
-  console.log('  ✓ Linear pipeline test passed');
+  console.log('   Linear pipeline test passed');
 }
 
 async function testBackpressure() {
@@ -138,7 +138,7 @@ async function testBackpressure() {
 
   assert(consumerEventsBetween > 0, 'Backpressure should cause interleaving');
 
-  console.log(`  ✓ Backpressure test passed (${consumerEventsBetween} consumer events between sends)`);
+  console.log(`   Backpressure test passed (${consumerEventsBetween} consumer events between sends)`);
 }
 
 async function testDiamondTopology() {
@@ -207,7 +207,7 @@ async function testDiamondTopology() {
   assert(branchACounts > 0, 'Branch A should process messages');
   assert(branchBCounts > 0, 'Branch B should process messages');
 
-  console.log(`  ✓ Diamond topology test passed (A: ${branchACounts}, B: ${branchBCounts})`);
+  console.log(`   Diamond topology test passed (A: ${branchACounts}, B: ${branchBCounts})`);
 }
 
 // Run all tests
@@ -218,10 +218,10 @@ try {
   await testBackpressure();
   await testDiamondTopology();
 
-  console.log('\n✅ All nested channel tests passed!\n');
+  console.log('\n All nested channel tests passed!\n');
   process.exit(0);
 } catch (error) {
-  console.error('\n❌ Test failed:', error.message);
+  console.error('\n Test failed:', error.message);
   console.error(error.stack);
   process.exit(1);
 }

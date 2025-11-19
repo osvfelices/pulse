@@ -20,7 +20,7 @@ async function testImmediateRecv() {
   assert.strictEqual(result.value, 'hello', 'Should receive first value');
   assert.strictEqual(result.ok, true, 'Should be successful');
   assert.strictEqual(result.caseIndex, 0, 'Should be case 0');
-  console.log('✓ Immediate recv test passed');
+  console.log(' Immediate recv test passed');
 }
 
 // Test: Select immediately ready send
@@ -36,7 +36,7 @@ async function testImmediateSend() {
 
   const [value] = await ch.recv();
   assert.strictEqual(value, 42, 'Should have sent value');
-  console.log('✓ Immediate send test passed');
+  console.log(' Immediate send test passed');
 }
 
 // Test: Select first ready (deterministic ordering)
@@ -56,7 +56,7 @@ async function testDeterministicOrder() {
   // Should select first case (deterministic)
   assert.strictEqual(result.caseIndex, 0, 'Should select first ready case');
   assert.strictEqual(result.value, 'first', 'Should receive from first channel');
-  console.log('✓ Deterministic order test passed');
+  console.log(' Deterministic order test passed');
 }
 
 // Test: Select blocks then unblocks
@@ -85,7 +85,7 @@ async function testBlockThenUnblock() {
   assert.deepEqual(results, ['before-send', 'after-send', 'select-complete'],
     'Select should unblock after send');
   assert.strictEqual(result.value, 'unblock', 'Should receive sent value');
-  console.log('✓ Block then unblock test passed');
+  console.log(' Block then unblock test passed');
 }
 
 // Test: Select with multiple cases, one becomes ready
@@ -109,7 +109,7 @@ async function testMultipleCases() {
 
   assert.strictEqual(result.caseIndex, 1, 'Should be case 1 (ch2)');
   assert.strictEqual(result.value, 'from-ch2', 'Should receive from ch2');
-  console.log('✓ Multiple cases test passed');
+  console.log(' Multiple cases test passed');
 }
 
 // Test: Select with default case
@@ -125,7 +125,7 @@ async function testDefaultCase() {
 
   assert.strictEqual(defaultRan, true, 'Default should run');
   assert.strictEqual(result.caseIndex, -1, 'Should be default case');
-  console.log('✓ Default case test passed');
+  console.log(' Default case test passed');
 }
 
 // Test: Select with handler
@@ -146,7 +146,7 @@ async function testWithHandler() {
 
   assert.strictEqual(handlerValue, 42, 'Handler should receive value');
   assert.strictEqual(result.value, 42, 'Result should have value');
-  console.log('✓ Handler test passed');
+  console.log(' Handler test passed');
 }
 
 // Test: Select on closed channel
@@ -160,7 +160,7 @@ async function testClosedChannel() {
 
   assert.strictEqual(result.ok, false, 'Should indicate channel is closed');
   assert.strictEqual(result.value, undefined, 'Value should be undefined');
-  console.log('✓ Closed channel test passed');
+  console.log(' Closed channel test passed');
 }
 
 // Test: Select send/recv coordination
@@ -186,7 +186,7 @@ async function testSendRecvCoordination() {
   assert.strictEqual(recvResult.value, 'coordinated', 'Receiver should get value');
   assert.strictEqual(recvResult.ok, true, 'Receiver should succeed');
   assert.strictEqual(sendResult.ok, true, 'Sender should succeed');
-  console.log('✓ Send/recv coordination test passed');
+  console.log(' Send/recv coordination test passed');
 }
 
 // Run all tests
@@ -204,9 +204,9 @@ async function runTests() {
     await testClosedChannel();
     await testSendRecvCoordination();
 
-    console.log('\n✅ All select tests passed!');
+    console.log('\n All select tests passed!');
   } catch (error) {
-    console.error('\n❌ Test failed:', error);
+    console.error('\n Test failed:', error);
     process.exit(1);
   }
 }

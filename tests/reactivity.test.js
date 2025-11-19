@@ -18,7 +18,7 @@ function test(name, fn) {
     console.log(`[PASS] ${name}`);
   } catch (error) {
     testsFailed++;
-    console.error(`✗ ${name}`);
+    console.error(` ${name}`);
     console.error(`  ${error.message}`);
   }
 }

@@ -56,11 +56,11 @@ async function test100Runs() {
 
   console.log(`\nUnique hashes: ${uniqueHashes.size}`);
   if (uniqueHashes.size === 1) {
-    console.log(`✅ DETERMINISTIC: All 100 runs produced identical output`);
+    console.log(` DETERMINISTIC: All 100 runs produced identical output`);
     console.log(`   Hash: ${hashes[0].substring(0, 16)}...`);
     return true;
   } else {
-    console.log(`❌ NON-DETERMINISTIC: Found ${uniqueHashes.size} different outputs`);
+    console.log(` NON-DETERMINISTIC: Found ${uniqueHashes.size} different outputs`);
     console.log(`   Sample hashes:`);
     Array.from(uniqueHashes).slice(0, 5).forEach((h, i) => {
       console.log(`     ${i + 1}. ${h.substring(0, 16)}...`);

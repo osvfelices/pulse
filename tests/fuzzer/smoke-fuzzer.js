@@ -48,7 +48,7 @@ function genProgram() {
   return Array(count).fill(0).map(genStatement).join('\n');
 }
 
-console.log(`\n🔬 Smoke Fuzzer - ${CASES} cases\n`);
+console.log(`\n Smoke Fuzzer - ${CASES} cases\n`);
 
 let passed = 0;
 let failed = 0;

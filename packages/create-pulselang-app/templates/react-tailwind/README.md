@@ -1,103 +1,113 @@
-# Pulse + React + Vite + Tailwind
+# Pulse Full-Stack Application
 
-Starter template with React, Vite, Tailwind CSS, and Pulse signals.
+Full-stack application template with React 19, Vite, Tailwind CSS 4, and Pulse 1.5.0 backend.
 
-## Setup
+## Project Structure
+
+```
+.
+├── server/
+│   └── main.pulse          # Backend API server
+├── src/
+│   ├── App.jsx             # React application
+│   └── main.jsx            # Frontend entry point
+├── .vscode/
+│   └── launch.json         # VS Code debug configuration
+├── pulse.json              # Pulse project configuration
+├── package.json            # npm dependencies and scripts
+└── vite.config.js          # Vite configuration
+```
+
+## Installation
 
 ```bash
 npm install
-npm run dev
 ```
 
-Build for production:
+## Development
+
+**Frontend (Vite dev server):**
+```bash
+npm run dev
+```
+Runs at `http://localhost:5173`
+
+**Backend (Pulse server):**
+```bash
+npm run backend
+```
+API runs at `http://localhost:3001`
+
+**Backend with hot reload (PRS):**
+```bash
+npm run backend:dev
+```
+PRS runs at `http://localhost:3000` with automatic reload on file changes.
+
+## Production Build
 
 ```bash
 npm run build
 npm run preview
 ```
 
-## Project Structure
+## Debugging in VS Code
 
-```
-src/
-├── App.jsx    - Main component with hero page
-├── main.jsx   - Entry point
-├── App.css    - Component styles
-└── index.css  - Global styles
-```
+The template includes two launch configurations:
 
-## Using Pulse Signals
+**1. Debug Pulse Backend**
+- Launches `server/main.pulse` with debugger attached
+- Set breakpoints in `.pulse` files
+- Step through execution, inspect variables
 
-The `useSignal` hook returns a getter function and a setter:
+**2. Attach to PRS**
+- Attaches debugger to running PRS instance (port 3000)
+- Use with `npm run backend:dev`
+- Enables hot reload with debugging
 
+**Usage:**
+1. Install Pulse VS Code extension
+2. Open project in VS Code
+3. Press F5 or select configuration from Run and Debug panel
+
+## API Endpoints
+
+The backend server (`server/main.pulse`) exposes:
+
+- `GET /api/health` - Health check endpoint
+- `GET /api/data` - Sample data endpoint
+
+Extend `server/main.pulse` to add additional endpoints using `std/http` APIs.
+
+## Pulse Configuration
+
+**pulse.json:**
+- `entry`: Backend entry point (`server/main.pulse`)
+- `dependencies`: Pulse package dependencies
+
+Refer to [Package Manager documentation](https://osvfelices.github.io/pulse/docs/package-manager) for dependency management.
+
+## Frontend Integration
+
+The Vite configuration includes `vite-plugin-pulse` for `.pulse` file compilation.
+
+Import Pulse files directly in React components:
 ```jsx
-import { useSignal } from '@pulselang/react'
-
-function Counter() {
-  const [count, setCount] = useSignal(0)
-
-  return (
-    <button onClick={() => setCount(count() + 1)}>
-      Count: {count()}
-    </button>
-  )
-}
+import { myFunction } from './logic.pulse'
 ```
 
-Call the getter as a function to read the value. React automatically re-renders when the signal changes.
+The plugin handles compilation automatically during development and build.
 
-## Using .pulse Files
+## Technical Stack
 
-You can create `.pulse` files for async logic or data processing:
-
-```pulse
-// example.pulse
-import { signal, effect } from 'pulselang/runtime'
-
-const [count, setCount] = signal(0)
-
-effect(() => {
-  print('Count:', count())
-})
-
-setCount(10)
-```
-
-Import them in your React components:
-
-```jsx
-import { runExample } from './example.pulse'
-```
-
-The vite-plugin-pulse handles compilation automatically.
-
-## Running Pulse Files
-
-Two different commands for different purposes:
-
-- `npm run dev` - Starts the Vite dev server for your web app
-- `pulse myfile.pulse` - Runs a standalone Pulse file from the command line
-
-The `pulse` CLI is for running `.pulse` files directly, not for starting web servers.
-
-## selectCase Requirement
-
-When using `select` statements in Pulse v1.0.4, you must explicitly import `selectCase`:
-
-```pulse
-import { select, selectCase } from 'pulselang/runtime'
-
-const result = await select {
-  case recv ch1
-  case recv ch2
-}
-```
-
-This is required even though you don't call `selectCase` directly. The compiler needs it at runtime.
+- **Frontend:** React 19, Vite 5, Tailwind CSS 4
+- **Backend:** Pulse 1.5.0 (deterministic runtime, CSP concurrency)
+- **Dev Tools:** PRS (Pulse Runtime Server), VS Code debugger integration
+- **Build:** Vite with Pulse plugin for `.pulse` file compilation
 
 ## Documentation
 
-- [Pulse](https://osvfelices.github.io/pulse/)
-- [Vite](https://vitejs.dev/)
-- [React](https://react.dev/)
-- [Tailwind](https://tailwindcss.com/)
+- [Pulse Documentation](https://osvfelices.github.io/pulse/)
+- [HTTP API Reference](https://osvfelices.github.io/pulse/docs/http-guide)
+- [Concurrency Guide](https://osvfelices.github.io/pulse/docs/concurrency)
+- [Debugging Guide](https://osvfelices.github.io/pulse/docs/debugging)

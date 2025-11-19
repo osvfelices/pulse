@@ -107,7 +107,7 @@ function benchmark(name, fn, iterations) {
 }
 
 async function runBenchmarks() {
-  console.log('\n⚡ Performance Benchmarks\n');
+  console.log('\n Performance Benchmarks\n');
   console.log(`Warmup: ${WARMUP_ITERATIONS} iterations`);
   console.log(`Benchmark: ${BENCHMARK_ITERATIONS} iterations\n`);
 
@@ -229,7 +229,7 @@ async function runBenchmarks() {
         if (baseline) {
           const ratio = current.avgMs / baseline.avgMs;
           const pctChange = ((ratio - 1) * 100).toFixed(1);
-          const status = ratio <= BUDGET_THRESHOLD ? '✓' : '✗';
+          const status = ratio <= BUDGET_THRESHOLD ? '' : '';
           const sign = ratio > 1 ? '+' : '';
 
           console.log(`  ${status} ${category}/${key.padEnd(15)} ${sign}${pctChange}% ${ratio > 1 ? '(slower)' : '(faster)'}`);
