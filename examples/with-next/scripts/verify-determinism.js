@@ -43,7 +43,7 @@ async function verifyFlow(flow) {
   const mod = await import(modulePath);
 
   if (typeof mod.runMany !== 'function') {
-    console.error(`✗ Module ${flow.name} does not export runMany()`);
+    console.error(` Module ${flow.name} does not export runMany()`);
     return false;
   }
 
@@ -61,12 +61,12 @@ async function verifyFlow(flow) {
 
   // Check mismatch count
   if (result.mismatchCount !== 0) {
-    console.error(`\n✗ FAILED: ${result.mismatchCount} runs produced different output!`);
+    console.error(`\n FAILED: ${result.mismatchCount} runs produced different output!`);
     console.error('  Determinism verification failed.');
     return false;
   }
 
-  console.log(`\n✓ All 100 runs produced identical output`);
+  console.log(`\n All 100 runs produced identical output`);
 
   // Check expected hash
   const expectedHashPath = join(__dirname, flow.expectedHashFile);
@@ -76,17 +76,17 @@ async function verifyFlow(flow) {
     console.log(`  Expected hash: ${expectedHash}`);
 
     if (result.hash === expectedHash) {
-      console.log(`✓ Hash matches expected value`);
+      console.log(` Hash matches expected value`);
     } else {
-      console.error(`✗ FAILED: Hash mismatch!`);
+      console.error(` FAILED: Hash mismatch!`);
       console.error(`  Expected: ${expectedHash}`);
       console.error(`  Got:      ${result.hash}`);
       return false;
     }
   } catch (error) {
-    console.log(`⚠ No expected hash file found, creating ${flow.expectedHashFile}`);
+    console.log(` No expected hash file found, creating ${flow.expectedHashFile}`);
     writeFileSync(expectedHashPath, result.hash + '\n', 'utf8');
-    console.log(`✓ Saved hash to ${flow.expectedHashFile}`);
+    console.log(` Saved hash to ${flow.expectedHashFile}`);
   }
 
   return true;
@@ -107,18 +107,18 @@ async function main() {
 
   console.log(`\n${'='.repeat(60)}`);
   if (allPassed) {
-    console.log('✓ ALL FLOWS PASSED: 100% deterministic execution');
+    console.log(' ALL FLOWS PASSED: 100% deterministic execution');
     console.log('='.repeat(60));
     process.exit(0);
   } else {
-    console.error('✗ SOME FLOWS FAILED: See errors above');
+    console.error(' SOME FLOWS FAILED: See errors above');
     console.log('='.repeat(60));
     process.exit(1);
   }
 }
 
 main().catch(error => {
-  console.error('\n✗ Fatal error:', error.message);
+  console.error('\n Fatal error:', error.message);
   console.error(error.stack);
   process.exit(1);
 });

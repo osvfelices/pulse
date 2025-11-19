@@ -1,6 +1,6 @@
 # Pulse Language
 
-A programming language with reactivity and concurrency features.
+A programming language with deterministic concurrency and fine-grained reactivity. Compiles to JavaScript, runs on Node.js.
 
 ## Quick Examples
 
@@ -29,25 +29,28 @@ count is 2
 ### Channels
 
 ```pulse
-import { DeterministicScheduler, channel } from 'pulselang/runtime'
+import { spawn, channel } from 'std/async'
 
-const scheduler = new DeterministicScheduler()
-const ch = channel()
+async fn main() {
+  const ch = channel(1)
 
-scheduler.spawn(async () => {
-  for (let i = 1; i <= 3; i++) {
-    await ch.send(i)
-  }
-  ch.close()
-})
+  spawn(async () => {
+    for (let i = 1; i <= 3; i++) {
+      await ch.send(i)
+    }
+    ch.close()
+  })
 
-scheduler.spawn(async () => {
-  for await (const x of ch) {
-    print('received', x)
-  }
-})
+  spawn(async () => {
+    for await (const x of ch) {
+      print('received', x)
+    }
+  })
 
-await scheduler.run()
+  await sleep(100)
+}
+
+spawn(main())
 ```
 
 Expected output:
@@ -60,31 +63,43 @@ received 3
 ### Select
 
 ```pulse
-import { DeterministicScheduler, channel, select, selectCase } from 'pulselang/runtime'
+import { spawn, sleep, channel, select, selectCase } from 'std/async'
 
-const scheduler = new DeterministicScheduler()
-const fast = channel()
-const slow = channel()
+async fn main() {
+  const fast = channel(1)
+  const slow = channel(1)
 
-scheduler.spawn(async () => { await fast.send('fast') })
-scheduler.spawn(async () => { await slow.send('slow') })
+  spawn(async () => {
+    await sleep(10)
+    await fast.send('fast')
+  })
 
-scheduler.spawn(async () => {
-  const result = await select {
-    case recv fast
-    case recv slow
-  }
-  print(result.value)
-})
+  spawn(async () => {
+    await sleep(20)
+    await slow.send('slow')
+  })
 
-await scheduler.run()
+  const result = await select([
+    selectCase({ channel: fast, op: 'recv', handler: ([msg]) => msg }),
+    selectCase({ channel: slow, op: 'recv', handler: ([msg]) => msg })
+  ])
+
+  print('Winner:', result.value)
+}
+
+spawn(main())
+```
+
+Expected output:
+```
+Winner: fast
 ```
 
 ## Overview
 
 Pulse is a programming language with its own lexer, parser, runtime, and standard library. It compiles to JavaScript ES modules, but it is a separate language with different execution semantics.
 
-Pulse compiles to ES Modules but runs on its own deterministic runtime. Think Go-style channels and a fine-grained reactive core, in a language that feels familiar.
+The runtime provides deterministic concurrency (Go-style channels) and fine-grained reactivity (Solid.js-style signals) in a language that feels familiar to JavaScript developers.
 
 ## What Makes Pulse Different
 
@@ -92,27 +107,40 @@ JavaScript's concurrency model is built around Promises and the event loop. Puls
 
 Run the same code 100 times, you get the exact same output. The runtime verifies this in tests by hashing outputs and comparing them across runs.
 
-The runtime does not use `setTimeout`, `setImmediate`, or `Promise.race`. Only channels and a task queue. The concurrency model is similar to Go's goroutines and channels, but it compiles to JavaScript.
+The runtime does not use `setTimeout`, `setImmediate`, or `Promise.race` for its scheduler. Only channels and a task queue. The concurrency model is similar to Go's goroutines and channels, compiled to JavaScript.
 
 ## Key Features
 
 ### Reactivity
 
-Pulse includes a reactive system with signals, computed values, and effects.
+Pulse includes a reactive system with signals, computed values, and effects. Signals provide fine-grained reactivity - when a signal changes, only its direct subscribers run. No virtual DOM, no reconciliation.
 
-Expected output from the reactivity example above:
+```pulse
+import { signal, computed, effect } from 'pulselang/runtime'
+
+const [count, setCount] = signal(0)
+const doubled = computed(() => count() * 2)
+
+effect(() => {
+  print('Count:', count(), 'Doubled:', doubled())
+})
+
+setCount(5)
 ```
-Count is 0
-Count is 5 doubled is 10
+
+Expected output:
+```
+Count: 0 Doubled: 0
+Count: 5 Doubled: 10
 ```
 
 ### Concurrency
 
-Channels are how you communicate between tasks. Not Promises - channels actually block. When you `send()`, the task pauses until someone else does `recv()`. That is the key to making determinism work.
+Channels are how you communicate between tasks. When you `send()`, the task pauses until someone else does `recv()`. This blocking behavior is key to making determinism work.
 
 Unbuffered channels (capacity 0) require both sender and receiver to be ready simultaneously. Buffered channels allow sending multiple values without immediate receiving.
 
-Select waits on multiple channels, whichever is ready first wins.
+Select waits on multiple channels, whichever is ready first wins (deterministically, based on source order if multiple are ready).
 
 ### Modern Syntax
 
@@ -132,7 +160,7 @@ const [first, second, ...rest] = [1, 2, 3, 4, 5]
 ## Quick Start
 
 ```bash
-npm install pulselang
+npm install -g pulselang
 ```
 
 Create `hello.pulse`:
@@ -145,7 +173,7 @@ main()
 
 Run it:
 ```bash
-pulse hello.pulse
+pulse run hello.pulse
 ```
 
 Expected output:
@@ -155,7 +183,7 @@ Hello, Pulse!
 
 ## Performance
 
-Designed for low-overhead updates, FIFO channels, and stable memory under load. All core modules tested.
+Designed for low-overhead updates, FIFO channels, and stable memory under load. The scheduler processes tasks deterministically without timing-based operations. Fine-grained reactivity means only actual subscribers update, not entire component trees.
 
 ## Getting Started
 
@@ -163,28 +191,35 @@ Ready to start? Check out the [Getting Started Guide](guide.html) to write your 
 
 ## Known Limitations
 
-v1.0.4 with more features planned:
+**Current version: v1.5.0**
 
-**Platforms** - Tested on Node 18+. Deno/Bun/Browser support not verified yet.
+**HTTP + Scheduler Integration** - HTTP handlers run on Node's event loop and cannot use `spawn()`, `sleep()`, or `channels()`. Handlers can use `async/await` and signals. This is an architectural limitation where the synchronous deterministic scheduler cannot coexist with Node's async event loop. Full integration is planned for Runtime 2.0. See [RUNTIME-2.0.md](https://github.com/osvfelices/pulse/blob/main/RUNTIME-2.0.md) for technical details.
+
+**Platforms** - Tested on Node.js 18+. Deno/Bun/Browser support not verified.
 
 **Type safety** - No TypeScript integration yet. Runtime errors instead of compile-time checks. Planning .d.ts files.
 
-**Error messages** - Parser errors could be clearer. Working on better diagnostics.
+**Error messages** - Parser errors could be clearer. Working on better diagnostics. Some errors may include raw JavaScript stack traces.
 
-**Debugging** - No source maps yet. You'll be debugging the compiled JavaScript output.
+**Debugging** - Source maps are functional but under refinement. You may be debugging compiled JavaScript output in some cases.
 
-**Channels** - No timeout or cancellation for blocked operations. No task priorities (FIFO only).
+**Channels** - No timeout or cancellation for blocked operations (workaround: use selectWithTimeout from std/async). Task priorities exist (HIGH, NORMAL, LOW) but are not exposed in public API.
 
-**JS interop** - Calling JavaScript from Pulse works, but mixing schedulers requires care. Channels don't auto-bridge to Promises.
+**JS interop** - Calling JavaScript from Pulse works, but mixing deterministic scheduler with Node's event loop requires care. Channels don't auto-bridge to Promises.
 
-**Stdlib** - File operations are basic wrappers around Node's fs. No HTTP client (use fetch). Minimal CLI utilities.
+**Stdlib** - File operations are basic wrappers around Node's fs. HTTP client not included (use fetch). CLI utilities are minimal.
 
-Hit an issue? Open a GitHub issue. Some limitations are on the roadmap, others might be design tradeoffs.
+**LSP and Debugger** - LSP server is in early development. Debugger and inspector are experimental, not production-ready.
+
+**Package Manager** - Basic functionality only (pulse add/install/remove). Not feature-complete.
+
+Hit an issue? Open a GitHub issue. Some limitations are on the roadmap, others are design tradeoffs.
 
 ## Community
 
 Pulse is open source.
 
 - GitHub: [github.com/osvfelices/pulse](https://github.com/osvfelices/pulse)
+- Documentation: [https://osvfelices.github.io/pulse/](https://osvfelices.github.io/pulse/)
 - License: MIT
-- Version: 1.0.4
+- Version: 1.5.0

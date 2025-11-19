@@ -1,0 +1,6 @@
+{
+  "name": "pulse-app",
+  "version": "0.0.0",
+  "entry": "server/main.pulse",
+  "dependencies": {}
+}

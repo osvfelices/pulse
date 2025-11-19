@@ -1,0 +1,22 @@
+{
+  "packages": {
+    "pulse-utils": {
+      "versions": {
+        "1.0.0": {
+          "path": "pulse-utils/1.0.0",
+          "integrity": "sha256-placeholder"
+        }
+      },
+      "latest": "1.0.0"
+    },
+    "pulse-logger": {
+      "versions": {
+        "1.0.0": {
+          "path": "pulse-logger/1.0.0",
+          "integrity": "sha256-placeholder"
+        }
+      },
+      "latest": "1.0.0"
+    }
+  }
+}

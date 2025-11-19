@@ -1,0 +1,10 @@
+{
+  "name": "pulse-utils",
+  "description": "Utility functions for Pulse applications",
+  "versions": {
+    "1.0.0": {
+      "integrity": "sha256-will-be-calculated",
+      "dependencies": {}
+    }
+  }
+}

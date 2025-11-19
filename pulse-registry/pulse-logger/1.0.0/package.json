@@ -1,0 +1,9 @@
+{
+  "name": "pulse-logger",
+  "version": "1.0.0",
+  "description": "Simple logging for Pulse applications",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js"
+  }
+}

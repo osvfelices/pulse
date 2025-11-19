@@ -1,0 +1,18 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "pulse",
+      "request": "launch",
+      "name": "Debug Pulse Backend",
+      "program": "${workspaceFolder}/server/main.pulse",
+      "stopOnEntry": false
+    },
+    {
+      "type": "pulse",
+      "request": "attach",
+      "name": "Attach to PRS",
+      "port": 3000
+    }
+  ]
+}

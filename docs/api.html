@@ -54,48 +54,378 @@
       <article class="article">
         <h1>API Reference</h1>
 
-<p>Complete reference for the Pulse standard library.</p>
+<p>Complete reference for the Pulse v1.5.0 standard library.</p>
+
+<h2>Async (std/async)</h2>
+
+<p>The async module provides spawn, sleep, channels, and select operations for deterministic concurrency.</p>
+
+<h3>spawn</h3>
+
+<p>Spawns a new task on the scheduler.</p>
+
+<pre><code class="language-javascript">import { spawn } from 'std/async'
+
+spawn(async () =&gt; {
+  print('Task running')
+})
+</code></pre>
+
+<strong>Parameters:</strong>
+<ul>
+<li><code>asyncFunction</code> (function): Async function to execute as a task</li>
+</ul>
+
+<strong>Returns:</strong> Task handle (implementation detail, not typically used)
+
+<p>Tasks spawned with <code>spawn</code> run on the deterministic scheduler. They execute in a predictable order based on logical time.</p>
+
+<hr>
+
+<h3>sleep</h3>
+
+<p>Pauses execution for a logical time duration.</p>
+
+<pre><code class="language-javascript">import { spawn, sleep } from 'std/async'
+
+async fn main() {
+  print('Start')
+  await sleep(100)
+  print('End')
+}
+
+spawn(main())
+</code></pre>
+
+<p>Expected output:</p>
+<pre><code>Start
+End
+</code></pre>
+
+<strong>Parameters:</strong>
+<ul>
+<li><code>ms</code> (number): Milliseconds to sleep (logical time)</li>
+<li><code>options</code> (object, optional): <code>{ cancel: CancelToken }</code> for cancellation support</li>
+</ul>
+
+<strong>Returns:</strong> <code>Promise<void></code>
+
+<p>Note: <code>sleep</code> uses logical time managed by the deterministic scheduler, not wall-clock time.</p>
+
+<hr>
+
+<h3>channel</h3>
+
+<p>Creates a channel for communication between tasks.</p>
+
+<pre><code class="language-javascript">import { spawn, channel } from 'std/async'
+
+async fn main() {
+  const ch = channel(1)
+
+  spawn(async () =&gt; {
+    await ch.send(42)
+  })
+
+  const [value, ok] = await ch.recv()
+  print('Received:', value)
+}
+
+spawn(main())
+</code></pre>
+
+<p>Expected output:</p>
+<pre><code>Received: 42
+</code></pre>
+
+<strong>Parameters:</strong>
+<ul>
+<li><code>bufferSize</code> (number, optional): Channel buffer capacity</li>
+</ul>
+<p>  - <code>0</code> or omitted: Unbuffered (sender blocks until receiver is ready)</p>
+<p>  - <code>> 0</code>: Buffered (sender blocks only when buffer is full)</p>
+
+<strong>Returns:</strong> Channel object with methods:
+<ul>
+<li><code>await ch.send(value)</code>: Send a value. Blocks if unbuffered or buffer is full.</li>
+<li><code>await ch.recv()</code>: Receive a value. Returns <code>[value, ok]</code> where <code>ok</code> is <code>false</code> if channel is closed.</li>
+<li><code>for await (const value of ch)</code>: Iterate until channel closes.</li>
+<li><code>ch.close()</code>: Close the channel. Subsequent sends fail, receives return <code>[undefined, false]</code>.</li>
+</ul>
+
+<p>Channels provide synchronous communication between tasks. When you <code>send()</code>, the task pauses until another task does <code>recv()</code>. This blocking behavior is how the scheduler maintains determinism.</p>
+
+<hr>
+
+<h3>select</h3>
+
+<p>Waits on multiple channel operations. Whichever channel becomes ready first (based on scheduler's logical time) has its case executed.</p>
+
+<pre><code class="language-javascript">import { spawn, sleep, channel, select, selectCase } from 'std/async'
+
+async fn main() {
+  const ch1 = channel(1)
+  const ch2 = channel(1)
+
+  spawn(async () =&gt; {
+    await sleep(5)
+    await ch1.send('fast')
+  })
+
+  spawn(async () =&gt; {
+    await sleep(10)
+    await ch2.send('slow')
+  })
+
+  const result = await select([
+    selectCase({ channel: ch1, op: 'recv', handler: ([msg]) =&gt; msg }),
+    selectCase({ channel: ch2, op: 'recv', handler: ([msg]) =&gt; msg })
+  ])
+
+  print('Winner:', result.value)
+}
+
+spawn(main())
+</code></pre>
+
+<p>Expected output:</p>
+<pre><code>Winner: fast
+</code></pre>
+
+<strong>Parameters:</strong>
+<ul>
+<li><code>cases</code> (array): Array of select cases created with <code>selectCase()</code></li>
+</ul>
+
+<strong>Returns:</strong> Object with:
+<pre><code class="language-javascript">{
+  caseIndex: number,  // Which case matched (0-indexed)
+  value: any,         // Return value from the case handler
+  ok: boolean         // For recv operations, false if channel closed
+}
+</code></pre>
+
+<p>If multiple channels are ready simultaneously, selection is deterministic based on source order.</p>
+
+<hr>
+
+<h3>selectCase</h3>
+
+<p>Creates a case for use with <code>select()</code>.</p>
+
+<pre><code class="language-javascript">import { selectCase } from 'std/async'
+
+selectCase({ channel: ch, op: 'recv', handler: ([value, ok]) =&gt; value })
+selectCase({ channel: ch, op: 'send', value: 42, handler: () =&gt; 'sent' })
+</code></pre>
+
+<strong>Parameters:</strong>
+<ul>
+<li><code>options</code> (object):</li>
+</ul>
+<p>  - <code>channel</code>: The channel to operate on</p>
+<p>  - <code>op</code>: Operation type (<code>'recv'</code> or <code>'send'</code>)</p>
+<p>  - <code>value</code>: (For send operations) Value to send</p>
+<p>  - <code>handler</code>: Function to call if this case is selected. Receives operation result.</p>
+
+<strong>Returns:</strong> Select case object (opaque, passed to <code>select()</code>)
+
+<hr>
+
+<h3>asyncAll</h3>
+
+<p>Runs multiple async functions in parallel and waits for all to complete.</p>
+
+<pre><code class="language-javascript">import { asyncAll } from 'std/async'
+
+const result = await asyncAll([
+  async () =&gt; 'task 1',
+  async () =&gt; 'task 2',
+  async () =&gt; 'task 3'
+])
+
+if (result.ok) {
+  print('All completed:', result.results)
+} else {
+  print('Error:', result.error)
+}
+</code></pre>
+
+<strong>Parameters:</strong>
+<ul>
+<li><code>fns</code> (array): Array of async functions to execute</li>
+<li><code>options</code> (object, optional): <code>{ cancel: CancelToken }</code></li>
+</ul>
+
+<strong>Returns:</strong> Result object:
+<pre><code class="language-javascript">{
+  ok: boolean,
+  value: any[],      // If ok=true, array of results
+  results: any[],    // Always present, array of results
+  errors: any[],     // If ok=false, array of errors
+  error: Error       // If ok=false, first error encountered
+}
+</code></pre>
+
+<p>All functions spawn as tasks and run concurrently on the scheduler.</p>
+
+<hr>
+
+<h3>asyncRace</h3>
+
+<p>Runs multiple async functions, returns first to complete. Cancels remaining tasks.</p>
+
+<pre><code class="language-javascript">import { asyncRace } from 'std/async'
+
+const result = await asyncRace([
+  async () =&gt; { await sleep(10); return 'fast' },
+  async () =&gt; { await sleep(20); return 'slow' }
+])
+
+if (result.ok) {
+  print('Winner:', result.value, 'at index', result.index)
+}
+</code></pre>
+
+<strong>Parameters:</strong>
+<ul>
+<li><code>fns</code> (array): Array of async functions</li>
+<li><code>options</code> (object, optional): <code>{ cancel: CancelToken }</code></li>
+</ul>
+
+<strong>Returns:</strong> Result object:
+<pre><code class="language-javascript">{
+  ok: boolean,
+  value: any,      // If ok=true, result from winning function
+  index: number,   // If ok=true, index of winning function
+  error: Error     // If ok=false, error that occurred
+}
+</code></pre>
+
+<hr>
+
+<h3>timeout</h3>
+
+<p>Creates a timeout channel that sends after specified duration.</p>
+
+<pre><code class="language-javascript">import { timeout } from 'std/async'
+
+const timeoutCh = timeout(1000)
+const [msg, ok] = await timeoutCh.recv()
+if (msg.timeout) {
+  print('Timed out')
+}
+</code></pre>
+
+<strong>Parameters:</strong>
+<ul>
+<li><code>ms</code> (number): Timeout duration in milliseconds</li>
+</ul>
+
+<strong>Returns:</strong> Channel that receives <code>{ timeout: true }</code> after duration
+
+<hr>
+
+<h3>selectWithTimeout</h3>
+
+<p>Select with automatic timeout support.</p>
+
+<pre><code class="language-javascript">import { spawn, channel, selectCase, selectWithTimeout } from 'std/async'
+
+async fn main() {
+  const ch = channel(1)
+
+  const result = await selectWithTimeout([
+    selectCase({ channel: ch, op: 'recv', handler: ([msg]) =&gt; msg })
+  ], 1000)
+
+  if (result.timeout) {
+    print('Operation timed out')
+  } else if (result.ok) {
+    print('Received:', result.value)
+  }
+}
+
+spawn(main())
+</code></pre>
+
+<strong>Parameters:</strong>
+<ul>
+<li><code>cases</code> (array): Array of select cases</li>
+<li><code>timeoutMs</code> (number): Timeout duration in milliseconds</li>
+<li><code>options</code> (object, optional): <code>{ cancel: CancelToken }</code></li>
+</ul>
+
+<strong>Returns:</strong> Result object with additional <code>timeout</code> field:
+<pre><code class="language-javascript">{
+  ok: boolean,
+  timeout: boolean,  // true if timeout occurred
+  value: any,
+  caseIndex: number
+}
+</code></pre>
+
+<hr>
+
+<h3>getScheduler</h3>
+
+<p>Returns the current scheduler instance.</p>
+
+<pre><code class="language-javascript">import { getScheduler } from 'std/async'
+
+const scheduler = getScheduler()
+</code></pre>
+
+<strong>Returns:</strong> Scheduler instance
+
+<p>This is used internally. Most programs don't need to call this directly - use <code>spawn()</code>, <code>sleep()</code>, and <code>channel()</code> instead.</p>
 
 <h2>File System (std/fs)</h2>
 
-<p>The <code>fs</code> module provides file system operations.</p>
+<p>File system operations with structured error handling. All functions return <code>{ ok, value }</code> or <code>{ ok, error, code }</code> structures.</p>
 
-<h3>Reading Files</h3>
-
-<pre><code class="language-javascript">import fs from 'std/fs'
-
-await fs.readText(filePath)
-</code></pre>
+<h3>readText</h3>
 
 <p>Reads a file and returns its contents as a string.</p>
+
+<pre><code class="language-javascript">import { readText } from 'std/fs'
+
+const result = await readText('./data.txt')
+if (result.ok) {
+  print(result.value)
+} else {
+  print('Error:', result.error)
+}
+</code></pre>
 
 <strong>Parameters:</strong>
 <ul>
 <li><code>filePath</code> (string): Path to the file</li>
 </ul>
 
-<strong>Returns:</strong> <code>Promise<string></code>
+<strong>Returns:</strong> <code>Promise<{ ok: true, value: string } | { ok: false, error: string, code: string }></code>
+
+<strong>Error codes:</strong>
+<ul>
+<li><code>FILE_NOT_FOUND</code>: File does not exist</li>
+<li><code>FILE_READ_FAILED</code>: Read operation failed</li>
+</ul>
 
 <hr>
 
-<pre><code class="language-javascript">await fs.readJson(filePath)
+<h3>writeText</h3>
+
+<p>Writes a string to a file. Creates parent directories if needed.</p>
+
+<pre><code class="language-javascript">import { writeText } from 'std/fs'
+
+const result = await writeText('./output.txt', 'Hello World')
+if (result.ok) {
+  print('File written')
+} else {
+  print('Error:', result.error)
+}
 </code></pre>
-
-<p>Reads and parses a JSON file.</p>
-
-<strong>Parameters:</strong>
-<ul>
-<li><code>filePath</code> (string): Path to the JSON file</li>
-</ul>
-
-<strong>Returns:</strong> <code>Promise<object></code>
-
-<h3>Writing Files</h3>
-
-<pre><code class="language-javascript">await fs.writeText(filePath, content)
-</code></pre>
-
-<p>Writes a string to a file.</p>
 
 <strong>Parameters:</strong>
 <ul>
@@ -103,278 +433,354 @@ await fs.readText(filePath)
 <li><code>content</code> (string): Content to write</li>
 </ul>
 
-<strong>Returns:</strong> <code>Promise<void></code>
+<strong>Returns:</strong> <code>Promise<{ ok: true } | { ok: false, error: string, code: string }></code>
 
 <hr>
 
-<pre><code class="language-javascript">await fs.writeJson(filePath, data)
-</code></pre>
-
-<p>Writes an object to a JSON file.</p>
-
-<strong>Parameters:</strong>
-<ul>
-<li><code>filePath</code> (string): Path to the file</li>
-<li><code>data</code> (object): Data to write</li>
-</ul>
-
-<strong>Returns:</strong> <code>Promise<void></code>
-
-<hr>
-
-<pre><code class="language-javascript">await fs.appendText(filePath, content)
-</code></pre>
-
-<p>Appends content to a file.</p>
-
-<strong>Parameters:</strong>
-<ul>
-<li><code>filePath</code> (string): Path to the file</li>
-<li><code>content</code> (string): Content to append</li>
-</ul>
-
-<strong>Returns:</strong> <code>Promise<void></code>
-
-<h3>Directory Operations</h3>
-
-<pre><code class="language-javascript">await fs.readDir(dirPath)
-</code></pre>
-
-<p>Lists all files and directories in a directory.</p>
-
-<strong>Parameters:</strong>
-<ul>
-<li><code>dirPath</code> (string): Path to the directory</li>
-</ul>
-
-<strong>Returns:</strong> <code>Promise<string[]></code>
-
-<hr>
-
-<pre><code class="language-javascript">await fs.createDir(dirPath)
-</code></pre>
-
-<p>Creates a directory.</p>
-
-<strong>Parameters:</strong>
-<ul>
-<li><code>dirPath</code> (string): Path to create</li>
-</ul>
-
-<strong>Returns:</strong> <code>Promise<void></code>
-
-<hr>
-
-<pre><code class="language-javascript">await fs.removeDir(dirPath)
-</code></pre>
-
-<p>Removes a directory.</p>
-
-<strong>Parameters:</strong>
-<ul>
-<li><code>dirPath</code> (string): Path to remove</li>
-</ul>
-
-<strong>Returns:</strong> <code>Promise<void></code>
-
-<h3>File Operations</h3>
-
-<pre><code class="language-javascript">await fs.exists(path)
-</code></pre>
+<h3>exists</h3>
 
 <p>Checks if a file or directory exists.</p>
 
+<pre><code class="language-javascript">import { exists } from 'std/fs'
+
+const result = await exists('./config.json')
+if (result.exists) {
+  print('File exists')
+}
+</code></pre>
+
 <strong>Parameters:</strong>
 <ul>
-<li><code>path</code> (string): Path to check</li>
+<li><code>filePath</code> (string): Path to check</li>
 </ul>
 
-<strong>Returns:</strong> <code>Promise<boolean></code>
+<strong>Returns:</strong> <code>Promise<{ ok: true, exists: boolean }></code>
+
+<p>This function always returns <code>ok: true</code>. The <code>exists</code> field indicates presence.</p>
 
 <hr>
 
-<pre><code class="language-javascript">await fs.removeFile(filePath)
+<h3>readDir</h3>
+
+<p>Lists all files and directories in a directory.</p>
+
+<pre><code class="language-javascript">import { readDir } from 'std/fs'
+
+const result = await readDir('./')
+if (result.ok) {
+  for (const entry of result.entries) {
+    print(entry)
+  }
+}
 </code></pre>
+
+<strong>Parameters:</strong>
+<ul>
+<li><code>dirPath</code> (string): Directory path</li>
+</ul>
+
+<strong>Returns:</strong> <code>Promise<{ ok: true, entries: string[] } | { ok: false, error: string, code: string }></code>
+
+<strong>Error codes:</strong>
+<ul>
+<li><code>FILE_NOT_FOUND</code>: Directory does not exist</li>
+<li><code>FILE_READ_FAILED</code>: Read operation failed</li>
+</ul>
+
+<hr>
+
+<h3>createDir</h3>
+
+<p>Creates a directory. Creates parent directories if they don't exist (recursive).</p>
+
+<pre><code class="language-javascript">import { createDir } from 'std/fs'
+
+const result = await createDir('./data/cache')
+if (result.ok) {
+  print('Directory created')
+}
+</code></pre>
+
+<strong>Parameters:</strong>
+<ul>
+<li><code>dirPath</code> (string): Directory path</li>
+</ul>
+
+<strong>Returns:</strong> <code>Promise<{ ok: true } | { ok: false, error: string, code: string }></code>
+
+<hr>
+
+<h3>removeFile</h3>
 
 <p>Removes a file.</p>
 
-<strong>Parameters:</strong>
-<ul>
-<li><code>filePath</code> (string): Path to the file</li>
-</ul>
+<pre><code class="language-javascript">import { removeFile } from 'std/fs'
 
-<strong>Returns:</strong> <code>Promise<void></code>
-
-<hr>
-
-<pre><code class="language-javascript">await fs.copyFile(source, dest)
+const result = await removeFile('./temp.txt')
+if (result.ok) {
+  print('File removed')
+}
 </code></pre>
-
-<p>Copies a file.</p>
 
 <strong>Parameters:</strong>
 <ul>
-<li><code>source</code> (string): Source path</li>
-<li><code>dest</code> (string): Destination path</li>
+<li><code>filePath</code> (string): File path</li>
 </ul>
 
-<strong>Returns:</strong> <code>Promise<void></code>
+<strong>Returns:</strong> <code>Promise<{ ok: true } | { ok: false, error: string, code: string }></code>
+
+<strong>Error codes:</strong>
+<ul>
+<li><code>FILE_NOT_FOUND</code>: File does not exist</li>
+<li><code>FILE_WRITE_FAILED</code>: Remove operation failed</li>
+</ul>
 
 <hr>
 
-<pre><code class="language-javascript">await fs.rename(oldPath, newPath)
-</code></pre>
+<h3>removeDir</h3>
 
-<p>Renames or moves a file.</p>
+<p>Removes a directory recursively.</p>
+
+<pre><code class="language-javascript">import { removeDir } from 'std/fs'
+
+const result = await removeDir('./temp')
+if (result.ok) {
+  print('Directory removed')
+}
+</code></pre>
 
 <strong>Parameters:</strong>
 <ul>
-<li><code>oldPath</code> (string): Current path</li>
-<li><code>newPath</code> (string): New path</li>
+<li><code>dirPath</code> (string): Directory path</li>
 </ul>
 
-<strong>Returns:</strong> <code>Promise<void></code>
+<strong>Returns:</strong> <code>Promise<{ ok: true } | { ok: false, error: string, code: string }></code>
 
 <hr>
 
-<pre><code class="language-javascript">await fs.stat(path)
-</code></pre>
+<h3>stat</h3>
 
 <p>Gets file or directory information.</p>
 
-<strong>Parameters:</strong>
-<ul>
-<li><code>path</code> (string): Path to inspect</li>
-</ul>
+<pre><code class="language-javascript">import { stat } from 'std/fs'
 
-<strong>Returns:</strong> <code>Promise<{isFile, isDirectory, size, created, modified}></code>
-
-<h2>JSON (std/json)</h2>
-
-<p>Parse and stringify JSON data.</p>
-
-<pre><code class="language-javascript">import json from 'std/json'
-
-json.parse(jsonString)
+const result = await stat('./file.txt')
+if (result.ok) {
+  print('Size:', result.stats.size)
+  print('Is file:', result.stats.isFile)
+  print('Is directory:', result.stats.isDirectory)
+}
 </code></pre>
 
-<p>Parses a JSON string.</p>
+<strong>Parameters:</strong>
+<ul>
+<li><code>filePath</code> (string): Path to inspect</li>
+</ul>
+
+<strong>Returns:</strong> <code>Promise<{ ok: true, stats: object } | { ok: false, error: string, code: string }></code>
+
+<p>Stats object contains:</p>
+<pre><code class="language-javascript">{
+  size: number,           // File size in bytes
+  isFile: boolean,        // true if regular file
+  isDirectory: boolean,   // true if directory
+  modified: Date,         // Last modification time
+  created: Date           // Creation time
+}
+</code></pre>
+
+<h2>HTTP (std/http)</h2>
+
+<p>HTTP server primitives. Note: In v1.5.0, HTTP handlers run on Node's event loop and cannot use <code>spawn()</code>, <code>sleep()</code>, or <code>channels()</code>. Handlers can use <code>async/await</code> and signals.</p>
+
+<h3>createServer</h3>
+
+<p>Creates an HTTP server instance.</p>
+
+<pre><code class="language-javascript">import { createServer } from 'std/http'
+
+const server = createServer((req, res) =&gt; {
+  if (req.url == '/') {
+    res.writeHead(200, { 'Content-Type': 'text/plain' })
+    res.end('Hello from Pulse')
+  } else {
+    res.writeHead(404)
+    res.end('Not Found')
+  }
+})
+
+server.listen(3000, () =&gt; {
+  print('Server running on port 3000')
+})
+</code></pre>
 
 <strong>Parameters:</strong>
 <ul>
-<li><code>jsonString</code> (string): JSON string to parse</li>
+<li><code>handler</code> (function): Request handler function <code>(req, res) => {}</code></li>
+<li>OR <code>options</code> (object): <code>{ handler: function, ...otherOptions }</code></li>
 </ul>
 
-<strong>Returns:</strong> <code>object</code>
+<strong>Returns:</strong> Node.js http.Server instance
+
+<p>The request handler receives:</p>
+<ul>
+<li><code>req</code>: Node.js IncomingMessage (has <code>url</code>, <code>method</code>, <code>headers</code>, etc.)</li>
+<li><code>res</code>: Node.js ServerResponse (has <code>writeHead()</code>, <code>end()</code>, etc.)</li>
+</ul>
+
+<p>Handlers are plain async functions running on Node's event loop. They cannot use Pulse scheduler primitives in v1.5.0.</p>
 
 <hr>
 
-<pre><code class="language-javascript">json.stringify(value)
-</code></pre>
+<h3>serve</h3>
 
-<p>Converts a value to JSON string.</p>
+<p>Serves HTTP requests with simplified response format.</p>
+
+<pre><code class="language-javascript">import { serve } from 'std/http'
+
+const server = await serve(3000, async (req) =&gt; {
+  return {
+    status: 200,
+    headers: { 'Content-Type': 'text/plain' },
+    body: 'Hello'
+  }
+})
+
+print('Server started on port 3000')
+</code></pre>
 
 <strong>Parameters:</strong>
 <ul>
-<li><code>value</code> (any): Value to stringify</li>
+<li><code>port</code> (number): Port to listen on</li>
+<li><code>handler</code> (function): Async function <code>(req) => response</code></li>
 </ul>
 
-<strong>Returns:</strong> <code>string</code>
+<strong>Returns:</strong> <code>Promise<Server></code> that resolves when server starts
+
+<p>Handler receives <code>req</code> (IncomingMessage) and returns response object:</p>
+<pre><code class="language-javascript">{
+  status: number,          // HTTP status code
+  headers: object,         // Response headers
+  body: string             // Response body
+}
+</code></pre>
 
 <hr>
 
-<pre><code class="language-javascript">json.stringifyPretty(value)
-</code></pre>
+<h3>json</h3>
 
-<p>Converts a value to formatted JSON string.</p>
+<p>Helper for JSON responses.</p>
+
+<pre><code class="language-javascript">import { json } from 'std/http'
+
+const response = json({ message: 'Success' }, 200)
+// Returns: { status: 200, headers: { 'Content-Type': 'application/json' }, body: '{"message":"Success"}' }
+</code></pre>
 
 <strong>Parameters:</strong>
 <ul>
-<li><code>value</code> (any): Value to stringify</li>
+<li><code>data</code> (any): Data to serialize as JSON</li>
+<li><code>status</code> (number, optional): HTTP status code (default: 200)</li>
 </ul>
 
-<strong>Returns:</strong> <code>string</code> (formatted with indentation)
+<strong>Returns:</strong> Response object compatible with <code>serve()</code>
 
 <hr>
 
-<pre><code class="language-javascript">json.validate(jsonString)
-</code></pre>
+<h3>text</h3>
 
-<p>Validates a JSON string.</p>
+<p>Helper for plain text responses.</p>
+
+<pre><code class="language-javascript">import { text } from 'std/http'
+
+const response = text('Hello World', 200)
+</code></pre>
 
 <strong>Parameters:</strong>
 <ul>
-<li><code>jsonString</code> (string): JSON to validate</li>
+<li><code>data</code> (string): Text content</li>
+<li><code>status</code> (number, optional): HTTP status code (default: 200)</li>
 </ul>
 
-<strong>Returns:</strong> <code>boolean</code>
+<strong>Returns:</strong> Response object with Content-Type: text/plain
 
-<h2>Math (std/math)</h2>
+<hr>
 
-<p>Mathematical functions and constants.</p>
+<h3>redirect</h3>
 
-<h3>Constants</h3>
+<p>Helper for redirect responses.</p>
 
-<pre><code class="language-javascript">import math from 'std/math'
+<pre><code class="language-javascript">import { redirect } from 'std/http'
 
-math.PI
-math.E
-math.SQRT2
+const response = redirect('/new-location', 302)
 </code></pre>
 
-<h3>Basic Functions</h3>
+<strong>Parameters:</strong>
+<ul>
+<li><code>url</code> (string): Redirect URL</li>
+<li><code>status</code> (number, optional): HTTP status code (default: 302)</li>
+</ul>
 
-<pre><code class="language-javascript">math.abs(x)
-math.min(a, b)
-math.max(a, b)
-math.floor(x)
-math.ceil(x)
-math.round(x)
-math.pow(base, exponent)
-math.sqrt(x)
+<strong>Returns:</strong> Response object with Location header
+
+<hr>
+
+<h3>send</h3>
+
+<p>Sends a response object to a response stream.</p>
+
+<pre><code class="language-javascript">import { createServer, json, send } from 'std/http'
+
+const server = createServer((req, res) =&gt; {
+  const response = json({ message: 'Hello' })
+  send(res, response)
+})
 </code></pre>
 
-<h3>Trigonometry</h3>
+<strong>Parameters:</strong>
+<ul>
+<li><code>res</code>: ServerResponse object</li>
+<li><code>response</code>: Response object with <code>{ status, headers, body }</code></li>
+</ul>
 
-<pre><code class="language-javascript">math.sin(x)
-math.cos(x)
-math.tan(x)
-math.toRadians(degrees)
-math.toDegrees(radians)
-</code></pre>
+<strong>Returns:</strong> <code>void</code>
 
-<h3>Utilities</h3>
+<h2>Reactivity (pulselang/runtime)</h2>
 
-<pre><code class="language-javascript">math.random()
-math.randomInt(min, max)
-math.clamp(value, min, max)
-math.lerp(start, end, t)
-</code></pre>
+<p>Fine-grained reactive primitives inspired by Solid.js.</p>
 
-<h2>Runtime (pulselang/runtime)</h2>
-
-<p>The core concurrency and reactivity primitives.</p>
-
-<h3>Reactivity</h3>
-
-<strong>signal</strong>
+<h3>signal</h3>
 
 <p>Creates a reactive signal.</p>
 
 <pre><code class="language-javascript">import { signal } from 'pulselang/runtime'
 
 const [count, setCount] = signal(0)
-print(count())
+
+print(count())      // 0
 setCount(5)
-print(count())
+print(count())      // 5
+
+setCount(c =&gt; c + 1)
+print(count())      // 6
 </code></pre>
 
-<p>Expected output:</p>
-<pre><code>0
-5
-</code></pre>
+<strong>Parameters:</strong>
+<ul>
+<li><code>initialValue</code> (any): Initial value for the signal</li>
+</ul>
 
-<strong>effect</strong>
+<strong>Returns:</strong> <code>[getter, setter]</code> tuple
+<ul>
+<li><code>getter()</code>: Returns current value and subscribes current reactive context</li>
+<li><code>setter(newValue)</code>: Updates value. Can pass value or updater function <code>(prev) => next</code></li>
+</ul>
+
+<p>Signals are fine-grained reactive primitives. Only direct subscribers update when the signal changes.</p>
+
+<hr>
+
+<h3>effect</h3>
 
 <p>Runs code whenever its dependencies change.</p>
 
@@ -383,7 +789,7 @@ print(count())
 const [count, setCount] = signal(0)
 
 effect(() =&gt; {
-  print('count is', count())
+  print('Count is', count())
 })
 
 setCount(1)
@@ -391,12 +797,23 @@ setCount(2)
 </code></pre>
 
 <p>Expected output:</p>
-<pre><code>count is 0
-count is 1
-count is 2
+<pre><code>Count is 0
+Count is 1
+Count is 2
 </code></pre>
 
-<strong>computed</strong>
+<strong>Parameters:</strong>
+<ul>
+<li><code>fn</code> (function): Function to run. Automatically tracks signal reads.</li>
+</ul>
+
+<strong>Returns:</strong> Dispose function to stop the effect
+
+<p>The effect runs immediately and re-runs whenever any signal it reads changes.</p>
+
+<hr>
+
+<h3>computed</h3>
 
 <p>Creates a derived reactive value.</p>
 
@@ -405,210 +822,295 @@ count is 2
 const [count, setCount] = signal(5)
 const doubled = computed(() =&gt; count() * 2)
 
-print(doubled())
+print(doubled())    // 10
 setCount(10)
-print(doubled())
-</code></pre>
-
-<p>Expected output:</p>
-<pre><code>10
-20
-</code></pre>
-
-<h3>Concurrency</h3>
-
-<strong>DeterministicScheduler</strong>
-
-<p>Creates a deterministic task scheduler. Tasks run in a predictable order based on logical time, not wall-clock time.</p>
-
-<pre><code class="language-javascript">import { DeterministicScheduler } from 'pulselang/runtime'
-
-const scheduler = new DeterministicScheduler()
-</code></pre>
-
-<strong>Methods:</strong>
-<ul>
-<li><code>scheduler.spawn(asyncFunction)</code>: Add a task to the scheduler</li>
-<li><code>await scheduler.run()</code>: Run all tasks to completion</li>
-<li><code>scheduler.sleep(ms)</code>: Pause for logical time duration</li>
-</ul>
-
-<strong>channel</strong>
-
-<p>Creates a channel for communication between tasks. Channels are not Promises, they're synchronization primitives.</p>
-
-<pre><code class="language-javascript">import { DeterministicScheduler, channel } from 'pulselang/runtime'
-
-const scheduler = new DeterministicScheduler()
-const ch = channel()
-
-scheduler.spawn(async () =&gt; {
-  await ch.send(42)
-  print('sent 42')
-})
-
-scheduler.spawn(async () =&gt; {
-  const msg = await ch.recv()
-  print('received', msg.value)
-})
-
-await scheduler.run()
-</code></pre>
-
-<p>Expected output:</p>
-<pre><code>sent 42
-received 42
+print(doubled())    // 20
 </code></pre>
 
 <strong>Parameters:</strong>
 <ul>
-<li><code>bufferSize</code> (number, optional): Buffer capacity</li>
-</ul>
-<p>  - <code>0</code> or omitted = unbuffered (sender blocks until receiver is ready)</p>
-<p>  - <code>> 0</code> = buffered (sender blocks only when buffer is full)</p>
-
-<strong>Channel Methods:</strong>
-<ul>
-<li><code>await ch.send(value)</code>: Send a value. Blocks if unbuffered or buffer is full.</li>
-<li><code>await ch.recv()</code>: Receive a value. Returns <code>{ value, ok }</code> where <code>ok</code> is <code>false</code> if channel is closed.</li>
-<li><code>for await (const val of ch)</code>: Iterate until channel closes.</li>
-<li><code>ch.close()</code>: Close the channel.</li>
+<li><code>fn</code> (function): Computation function. Returns derived value.</li>
 </ul>
 
-<p>Channels block tasks. When you <code>send()</code>, your task stops until another task does <code>recv()</code>. The scheduler controls exactly when to wake tasks up. This is why execution order is predictable.</p>
+<strong>Returns:</strong> Getter function that returns computed value
 
-<strong>select</strong>
+<p>Computed values only recalculate when their dependencies change, not on every read.</p>
 
-<p>Multiplexes multiple channel operations. Whichever channel becomes ready first (based on the scheduler's logical time), that case executes.</p>
+<hr>
 
-<pre><code class="language-javascript">import { DeterministicScheduler, channel, select, selectCase } from 'pulselang/runtime'
+<h3>batch</h3>
 
-const scheduler = new DeterministicScheduler()
-const ch1 = channel()
-const ch2 = channel()
+<p>Batches multiple signal updates into a single reactive update.</p>
 
-scheduler.spawn(async () =&gt; {
-  await scheduler.sleep(5)
-  await ch1.send('hello')
+<pre><code class="language-javascript">import { signal, effect, batch } from 'pulselang/runtime'
+
+const [count, setCount] = signal(0)
+const [name, setName] = signal('Alice')
+
+effect(() =&gt; {
+  print(`${name()} has ${count()} items`)
 })
 
-scheduler.spawn(async () =&gt; {
-  await scheduler.sleep(10)
-  await ch2.send('world')
+batch(() =&gt; {
+  setCount(5)
+  setName('Bob')
 })
-
-scheduler.spawn(async () =&gt; {
-  const result = await select {
-    case recv ch1
-    case recv ch2
-  }
-  print('got:', result.value, 'from case', result.caseIndex)
-})
-
-await scheduler.run()
 </code></pre>
 
 <p>Expected output:</p>
-<pre><code>got: hello from case 0
+<pre><code>Alice has 0 items
+Bob has 5 items
 </code></pre>
 
-<strong>Returns:</strong>
-<pre><code>{
-  caseIndex: number,  // Which case matched (0-indexed)
-  value: any,         // For recv operations, the received value
-  ok: boolean         // For recv operations, false if channel closed
+<strong>Parameters:</strong>
+<ul>
+<li><code>fn</code> (function): Function containing signal updates</li>
+</ul>
+
+<strong>Returns:</strong> <code>void</code>
+
+<p>Without <code>batch</code>, the effect would run twice (once for each setter). With <code>batch</code>, it runs once after all updates complete.</p>
+
+<h2>JSON (std/json)</h2>
+
+<p>JSON parsing and stringification with error handling.</p>
+
+<h3>parse</h3>
+
+<p>Parses a JSON string.</p>
+
+<pre><code class="language-javascript">import { parse } from 'std/json'
+
+const result = parse('{"name":"Alice","age":30}')
+if (result.ok) {
+  print(result.value.name)
+} else {
+  print('Parse error:', result.error)
 }
 </code></pre>
 
-<strong>sleep</strong>
+<strong>Parameters:</strong>
+<ul>
+<li><code>jsonString</code> (string): JSON string to parse</li>
+</ul>
 
-<p>Pauses execution for a logical time duration.</p>
+<strong>Returns:</strong> <code>{ ok: true, value: any } | { ok: false, error: string, code: string }</code>
 
-<pre><code class="language-javascript">import { DeterministicScheduler } from 'pulselang/runtime'
+<hr>
 
-const scheduler = new DeterministicScheduler()
+<h3>stringify</h3>
 
-scheduler.spawn(async () =&gt; {
-  print('start')
-  await scheduler.sleep(100)
-  print('end')
-})
+<p>Converts a value to JSON string.</p>
 
-await scheduler.run()
+<pre><code class="language-javascript">import { stringify } from 'std/json'
+
+const result = stringify({ name: 'Alice', age: 30 })
+if (result.ok) {
+  print(result.value)
+}
+</code></pre>
+
+<strong>Parameters:</strong>
+<ul>
+<li><code>value</code> (any): Value to stringify</li>
+</ul>
+
+<strong>Returns:</strong> <code>{ ok: true, value: string } | { ok: false, error: string, code: string }</code>
+
+<hr>
+
+<h3>stringifyPretty</h3>
+
+<p>Converts a value to formatted JSON string with indentation.</p>
+
+<pre><code class="language-javascript">import { stringifyPretty } from 'std/json'
+
+const result = stringifyPretty({ name: 'Alice', age: 30 })
+if (result.ok) {
+  print(result.value)
+}
 </code></pre>
 
 <p>Expected output:</p>
-<pre><code>start
-end
+<pre><code class="language-json">{
+  "name": "Alice",
+  "age": 30
+}
 </code></pre>
 
-<p>Note: <code>sleep</code> uses logical time, not wall-clock time. It's deterministic.</p>
+<strong>Parameters:</strong>
+<ul>
+<li><code>value</code> (any): Value to stringify</li>
+<li><code>indent</code> (number, optional): Indentation spaces (default: 2)</li>
+</ul>
+
+<strong>Returns:</strong> <code>{ ok: true, value: string } | { ok: false, error: string, code: string }</code>
+
+<h2>Math (std/math)</h2>
+
+<p>Mathematical functions and constants.</p>
+
+<h3>Constants</h3>
+
+<pre><code class="language-javascript">import { PI, E, SQRT2, LN2, LN10 } from 'std/math'
+
+print(PI)      // 3.141592653589793
+print(E)       // 2.718281828459045
+</code></pre>
+
+<p>Available constants:</p>
+<ul>
+<li><code>PI</code>: π (3.141592653589793)</li>
+<li><code>E</code>: Euler's number (2.718281828459045)</li>
+<li><code>SQRT2</code>: √2 (1.4142135623730951)</li>
+<li><code>LN2</code>: Natural log of 2</li>
+<li><code>LN10</code>: Natural log of 10</li>
+</ul>
+
+<hr>
+
+<h3>Basic Functions</h3>
+
+<pre><code class="language-javascript">import { abs, min, max, floor, ceil, round } from 'std/math'
+
+print(abs(-5))           // 5
+print(min(3, 7))         // 3
+print(max(3, 7))         // 7
+print(floor(4.7))        // 4
+print(ceil(4.3))         // 5
+print(round(4.5))        // 5
+</code></pre>
+
+<p>Functions:</p>
+<ul>
+<li><code>abs(x)</code>: Absolute value</li>
+<li><code>min(a, b, ...rest)</code>: Minimum value</li>
+<li><code>max(a, b, ...rest)</code>: Maximum value</li>
+<li><code>floor(x)</code>: Round down to integer</li>
+<li><code>ceil(x)</code>: Round up to integer</li>
+<li><code>round(x)</code>: Round to nearest integer</li>
+<li><code>pow(base, exp)</code>: Exponentiation</li>
+<li><code>sqrt(x)</code>: Square root</li>
+</ul>
+
+<hr>
+
+<h3>Trigonometry</h3>
+
+<pre><code class="language-javascript">import { sin, cos, tan, asin, acos, atan, atan2 } from 'std/math'
+
+print(sin(0))            // 0
+print(cos(0))            // 1
+print(tan(PI / 4))       // 1
+</code></pre>
+
+<p>Functions (all use radians):</p>
+<ul>
+<li><code>sin(x)</code>, <code>cos(x)</code>, <code>tan(x)</code>: Trigonometric functions</li>
+<li><code>asin(x)</code>, <code>acos(x)</code>, <code>atan(x)</code>: Inverse trigonometric functions</li>
+<li><code>atan2(y, x)</code>: Arctangent of y/x</li>
+</ul>
+
+<hr>
+
+<h3>Utilities</h3>
+
+<pre><code class="language-javascript">import { clamp, lerp, map } from 'std/math'
+
+print(clamp(15, 0, 10))        // 10 (clamped to max)
+print(lerp(0, 100, 0.5))       // 50 (linear interpolation)
+print(map(5, 0, 10, 0, 100))   // 50 (map value between ranges)
+</code></pre>
+
+<p>Functions:</p>
+<ul>
+<li><code>clamp(value, min, max)</code>: Constrains value to range</li>
+<li><code>lerp(start, end, t)</code>: Linear interpolation (t between 0 and 1)</li>
+<li><code>map(value, inMin, inMax, outMin, outMax)</code>: Maps value from one range to another</li>
+</ul>
 
 <h2>Path (std/path)</h2>
 
-<p>Path manipulation utilities.</p>
+<p>Path manipulation utilities wrapping Node.js path module.</p>
 
-<pre><code class="language-javascript">import path from 'std/path'
+<pre><code class="language-javascript">import { join, basename, dirname, extname, resolve } from 'std/path'
 
-path.join(...paths)
-path.basename(path, ext)
-path.dirname(path)
-path.extname(path)
-path.normalize(path)
-path.resolve(...paths)
-path.relative(fromPath, toPath)
-path.parse(path)
-path.format(pathObject)
-path.isAbsolute(path)
-path.separator()
-path.delimiter()
+print(join('foo', 'bar', 'baz.txt'))       // foo/bar/baz.txt
+print(basename('/foo/bar/baz.txt'))        // baz.txt
+print(dirname('/foo/bar/baz.txt'))         // /foo/bar
+print(extname('file.txt'))                 // .txt
+print(resolve('foo', 'bar'))               // /current/dir/foo/bar
 </code></pre>
 
-<h2>CLI (std/cli)</h2>
+<p>Functions:</p>
+<ul>
+<li><code>join(...paths)</code>: Joins path segments</li>
+<li><code>basename(path, ext)</code>: Returns last portion of path</li>
+<li><code>dirname(path)</code>: Returns directory name</li>
+<li><code>extname(path)</code>: Returns file extension</li>
+<li><code>normalize(path)</code>: Normalizes path</li>
+<li><code>resolve(...paths)</code>: Resolves to absolute path</li>
+<li><code>relative(from, to)</code>: Returns relative path</li>
+<li><code>parse(path)</code>: Parses path into object</li>
+<li><code>format(pathObject)</code>: Formats path from object</li>
+<li><code>isAbsolute(path)</code>: Checks if path is absolute</li>
+</ul>
 
-<p>Command-line interface utilities.</p>
+<h2>Console (std/console)</h2>
 
-<pre><code class="language-javascript">import cli from 'std/cli'
+<p>Console logging utilities.</p>
 
-cli.parseArgs(args, options)
-cli.getEnv(name, defaultValue)
-cli.prompt(message, options)
-cli.spinner(message)
-cli.progressBar(options)
-cli.table(data)
+<pre><code class="language-javascript">import { log, error, warn } from 'std/console'
+
+log('Info message')
+error('Error message')
+warn('Warning message')
 </code></pre>
 
-<h3>Colors</h3>
-
-<pre><code class="language-javascript">cli.colors.red('Error message')
-cli.colors.green('Success')
-cli.colors.blue('Info')
-cli.colors.yellow('Warning')
-cli.colors.bold('Important')
-</code></pre>
-
-<h2>Reactive</h2>
-
-<p>Fine-grained reactivity system. See the Runtime section above for <code>signal</code>, <code>effect</code>, <code>computed</code>, and <code>batch</code> examples with expected outputs.</p>
+<p>Functions:</p>
+<ul>
+<li><code>log(...args)</code>: Standard output</li>
+<li><code>error(...args)</code>: Error output</li>
+<li><code>warn(...args)</code>: Warning output</li>
+</ul>
 
 <h2>Global Functions</h2>
 
-<strong>print</strong>
+<h3>print</h3>
 
-<p>Outputs values to the console.</p>
+<p>Outputs values to the console. Automatically called with arguments separated by spaces.</p>
 
 <pre><code class="language-javascript">print('hello', 'world')
 print(42)
+print({ name: 'Alice' })
 </code></pre>
 
 <p>Expected output:</p>
 <pre><code>hello world
 42
+{ name: 'Alice' }
 </code></pre>
+
+<strong>Parameters:</strong>
+<ul>
+<li><code>...args</code>: Any number of values to print</li>
+</ul>
+
+<strong>Returns:</strong> <code>void</code>
 
 <hr>
 
 <p>For more examples and tutorials, visit the <a href="guide.html">Getting Started Guide</a>.</p>
+
+<h2>Known Limitations (v1.5.0)</h2>
+
+<strong>HTTP + Scheduler Integration</strong>: HTTP handlers cannot use <code>spawn()</code>, <code>sleep()</code>, or <code>channels()</code>. See <a href="https://github.com/osvfelices/pulse/blob/main/RUNTIME-2.0.md">RUNTIME-2.0.md</a> for details.
+
+<strong>Database Clients</strong>: <code>std/db</code> provides client stubs for MySQL, PostgreSQL, and Redis, but they are not fully implemented. SQLite integration (sqlite.js) is functional.
+
+<strong>CLI Utilities</strong>: <code>std/cli</code> module is minimal. Many functions listed in older documentation are not yet implemented.
+
+<strong>Crypto</strong>: <code>std/crypto</code> provides basic utilities but is not feature-complete.
 
       </article>
     </main>

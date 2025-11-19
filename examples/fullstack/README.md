@@ -6,7 +6,7 @@ A web application showing Pulse's features.
 
 - Server: Node.js HTTP server with reactive signals
 - Client: Reactive UI using Pulse signals
-- Build: Compile .pulse → .mjs
+- Build: Compile .pulse -> .mjs
 
 ## Project Structure
 

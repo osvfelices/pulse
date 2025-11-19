@@ -6,11 +6,13 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "backend": "pulse run server/main.pulse",
+    "prs": "pulse prs --port 3000 --project .",
+    "backend:dev": "pulse dev --port 3000 --project ."
   },
   "dependencies": {
-    "pulselang": "^1.0.6",
-    "@pulselang/react": "^1.0.6",
+    "pulselang": "^1.5.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
@@ -21,6 +23,6 @@
     "@tailwindcss/vite": "^4.0.0",
     "tailwindcss": "^4.0.0",
     "vite": "^5.3.1",
-    "vite-plugin-pulse": "^1.0.7"
+    "vite-plugin-pulse": "^1.5.0"
   }
 }

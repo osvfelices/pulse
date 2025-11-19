@@ -20,7 +20,7 @@
   function initSearch() {
     const searchInput = document.querySelector('.search-input');
     const searchResults = document.querySelector('.search-results');
-    
+
     if (!searchInput || !searchResults) return;
 
     // Sample search data - in real implementation, this would come from a search index
@@ -43,7 +43,7 @@
       }
 
       searchTimeout = setTimeout(() => {
-        const results = searchData.filter(item => 
+        const results = searchData.filter(item =>
           item.title.toLowerCase().includes(query) ||
           item.section.toLowerCase().includes(query)
         );
@@ -94,7 +94,7 @@
   function initNavigation() {
     const currentPath = window.location.pathname.split('/').pop() || 'index.html';
     const navLinks = document.querySelectorAll('.nav-link');
-    
+
     navLinks.forEach(link => {
       const href = link.getAttribute('href');
       if (href === currentPath || (currentPath === '' && href === 'index.html')) {
@@ -139,7 +139,7 @@
 
     function updateHeader() {
       const scrollY = window.scrollY;
-      
+
       if (scrollY > 50) {
         header.style.boxShadow = '0 1px 3px rgba(0, 0, 0, 0.1)';
       } else {
@@ -167,7 +167,7 @@
       e.preventDefault();
       const targetId = link.getAttribute('href').slice(1);
       const targetElement = document.getElementById(targetId);
-      
+
       if (targetElement) {
         targetElement.scrollIntoView({
           behavior: 'smooth',

@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 /**
  * Property-Based Fuzz Testing for Pulse Runtime
- * 
+ *
  * Uses fast-check to generate random sequences of operations and verify invariants:
  * - FIFO ordering for each channel
  * - Deterministic select behavior
  * - No deadlocks when progress is possible
  * - No lost wakeups
- * 
+ *
  * Install: npm install --save-dev fast-check
  * Run: node tests/fuzz/runtime.fuzz.test.js
  */
@@ -37,7 +37,7 @@ async function testChannelFIFO() {
         const scheduler = new DeterministicScheduler();
         const ch = channel(capacity);
         const received = [];
-        
+
         // Producer
         scheduler.spawn(async () => {
           for (const v of values) {
@@ -45,21 +45,21 @@ async function testChannelFIFO() {
           }
           ch.close();
         });
-        
+
         // Consumer
         scheduler.spawn(async () => {
           for await (const v of ch) {
             received.push(v);
           }
         });
-        
+
         await scheduler.run();
-        
+
         // Invariant: received order === sent order (FIFO)
         if (received.length !== values.length) {
           throw new Error(`Lost messages: sent ${values.length}, received ${received.length}`);
         }
-        
+
         for (let i = 0; i < values.length; i++) {
           if (received[i] !== values[i]) {
             throw new Error(`FIFO violation at index ${i}: expected ${values[i]}, got ${received[i]}`);
@@ -73,7 +73,7 @@ async function testChannelFIFO() {
 
 /**
  * Test 2: Select Determinism
- * Same operations with same timing → same select choices
+ * Same operations with same timing -> same select choices
  */
 async function testSelectDeterminism() {
   await fc.assert(
@@ -88,7 +88,7 @@ async function testSelectDeterminism() {
           const scheduler = new DeterministicScheduler();
           const channels = [channel(1), channel(1), channel(1)];
           const results = [];
-          
+
           // Producers
           for (const op of ops) {
             scheduler.spawn(async () => {
@@ -96,7 +96,7 @@ async function testSelectDeterminism() {
               await channels[op.channel].send(op.value);
             });
           }
-          
+
           // Consumer
           scheduler.spawn(async () => {
             for (let i = 0; i < ops.length; i++) {
@@ -108,19 +108,19 @@ async function testSelectDeterminism() {
               results.push({ caseIndex: result.caseIndex, value: result.value });
             }
           });
-          
+
           await scheduler.run();
           return results;
         };
-        
+
         // Run twice - must be identical (determinism)
         const results1 = await run();
         const results2 = await run();
-        
+
         if (results1.length !== results2.length) {
           throw new Error(`Non-deterministic length: ${results1.length} vs ${results2.length}`);
         }
-        
+
         for (let i = 0; i < results1.length; i++) {
           if (results1[i].caseIndex !== results2[i].caseIndex) {
             throw new Error(`Non-deterministic select at index ${i}: case ${results1[i].caseIndex} vs ${results2[i].caseIndex}`);
@@ -149,7 +149,7 @@ async function testNoLostWakeups() {
         const ch = channel(capacity);
         let sent = 0;
         let received = 0;
-        
+
         // Producer
         scheduler.spawn(async () => {
           for (let i = 0; i < count; i++) {
@@ -158,16 +158,16 @@ async function testNoLostWakeups() {
           }
           ch.close();
         });
-        
+
         // Consumer
         scheduler.spawn(async () => {
           for await (const _ of ch) {
             received++;
           }
         });
-        
+
         await scheduler.run();
-        
+
         // Invariant: all messages received
         if (sent !== count || received !== count) {
           throw new Error(`Lost wakeups: sent ${sent}/${count}, received ${received}/${count}`);
@@ -190,7 +190,7 @@ async function testCloseWakesReceivers() {
         const scheduler = new DeterministicScheduler();
         const ch = channel(0);
         let receiversDone = 0;
-        
+
         // Multiple receivers
         for (let i = 0; i < numReceivers; i++) {
           scheduler.spawn(async () => {
@@ -200,15 +200,15 @@ async function testCloseWakesReceivers() {
             receiversDone++;
           });
         }
-        
+
         // Close after delay
         scheduler.spawn(async () => {
           await scheduler.sleep(5);
           ch.close();
         });
-        
+
         await scheduler.run();
-        
+
         // Invariant: all receivers woke up
         if (receiversDone !== numReceivers) {
           throw new Error(`Not all receivers woke: ${receiversDone}/${numReceivers}`);
@@ -226,37 +226,37 @@ async function main() {
     { name: 'No Lost Wakeups', fn: testNoLostWakeups },
     { name: 'Close Wakes Receivers', fn: testCloseWakesReceivers }
   ];
-  
+
   let allPassed = true;
-  
+
   for (const test of tests) {
     console.log(`\nTesting: ${test.name}`);
     console.log('-'.repeat(60));
-    
+
     try {
       await test.fn();
-      console.log(`✓ PASSED`);
+      console.log(` PASSED`);
     } catch (error) {
-      console.error(`✗ FAILED: ${error.message}`);
+      console.error(` FAILED: ${error.message}`);
       if (error.counterexample) {
         console.error(`  Counterexample:`, JSON.stringify(error.counterexample, null, 2));
       }
       allPassed = false;
     }
   }
-  
+
   console.log('\n' + '='.repeat(60));
   if (allPassed) {
-    console.log(`✓ ALL FUZZ TESTS PASSED (${numRuns} runs each)`);
+    console.log(` ALL FUZZ TESTS PASSED (${numRuns} runs each)`);
     process.exit(0);
   } else {
-    console.error('✗ SOME FUZZ TESTS FAILED');
+    console.error(' SOME FUZZ TESTS FAILED');
     process.exit(1);
   }
 }
 
 main().catch(error => {
-  console.error('✗ Fatal error:', error.message);
+  console.error(' Fatal error:', error.message);
   console.error(error.stack);
   process.exit(1);
 });
