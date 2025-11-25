@@ -1,9 +1,9 @@
 {
   "name": "pulselang",
-  "version": "1.5.0",
+  "version": "2.0.0",
   "private": false,
   "license": "MIT",
-  "description": "Pulse Language v1.5.0 - Developer-Ready: deterministic runtime, stdlib, debugger, LSP, package manager, and PRS",
+  "description": "Pulse Runtime 2.0.0 - Production HTTP integration with full scheduler support: spawn, sleep, channels in HTTP handlers",
   "type": "module",
   "main": "lib/parser.js",
   "bin": {
