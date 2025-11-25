@@ -76,3 +76,46 @@ tools/vscode-pulse/
 
 # Tests directory
 tests/
+
+# Internal development files
+benchmarks/
+examples/app-a-api-server/
+examples/app-b-worker/
+examples/app-c-realtime/
+examples/concurrency-signals.pulse
+examples/observability-demo.js
+examples/patterns/
+examples/production-server/
+examples/realtime-chat/
+examples/resource-management-demo.js
+lib/runtime/http-integration.js
+lib/runtime/index.d.ts
+lib/runtime/observability/
+lib/runtime/resources/
+lib/runtime/scheduler-core.js
+lib/runtime/scheduler-global.js
+lib/runtime/scheduler-pool.js
+lib/runtime/scheduler-request.js
+docs/DATABASE-GUIDE.md
+docs/DATABASE-TYPE-CONVERSION.md
+docs/DB-GUIDE.md
+docs/DEBUGGING.md
+docs/DETERMINISM-GUARANTEES.md
+docs/HTTP-ADVERSARIAL-TESTING.md
+docs/HTTP-STATIC-FILES.md
+docs/PACKAGE-MANAGER.md
+docs/REQUEST-CONTEXT-DESIGN.md
+docs/RUNTIME-2.0-DESIGN.md
+docs/SCHEDULER-DEADLOCKS.md
+docs/SEMANTIC-GAPS-ANALYSIS.md
+docs/WEEK4-HTTP-SPECIFICATION.md
+docs/api-reference.md
+docs/error-audit.md
+docs/phase-4.6-complete.md
+docs/phase-5-complete.md
+docs/phase-6-benchmarks.md
+docs/phase-7-patterns.md
+docs/phase-8-observability.md
+docs/phase-9-resources.md
+docs/release-notes-2.0.0.md
+docs/sourcemaps.md
