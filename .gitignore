@@ -71,6 +71,7 @@ scripts/verify-lang-release.sh
 
 # Internal planning documents
 ROADMAP.md
+RUNTIME-2.0.md
 pre_release_audit/
 tools/vscode-pulse/
 tools/pulse-vscode/
