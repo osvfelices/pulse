@@ -40,8 +40,8 @@
   ],
   "scripts": {
     "parse": "node lib/run.js",
-    "test": "bash scripts/verify-lang-release.sh",
-    "verify": "bash scripts/verify-lang-release.sh",
+    "test": "bash scripts/verify-release.sh",
+    "verify": "bash scripts/verify-release.sh",
     "verify:determinism": "node tests/extreme/determinism-100runs.test.js",
     "bench:scheduler": "node tests/extreme/stress-1000tasks.test.js",
     "run:quickstart": "node lib/run.js quickstart/ping.pulse",
