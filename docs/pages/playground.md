@@ -169,9 +169,9 @@ Full name: Bob Jones
 Full name: Charlie Brown
 ```
 
-### HTTP Server (v1.5.0)
+### HTTP Server (v2.0.0)
 
-HTTP handlers in v1.5.0 run on Node's event loop and can use async/await and signals, but cannot use spawn(), sleep(), or channels(). Full scheduler integration is planned for Runtime 2.0.
+HTTP handlers in v2.0.0 have full scheduler integration and can use spawn(), sleep(), channels(), async/await, and signals.
 
 ```pulse
 import { createServer } from 'std/http'
@@ -194,7 +194,7 @@ server.listen(3000, () => {
 })
 ```
 
-This works because it only uses signals. Do NOT use spawn/sleep/channels in HTTP handlers in v1.5.0.
+HTTP handlers can now use all scheduler primitives including spawn, sleep, and channels in v2.0.0.
 
 ## Try It Locally
 

@@ -2,7 +2,7 @@
 
 Learn the fundamentals of Pulse programming in this guide.
 
-## Quickstart (v1.5.0)
+## Quickstart (v2.0.0)
 
 ### Installation
 
@@ -354,7 +354,7 @@ import { readFile, writeFile } from 'std/fs'
 Pulse includes a standard library:
 
 - **std/async** - spawn, sleep, channel, select, asyncAll, asyncRace
-- **std/http** - createServer, serve, json, text, redirect (Note: HTTP handlers cannot use spawn/sleep/channels in v1.5.0)
+- **std/http** - createServer, serve, json, text, redirect (Full scheduler support in v2.0.0)
 - **std/fs** - File system operations (readFile, writeFile, exists, mkdir, etc.)
 - **std/json** - JSON parsing and stringification with error handling
 - **std/math** - Mathematical functions (abs, min, max, clamp, etc.)
@@ -366,28 +366,11 @@ Pulse includes a standard library:
 
 Explore the [API Reference](api.html) for complete documentation.
 
-## HTTP Limitation in v1.5.0
+## HTTP + Scheduler Integration (v2.0.0)
 
-HTTP handlers run on Node's event loop and cannot use `spawn()`, `sleep()`, or `channels()`. Handlers can use `async/await` and signals.
+In v2.0.0, HTTP handlers now have full scheduler support. You can use `spawn()`, `sleep()`, and `channels()` alongside `async/await` and signals.
 
-This works in v1.5.0:
-
-```pulse
-import { createServer } from 'std/http'
-import { signal } from 'pulselang/runtime'
-
-const [counter, setCounter] = signal(0)
-
-const server = createServer((req, res) => {
-  setCounter(c => c + 1)
-  res.writeHead(200, { 'Content-Type': 'text/plain' })
-  res.end(`Request ${counter()}`)
-})
-
-server.listen(3000)
-```
-
-This does NOT work in v1.5.0 (will hang):
+Example with channels in HTTP handlers:
 
 ```pulse
 import { createServer } from 'std/http'
@@ -395,15 +378,17 @@ import { spawn, channel } from 'std/async'
 
 const server = createServer(async (req, res) => {
   const ch = channel(1)
-  spawn(async () => {  // DON'T DO THIS
-    await ch.send('data')
+  spawn(async () => {
+    await ch.send('data from spawned task')
   })
-  const [data] = await ch.recv()  // WILL HANG
+  const [data] = await ch.recv()
   res.end(data)
 })
+
+server.listen(3000)
 ```
 
-See [RUNTIME-2.0.md](https://github.com/osvfelices/pulse/blob/main/RUNTIME-2.0.md) for technical details. Full integration is planned for Runtime 2.0.
+This now works correctly in v2.0.0. The scheduler is fully integrated with HTTP request handling.
 
 ## Next Steps
 

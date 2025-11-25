@@ -191,9 +191,9 @@ Ready to start? Check out the [Getting Started Guide](guide.html) to write your 
 
 ## Known Limitations
 
-**Current version: v1.5.0**
+**Current version: v2.0.0**
 
-**HTTP + Scheduler Integration** - HTTP handlers run on Node's event loop and cannot use `spawn()`, `sleep()`, or `channels()`. Handlers can use `async/await` and signals. This is an architectural limitation where the synchronous deterministic scheduler cannot coexist with Node's async event loop. Full integration is planned for Runtime 2.0. See [RUNTIME-2.0.md](https://github.com/osvfelices/pulse/blob/main/RUNTIME-2.0.md) for technical details.
+**HTTP + Scheduler Integration** - RESOLVED IN 2.0.0 - HTTP handlers now fully support `spawn()`, `sleep()`, and `channels()` alongside `async/await` and signals. The scheduler has been integrated with HTTP request handling.
 
 **Platforms** - Tested on Node.js 18+. Deno/Bun/Browser support not verified.
 
@@ -222,4 +222,4 @@ Pulse is open source.
 - GitHub: [github.com/osvfelices/pulse](https://github.com/osvfelices/pulse)
 - Documentation: [https://osvfelices.github.io/pulse/](https://osvfelices.github.io/pulse/)
 - License: MIT
-- Version: 1.5.0
+- Version: 2.0.0
