@@ -74,9 +74,6 @@ ROADMAP.md
 pre_release_audit/
 tools/vscode-pulse/
 
-# Tests directory
-tests/
-
 # Internal development files
 benchmarks/
 examples/app-a-api-server/
