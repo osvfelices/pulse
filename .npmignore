@@ -50,3 +50,7 @@ Thumbs.db
 TODO.md
 NOTES.md
 *.backup
+
+# Development runtime files (not for distribution)
+lib/runtime/*-2.0.0-dev.js
+lib/runtime/resources/admission/*-2.0.0-dev.js
