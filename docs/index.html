@@ -232,9 +232,9 @@ main()
 
 <h2>Known Limitations</h2>
 
-<strong>Current version: v1.5.0</strong>
+<strong>Current version: v2.0.0</strong>
 
-<strong>HTTP + Scheduler Integration</strong> - HTTP handlers run on Node's event loop and cannot use <code>spawn()</code>, <code>sleep()</code>, or <code>channels()</code>. Handlers can use <code>async/await</code> and signals. This is an architectural limitation where the synchronous deterministic scheduler cannot coexist with Node's async event loop. Full integration is planned for Runtime 2.0. See <a href="https://github.com/osvfelices/pulse/blob/main/RUNTIME-2.0.md">RUNTIME-2.0.md</a> for technical details.
+<strong>HTTP + Scheduler Integration</strong> - RESOLVED IN 2.0.0 - HTTP handlers now fully support <code>spawn()</code>, <code>sleep()</code>, and <code>channels()</code> alongside <code>async/await</code> and signals. The scheduler has been integrated with HTTP request handling.
 
 <strong>Platforms</strong> - Tested on Node.js 18+. Deno/Bun/Browser support not verified.
 
@@ -264,7 +264,7 @@ main()
 <li>GitHub: <a href="https://github.com/osvfelices/pulse">github.com/osvfelices/pulse</a></li>
 <li>Documentation: <a href="https://osvfelices.github.io/pulse/">https://osvfelices.github.io/pulse/</a></li>
 <li>License: MIT</li>
-<li>Version: 1.5.0</li>
+<li>Version: 2.0.0</li>
 </ul>
 
       </article>

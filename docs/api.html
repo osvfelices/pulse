@@ -54,7 +54,7 @@
       <article class="article">
         <h1>API Reference</h1>
 
-<p>Complete reference for the Pulse v1.5.0 standard library.</p>
+<p>Complete reference for the Pulse v2.0.0 standard library.</p>
 
 <h2>Async (std/async)</h2>
 
@@ -591,7 +591,7 @@ if (result.ok) {
 
 <h2>HTTP (std/http)</h2>
 
-<p>HTTP server primitives. Note: In v1.5.0, HTTP handlers run on Node's event loop and cannot use <code>spawn()</code>, <code>sleep()</code>, or <code>channels()</code>. Handlers can use <code>async/await</code> and signals.</p>
+<p>HTTP server primitives. In v2.0.0, HTTP handlers have full scheduler support and can use <code>spawn()</code>, <code>sleep()</code>, and <code>channels()</code> alongside <code>async/await</code> and signals.</p>
 
 <h3>createServer</h3>
 
@@ -628,7 +628,7 @@ server.listen(3000, () =&gt; {
 <li><code>res</code>: Node.js ServerResponse (has <code>writeHead()</code>, <code>end()</code>, etc.)</li>
 </ul>
 
-<p>Handlers are plain async functions running on Node's event loop. They cannot use Pulse scheduler primitives in v1.5.0.</p>
+<p>Handlers are async functions with full scheduler integration in v2.0.0. They can use all Pulse scheduler primitives including spawn, sleep, and channels.</p>
 
 <hr>
 
@@ -1102,9 +1102,9 @@ print({ name: 'Alice' })
 
 <p>For more examples and tutorials, visit the <a href="guide.html">Getting Started Guide</a>.</p>
 
-<h2>Known Limitations (v1.5.0)</h2>
+<h2>Known Limitations (v2.0.0)</h2>
 
-<strong>HTTP + Scheduler Integration</strong>: HTTP handlers cannot use <code>spawn()</code>, <code>sleep()</code>, or <code>channels()</code>. See <a href="https://github.com/osvfelices/pulse/blob/main/RUNTIME-2.0.md">RUNTIME-2.0.md</a> for details.
+<strong>HTTP + Scheduler Integration</strong>: RESOLVED IN 2.0.0 - HTTP handlers now fully support <code>spawn()</code>, <code>sleep()</code>, and <code>channels()</code>.
 
 <strong>Database Clients</strong>: <code>std/db</code> provides client stubs for MySQL, PostgreSQL, and Redis, but they are not fully implemented. SQLite integration (sqlite.js) is functional.
 

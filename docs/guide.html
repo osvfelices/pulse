@@ -56,7 +56,7 @@
 
 <p>Learn the fundamentals of Pulse programming in this guide.</p>
 
-<h2>Quickstart (v1.5.0)</h2>
+<h2>Quickstart (v2.0.0)</h2>
 
 <h3>Installation</h3>
 
@@ -388,7 +388,7 @@ import { readFile, writeFile } from 'std/fs'
 
 <ul>
 <li><strong>std/async</strong> - spawn, sleep, channel, select, asyncAll, asyncRace</li>
-<li><strong>std/http</strong> - createServer, serve, json, text, redirect (Note: HTTP handlers cannot use spawn/sleep/channels in v1.5.0)</li>
+<li><strong>std/http</strong> - createServer, serve, json, text, redirect (Full scheduler support in v2.0.0)</li>
 <li><strong>std/fs</strong> - File system operations (readFile, writeFile, exists, mkdir, etc.)</li>
 <li><strong>std/json</strong> - JSON parsing and stringification with error handling</li>
 <li><strong>std/math</strong> - Mathematical functions (abs, min, max, clamp, etc.)</li>
@@ -401,42 +401,28 @@ import { readFile, writeFile } from 'std/fs'
 
 <p>Explore the <a href="api.html">API Reference</a> for complete documentation.</p>
 
-<h2>HTTP Limitation in v1.5.0</h2>
+<h2>HTTP + Scheduler Integration (v2.0.0)</h2>
 
-<p>HTTP handlers run on Node's event loop and cannot use <code>spawn()</code>, <code>sleep()</code>, or <code>channels()</code>. Handlers can use <code>async/await</code> and signals.</p>
+<p>In v2.0.0, HTTP handlers now have full scheduler support. You can use <code>spawn()</code>, <code>sleep()</code>, and <code>channels()</code> alongside <code>async/await</code> and signals.</p>
 
-<p>This works in v1.5.0:</p>
-
-<pre><code class="language-javascript">import { createServer } from 'std/http'
-import { signal } from 'pulselang/runtime'
-
-const [counter, setCounter] = signal(0)
-
-const server = createServer((req, res) =&gt; {
-  setCounter(c =&gt; c + 1)
-  res.writeHead(200, { 'Content-Type': 'text/plain' })
-  res.end(`Request ${counter()}`)
-})
-
-server.listen(3000)
-</code></pre>
-
-<p>This does NOT work in v1.5.0 (will hang):</p>
+<p>Example with channels in HTTP handlers:</p>
 
 <pre><code class="language-javascript">import { createServer } from 'std/http'
 import { spawn, channel } from 'std/async'
 
 const server = createServer(async (req, res) =&gt; {
   const ch = channel(1)
-  spawn(async () =&gt; {  // DON'T DO THIS
-    await ch.send('data')
+  spawn(async () =&gt; {
+    await ch.send('data from spawned task')
   })
-  const [data] = await ch.recv()  // WILL HANG
+  const [data] = await ch.recv()
   res.end(data)
 })
+
+server.listen(3000)
 </code></pre>
 
-<p>See <a href="https://github.com/osvfelices/pulse/blob/main/RUNTIME-2.0.md">RUNTIME-2.0.md</a> for technical details. Full integration is planned for Runtime 2.0.</p>
+<p>This now works correctly in v2.0.0. The scheduler is fully integrated with HTTP request handling.</p>
 
 <h2>Next Steps</h2>
 
