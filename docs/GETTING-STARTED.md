@@ -1,4 +1,15 @@
-# Getting Started with Pulse v1.5.0
+# Getting Started with Pulse Runtime 2.0
+
+> **Note:** This guide covers the legacy Pulse language features.
+>
+> For Pulse Runtime 2.0 (the JavaScript/TypeScript library), see:
+> - [README.md](../README.md) - Runtime 2.0 overview and quick start
+> - [API Reference](api-reference.md) - Complete API documentation
+> - Runtime 2.0 is a JavaScript library, not a language compiler
+
+---
+
+# Getting Started with Pulse Language (v2.0.0)
 
 Pulse is a deterministic runtime for concurrent applications. This guide covers installation, project setup, and core CLI usage.
 
@@ -13,7 +24,7 @@ npm install -g pulselang
 Verify installation:
 
 ```bash
-pulse --version  # Should output: 1.5.0
+pulse --version  # Should output: 2.0.0
 ```
 
 ## Basic Program

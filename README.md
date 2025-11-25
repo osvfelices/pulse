@@ -1,356 +1,464 @@
-# Pulse
+<p align="center">
+  <img src="pulse.svg" alt="Pulse" width="200"/>
+</p>
 
-A programming language with deterministic concurrency primitives and fine-grained reactivity. Pulse compiles to JavaScript and runs on Node.js.
+# Pulse Runtime 2.0
 
-## What is Pulse?
+Cooperative scheduler for Node.js with structured concurrency, deterministic task execution, and HTTP integration.
 
-Pulse is designed for writing concurrent programs that behave predictably. It provides:
+## What is Pulse Runtime?
 
-- **Deterministic scheduler** - Tasks execute in a predictable order based on logical time, not wall-clock time
-- **CSP-style channels** - Go-like channels for communication between concurrent tasks
-- **Fine-grained reactivity** - Solid.js-inspired signals for reactive state management
-- **Structured concurrency** - spawn/sleep/select primitives that compose cleanly
-- **Compiles to JavaScript** - Generates clean, readable JavaScript from Pulse source
+Pulse Runtime is a JavaScript/TypeScript library that provides:
 
-Pulse is intended for CLI tools, batch programs, test runners, and applications where deterministic behavior matters.
+- **Cooperative scheduler** - Deterministic task execution with spawn/sleep primitives
+- **CSP-style channels** - Go-like channels for inter-task communication
+- **Select statement** - Multiplex channel operations with deterministic ordering
+- **HTTP integration** - Scheduler pool for handling concurrent HTTP requests
+- **Structured concurrency** - Parent-child task relationships with automatic cancellation
+- **Resource management** - Admission control, load shedding, and backpressure
+- **Production observability** - Prometheus metrics, health checks, graceful shutdown
+
+Built for backend services that need predictable concurrency behavior, resource control, and production-grade reliability.
+
+## When to Use This
+
+Use Pulse Runtime when you need:
+
+**Structured Concurrency**
+- Parent tasks automatically cancel children when cancelled or when they complete
+- No orphaned tasks or background work that outlives its context
+- Clear task lifecycles with completion promises
+
+**Backpressure and Flow Control**
+- Channels with bounded buffers to prevent unbounded queuing
+- Admission control to reject requests when overloaded
+- Load shedding based on queue depth or memory pressure
+
+**Deterministic Execution**
+- Tasks execute in predictable order based on logical time, not wall-clock time
+- Same inputs produce same execution order (useful for testing and debugging)
+- Batch-then-yield scheduling model
+
+**Resource Management**
+- Per-request resource limits (task count, duration, memory)
+- Configurable concurrency pools for HTTP servers
+- Memory monitoring with state change events
+
+**Production Observability**
+- Prometheus metrics for tasks, channels, HTTP requests
+- Graceful shutdown with timeout support
+- Health check endpoints for load balancers
 
 ## Installation
 
 ```bash
-npm install -g pulselang
+npm install pulselang
 ```
 
-Or create a new project:
-
-```bash
-npx create-pulselang-app my-app
-cd my-app
-npm install
-npm run dev
-```
+Requires Node.js 18 or higher.
 
 ## Quick Start
 
-### Hello World
+### Basic Task Spawning
 
-```pulse
-fn main() {
-  print('Hello, Pulse!')
-}
+```javascript
+import { spawn, sleep } from 'pulselang/runtime';
 
-main()
+// Spawn a concurrent task
+const task = spawn(async () => {
+  await sleep(100);
+  return 'done';
+});
+
+// Wait for completion
+const result = await task.completionPromise;
+console.log(result); // 'done'
 ```
 
-Run it:
+### HTTP Server with Scheduler Pool
 
-```bash
-pulse run hello.pulse
+```javascript
+import { createServerWithScheduler, spawn, sleep } from 'pulselang/runtime';
+
+const server = createServerWithScheduler(async (req, res) => {
+  // All Pulse primitives work inside handlers
+  const task = spawn(async () => {
+    await sleep(100);
+    return `Processed ${req.url}`;
+  });
+
+  const result = await task.completionPromise;
+
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
+  res.end(result);
+}, {
+  maxPoolSize: 100,      // Max 100 concurrent requests
+  maxQueueSize: 50,      // Max 50 queued when pool full
+  timeout: 30000         // 30 second request timeout
+});
+
+server.listen(3000);
+console.log('Server running on port 3000');
 ```
 
-### Concurrent Tasks with Channels
+### Channels and Pipelines
 
-```pulse
-import { spawn, sleep, channel } from 'std/async'
+```javascript
+import { spawn, Channel } from 'pulselang/runtime';
 
-async fn producer(ch) {
+const ch = new Channel(10); // Buffered channel with capacity 10
+
+// Producer
+spawn(async () => {
   for (let i = 0; i < 5; i++) {
-    await sleep(10)
-    await ch.send(i)
-    print('Sent:', i)
+    await ch.send(i);
   }
-  ch.close()
-}
+  ch.close();
+});
 
-async fn consumer(ch) {
-  while (true) {
-    const [value, ok] = await ch.recv()
-    if (!ok) break
-    print('Received:', value)
+// Consumer
+spawn(async () => {
+  for await (const value of ch) {
+    console.log('Received:', value);
   }
-}
-
-async fn main() {
-  const ch = channel(2)
-
-  spawn(producer(ch))
-  spawn(consumer(ch))
-
-  await sleep(100)
-}
-
-spawn(main())
+});
 ```
-
-The scheduler ensures deterministic execution - tasks wake in a predictable order based on logical time, not real time.
 
 ### Select Statement
 
-```pulse
-import { spawn, sleep, channel, select, selectCase } from 'std/async'
+```javascript
+import { spawn, Channel, select, selectCase, sleep } from 'pulselang/runtime';
 
-async fn main() {
-  const ch1 = channel(1)
-  const ch2 = channel(1)
+const dataCh = new Channel(1);
+const timeoutCh = new Channel(1);
 
-  spawn(async () => {
-    await sleep(10)
-    await ch1.send('from ch1')
+// Slow data source
+spawn(async () => {
+  await sleep(2000);
+  await dataCh.send('data');
+});
+
+// Timeout after 1 second
+spawn(async () => {
+  await sleep(1000);
+  await timeoutCh.send('timeout');
+});
+
+// Wait for first ready channel
+const result = await select([
+  selectCase({
+    channel: dataCh,
+    op: 'recv',
+    handler: (data) => ({ ok: true, data })
+  }),
+  selectCase({
+    channel: timeoutCh,
+    op: 'recv',
+    handler: () => ({ ok: false, error: 'Timeout' })
   })
+]);
 
-  spawn(async () => {
-    await sleep(15)
-    await ch2.send('from ch2')
-  })
-
-  const result = await select([
-    selectCase({ channel: ch1, op: 'recv', handler: ([msg]) => msg }),
-    selectCase({ channel: ch2, op: 'recv', handler: ([msg]) => msg })
-  ])
-
-  print('Winner:', result.value)
-}
-
-spawn(main())
+console.log(result); // { ok: false, error: 'Timeout' }
 ```
 
-Select waits on multiple channels and picks the first one ready (deterministically).
+## Core Features
 
-### Signals (Reactive State)
+### Structured Concurrency
 
-```pulse
-import { signal, effect } from 'pulselang/runtime'
+Tasks form a tree structure with automatic cleanup:
 
-const [count, setCount] = signal(0)
+```javascript
+import { spawn, sleep, CancelledError } from 'pulselang/runtime';
 
-effect(() => {
-  print('Count changed to:', count())
-})
+const parent = spawn(async () => {
+  const child = spawn(async () => {
+    try {
+      await sleep(5000);
+    } catch (error) {
+      if (error instanceof CancelledError) {
+        console.log('Child was cancelled');
+      }
+    }
+  });
 
-setCount(1)
-setCount(2)
-setCount(3)
+  await sleep(100);
+  return 'parent done';
+});
+
+// When parent completes, child is automatically cancelled
+await parent.completionPromise;
 ```
 
-Signals are fine-grained reactive primitives. When a signal changes, only its direct subscribers run - no virtual DOM, no reconciliation.
+### Graceful Shutdown
 
-### HTTP Server
+```javascript
+import { createServerWithScheduler, setupGracefulShutdown } from 'pulselang/runtime';
 
-```pulse
-import { createServer } from 'std/http'
+const server = createServerWithScheduler(handler, options);
 
-const server = createServer((req, res) => {
-  if (req.url == '/') {
-    res.writeHead(200, { 'Content-Type': 'text/plain' })
-    res.end('Hello from Pulse')
-  } else {
-    res.writeHead(404)
-    res.end('Not Found')
+setupGracefulShutdown(server, {
+  timeout: 30000,
+  onShutdown: (signal) => {
+    console.log(`Received ${signal}, shutting down...`);
+  },
+  onComplete: (result) => {
+    console.log(`Shutdown complete: ${result.activeWaitedFor} requests finished`);
   }
-})
+});
 
-server.listen(3000, () => {
-  print('Server running on port 3000')
-})
+server.listen(3000);
+
+// On SIGTERM or SIGINT:
+// 1. Stop accepting new requests
+// 2. Wait for active requests (up to timeout)
+// 3. Close server
+// 4. Exit process
 ```
 
-**Important limitation in v1.5.0**: HTTP handlers run on Node's event loop and cannot use `spawn()`, `sleep()`, or `channels()`. Handlers can use `async/await` and signals. Full scheduler integration is planned for Runtime 2.0.
+### Observability
 
-See [RUNTIME-2.0.md](RUNTIME-2.0.md) for technical details about this limitation.
+```javascript
+import { createServerWithScheduler } from 'pulselang/runtime';
+import {
+  enableMetrics,
+  getMetricsRegistry,
+  exportPrometheus
+} from 'pulselang/runtime/observability';
 
-## Standard Library
+// Enable metrics collection
+enableMetrics();
 
-The `std/` directory provides core functionality:
+const server = createServerWithScheduler(async (req, res) => {
+  if (req.url === '/metrics') {
+    const metrics = exportPrometheus(getMetricsRegistry());
+    res.writeHead(200, { 'Content-Type': 'text/plain' });
+    res.end(metrics);
+    return;
+  }
 
-- **async** - spawn, sleep, channels, select, asyncAll, asyncRace
-- **http** - createServer, serve, json, text, redirect helpers
-- **db** - SQLite integration (sqlite.js)
-- **fs** - File system operations (readFile, writeFile, exists, etc.)
-- **json** - JSON parsing and stringification with error handling
-- **math** - Mathematical utilities (abs, min, max, clamp, etc.)
-- **path** - Path manipulation (join, resolve, basename, dirname, etc.)
-- **env** - Environment variable access
-- **error** - Structured error handling with error codes
-- **signal** - Reactive state primitives (signal, effect, computed, batch)
-- **console** - Console logging utilities (log, error, warn, etc.)
-- **crypto** - Cryptographic utilities (hash, randomBytes, etc.)
-- **cli** - Command-line interface helpers
-- **collections** - Data structure utilities
+  // Your handler...
+  res.writeHead(200);
+  res.end('OK');
+});
 
-## CLI Commands
+server.listen(3000);
 
-```bash
-pulse run <file>              # Run a Pulse program
-pulse build <src> <out>       # Compile to JavaScript
-pulse dev                     # Start development server
-pulse test                    # Run test suite
-pulse prs                     # Start Package Resolution Server
-pulse repl                    # Interactive REPL (planned)
+// GET /metrics returns Prometheus-format metrics:
+// pulse_task_spawn_total 42
+// pulse_http_request_duration_ms_bucket{le="100"} 35
+// pulse_http_request_duration_ms_bucket{le="500"} 40
+// ...
 ```
 
-## Language Features
+### Resource Management
 
-### Function Declarations
+```javascript
+import { withResourceManagement } from 'pulselang/runtime/http-integration.js';
+import {
+  AdmissionController,
+  LoadShedder
+} from 'pulselang/runtime/resources';
 
-```pulse
-fn add(a, b) {
-  return a + b
-}
+// Setup resource management
+const admissionController = new AdmissionController({
+  maxConcurrent: 1000,
+  maxQueued: 5000
+});
 
-async fn fetchData() {
-  // async work here
-}
+const loadShedder = new LoadShedder({
+  enabled: true,
+  queueDepth: 1000,        // Shed load if queue > 1000
+  memoryThreshold: 0.85    // Shed load if heap > 85%
+});
+
+// Wrap handler with resource management
+const handler = withResourceManagement(async (req, res) => {
+  // Your handler code
+  res.writeHead(200);
+  res.end('OK');
+}, {
+  admissionController,
+  loadShedder
+});
+
+const server = http.createServer(handler);
+server.listen(3000);
+
+// Requests are automatically:
+// - Queued when pool is full
+// - Rejected with 503 when queue is full
+// - Rejected with 503 when memory/queue thresholds exceeded
 ```
 
-### Variables
+## API Reference
 
-```pulse
-let x = 42
-const y = 100
+Complete API documentation with TypeScript examples: [docs/api-reference.md](docs/api-reference.md)
+
+### Core Primitives
+
+- `spawn(fn, options)` - Spawn a new task
+- `sleep(ms)` - Sleep for milliseconds
+- `getRequestContext()` - Get current request context (trace ID, request ID, custom metadata)
+
+### Channel Communication
+
+- `Channel` - CSP-style channel with buffered/unbuffered modes
+- `channel.send(value)` - Send to channel
+- `channel.recv()` - Receive from channel
+- `channel.close()` - Close channel
+- `for await...of` - Iterate over channel
+
+### Select Statement
+
+- `select(cases)` - Wait for first ready channel operation
+- `selectCase(config)` - Define a select case (send or recv)
+
+### HTTP Integration
+
+- `createServerWithScheduler(handler, options)` - Create HTTP server with scheduler pool
+- `setupGracefulShutdown(server, options)` - Setup graceful shutdown
+- `createHealthCheckHandler(server)` - Create health check endpoint
+- `getPoolStats(server)` - Get pool statistics
+- `getHealth(server)` - Get health status
+
+### Advanced
+
+- `SchedulerPool` - Manual pool management (most users don't need this)
+
+### Errors
+
+- `CancelledError` - Thrown when task is cancelled
+- `PoolExhaustedError` - Thrown when pool is exhausted
+
+## TypeScript Support
+
+Full TypeScript definitions with type inference:
+
+```typescript
+import { spawn, Channel, Task } from 'pulselang/runtime';
+
+// Type inference works
+const task: Task<number> = spawn(async () => {
+  return 42;
+});
+
+const result: number = await task.completionPromise;
+
+// Generic channel types
+const ch = new Channel<string>(5);
+await ch.send('hello');      // OK
+await ch.send(42);           // Type error!
+
+const [value, ok] = await ch.recv(); // value: string, ok: boolean
 ```
 
-### Control Flow
+## Production Patterns
 
-```pulse
-if (x > 10) {
-  print('big')
-} else {
-  print('small')
-}
+Pulse Runtime includes production-ready patterns built on core primitives:
 
-for (let i = 0; i < 10; i++) {
-  print(i)
-}
+- **Rate Limiter** - Token bucket with burst capacity
+- **Circuit Breaker** - Fault isolation with CLOSED/OPEN/HALF_OPEN states
+- **Worker Pool** - Bounded concurrency control
+- **Request Deduplication** - Singleflight pattern to prevent duplicate work
+- **Retry Logic** - Exponential backoff with jitter
 
-while (condition) {
-  // loop body
-}
-```
-
-### Imports
-
-```pulse
-import { spawn, sleep } from 'std/async'
-import { createServer } from 'std/http'
-import { signal } from 'pulselang/runtime'
-```
-
-## How It Works
-
-1. **Parser** - Parses `.pulse` source into AST
-2. **Codegen** - Generates JavaScript with runtime imports
-3. **Runtime** - Provides scheduler, channels, signals, and stdlib
-4. **Execution** - Runs on Node.js
-
-Pulse code compiles to clean, readable JavaScript. The compiler handles imports, async transforms, and injects runtime primitives where needed.
+See pattern documentation for usage examples.
 
 ## Examples
 
 The `examples/` directory contains runnable programs:
 
-- `hello.pulse` - Basic hello world
-- `http-api.pulse` - HTTP server with routing
-- `production-api.pulse` - Production-ready HTTP API example
-- `database-crud.pulse` - SQLite database operations
-- `concurrency-signals.pulse` - Demonstrates spawn + signals together
+- `production-server/` - Complete production server with graceful shutdown and health checks
+- `observability-demo.js` - Metrics endpoint and monitoring
+- `resource-management-demo.js` - Admission control and load shedding
+- Pattern examples in `lib/runtime/patterns/`
 
 Run examples:
 
 ```bash
-pulse run examples/http-api.pulse
+node examples/production-server/server.js
+node examples/observability-demo.js
+node examples/resource-management-demo.js
 ```
 
-## React Integration
+## Performance
 
-Pulse provides `@pulselang/react` for using signals in React components:
+Pulse Runtime 2.0 includes a comprehensive benchmark suite:
 
-```javascript
-import { useSignal } from '@pulselang/react'
+- Primitive benchmarks (spawn, sleep, channels, select)
+- HTTP server load tests at various concurrency levels
+- Memory leak detection (validated with 50k+ operations)
+- Automated regression detection
 
-function Counter() {
-  const [count, setCount] = useSignal(0)
+Run benchmarks:
 
-  return (
-    <button onClick={() => setCount(c => c + 1)}>
-      Count: {count()}
-    </button>
-  )
-}
+```bash
+node benchmarks/primitives/spawn-bench.js
+node benchmarks/http/http-bench.js
+node benchmarks/memory/leak-detection.js
 ```
 
-The React integration uses Pulse's signal system for fine-grained updates without re-rendering the entire component tree.
+Performance characteristics:
 
-## Vite Plugin
-
-Use `vite-plugin-pulse` to compile `.pulse` files in Vite projects:
-
-```javascript
-// vite.config.js
-import { defineConfig } from 'vite'
-import pulse from 'vite-plugin-pulse'
-
-export default defineConfig({
-  plugins: [pulse()]
-})
-```
-
-## Architecture
-
-- **Deterministic Scheduler** - [lib/runtime/scheduler-deterministic.js](lib/runtime/scheduler-deterministic.js)
-- **Channels** - [lib/runtime/channel-deterministic.js](lib/runtime/channel-deterministic.js)
-- **Select** - [lib/runtime/select-deterministic.js](lib/runtime/select-deterministic.js)
-- **Signals** - [lib/runtime/reactivity.js](lib/runtime/reactivity.js)
-- **Parser** - [lib/parser.js](lib/parser.js)
-- **Codegen** - [lib/codegen.js](lib/codegen.js)
+- Zero overhead when observability/resource management disabled
+- <5% overhead when metrics enabled with sampling
+- Deterministic batch-then-yield scheduling model
+- No memory leaks in sustained high-load scenarios
 
 ## Testing
 
-Pulse includes comprehensive tests for determinism:
+Run the full test suite:
 
 ```bash
-node tests/scheduler-deterministic.test.js
-node tests/channel-deterministic.test.js
-node tests/select-deterministic.test.js
-node tests/extreme/determinism-100runs.test.js
+npm test
 ```
 
-The 100-run determinism test spawns 1000 tasks and verifies identical execution order across 100 runs.
+All tests (42/42) pass:
 
-## Known Limitations
-
-**Current version: v1.5.0**
-
-- HTTP handlers cannot use `spawn()`, `sleep()`, or `channels()` (architectural limitation, planned for Runtime 2.0)
-- LSP and REPL are in early development
-- Source maps are functional but under refinement
-- Error messages can sometimes include raw stack traces (being improved)
-
-See [RUNTIME-2.0.md](RUNTIME-2.0.md) for details on the HTTP + scheduler limitation and the planned solution.
+- Deterministic scheduler tests
+- Channel tests (buffered, unbuffered, iteration)
+- Select tests (multiple channels, timeouts)
+- HTTP integration tests (pool, timeout, abort)
+- Error path tests (cleanup, cancellation)
+- Graceful shutdown tests
 
 ## Documentation
 
-Full documentation is available in the `docs/` directory:
+- [API Reference](docs/api-reference.md) - Complete API documentation with TypeScript examples
+- [Getting Started](docs/GETTING-STARTED.md) - Detailed getting started guide
+- [HTTP Guide](docs/HTTP-GUIDE.md) - HTTP server integration guide
+- Phase completion docs in `docs/` for implementation details
 
-- [Getting Started](docs/pages/getting-started.md)
-- [Language Guide](docs/pages/guide.md)
-- [Concurrency](docs/pages/concurrency.md)
-- [Signals](docs/pages/signals.md)
-- [HTTP Servers](docs/pages/http.md)
-- [Standard Library](docs/pages/stdlib.md)
-- [CLI Reference](docs/pages/cli.md)
+## Design Principles
 
-## Project Status
+Pulse Runtime 2.0 follows these principles:
 
-Pulse is in active development. The core language, scheduler, channels, and signals are stable and tested. HTTP support works with the limitations noted above. Development tooling (LSP, dev server, package manager) is functional but evolving.
+- **Determinism** - Tasks execute in predictable order based on logical time
+- **Structured concurrency** - Parent-child relationships with automatic cleanup
+- **Opt-in features** - Observability and resource management are separate imports
+- **Zero overhead when disabled** - Fast-path inline checks for optional features
+- **Production-first** - Graceful shutdown, health checks, metrics, admission control
+- **API stability** - Public API is frozen, semantic versioning guarantees
+
+## Known Limitations
+
+- HTTP handlers are the only supported entry point (no standalone CLI/batch support)
+- Distributed tracing not yet implemented (metrics only, no span propagation)
+- Debug inspectors deferred (no runtime introspection endpoints)
+- Worker pools don't support dynamic scaling
 
 ## Contributing
 
-Contributions are welcome. The codebase is organized as:
+Contributions welcome. The codebase is organized as:
 
-- `lib/` - Parser, codegen, runtime
-- `std/` - Standard library
+- `lib/runtime/` - Core scheduler, channels, select, HTTP integration
+- `lib/runtime/observability/` - Metrics collection and exporters
+- `lib/runtime/resources/` - Resource management (admission control, load shedding)
+- `lib/runtime/patterns/` - Production patterns
+- `benchmarks/` - Performance benchmarks
 - `tests/` - Test suite
 - `examples/` - Example programs
-- `packages/` - React integration, Vite plugin, create-pulselang-app
+- `docs/` - Documentation
 
 ## License
 
@@ -358,5 +466,7 @@ MIT
 
 ## Links
 
+- Repository: https://github.com/osvfelices/pulse
 - Documentation: https://osvfelices.github.io/pulse/
-- npm packages: pulselang, @pulselang/react, vite-plugin-pulse, create-pulselang-app
+- Issues: https://github.com/osvfelices/pulse/issues
+- npm: https://www.npmjs.com/package/pulselang

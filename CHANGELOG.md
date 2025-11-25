@@ -2,6 +2,129 @@
 
 All notable changes to Pulse will be documented in this file.
 
+## [2.0.0] - 2025-11-19
+
+### Breaking Changes
+
+None. This is a feature release that builds on 1.5.0 foundations. The public API is now frozen at 15 exports from `pulselang/runtime`.
+
+### Runtime 2.0 - Production-Ready Cooperative Scheduler
+
+**Core Scheduler** (Phases 1-4):
+- HTTP integration complete - `createServerWithScheduler()` runs request handlers in isolated RequestScheduler instances
+- Scheduler pool with configurable concurrency limits (maxPoolSize, maxQueueSize)
+- Request-scoped context propagation via `getRequestContext()` (trace IDs, request IDs, custom metadata)
+- Graceful shutdown with timeout support - waits for active requests before closing
+- Health check endpoints - JSON health status with pool statistics
+- Pool events for monitoring (request start/complete/error/timeout/abort, pool exhaustion, queue depth)
+- Request timeout support with automatic cleanup
+- Client abort handling with proper cleanup
+- Zero memory leaks verified in 50k+ operation stress tests
+
+**Public API** (Phase 5):
+- Single entry point: `pulselang/runtime` with 15 explicit exports
+- TypeScript definitions with type inference and generics
+- API reference documentation with examples and patterns
+- Semantic versioning guarantees - public API is stable, internal APIs may change
+- Package exports field for proper module resolution
+
+**15 Public Exports**:
+- Core: `spawn()`, `sleep()`, `getRequestContext()`
+- Channels: `Channel`
+- Select: `select()`, `selectCase()`
+- HTTP: `createServerWithScheduler()`, `setupGracefulShutdown()`, `createHealthCheckHandler()`, `getPoolStats()`, `getHealth()`
+- Scheduler: `scheduler` (for CLI/batch programs)
+- Advanced: `SchedulerPool`
+- Errors: `CancelledError`, `PoolExhaustedError`
+
+**Performance** (Phase 6):
+- Comprehensive benchmark suite (20+ benchmarks across 5 categories)
+- Automated regression detection framework
+- Memory leak detection tools
+- HTTP load testing infrastructure
+- Performance baseline established for spawn, sleep, channels, select, and HTTP handlers
+
+**Patterns** (Phase 7):
+- Token bucket rate limiter with burst capacity
+- Circuit breaker (CLOSED/OPEN/HALF_OPEN states) for fault isolation
+- Bounded worker pool for concurrency control
+- Request deduplication (singleflight) for cache stampede prevention
+- Retry with exponential backoff and jitter
+
+All patterns built on runtime primitives (spawn, sleep, Channel) and ready for production use.
+
+**Observability** (Phase 8):
+- Metrics collection framework with zero overhead when disabled
+- Counter, Histogram, and Gauge primitives
+- Prometheus text format exporter (compatible with Grafana)
+- JSON exporter with pretty-print and summary views
+- Instrumentation for tasks, channels, select, scheduler, and HTTP requests
+- Opt-in via `pulselang/runtime/observability` entry point
+- Sampling support to reduce overhead under high load
+
+**Metrics Collected**:
+- Task lifecycle: spawn, complete (success/error), cancel, duration, active count
+- Channel operations: send/recv (ok/closed status), buffer size, blocked operations
+- Select operations: execution count by case count, duration
+- Scheduler: queue depth, batch size, tick duration
+- HTTP: requests (method/status labels), latency, active requests, pool utilization
+
+**Resource Management** (Phase 9):
+- Admission control with priority queuing (high/normal/low priorities)
+- Load shedding based on queue depth, memory pressure, and event loop lag
+- Memory monitoring with state change events (normal/warning/critical)
+- Channel backpressure signaling with high/low water marks
+- Per-request resource quotas (task count, duration, memory limits)
+- HTTP integration via `withResourceManagement()` wrapper
+- Opt-in via `pulselang/runtime/resources` entry point
+- Conservative defaults (1000 concurrent, 5000 queued requests)
+
+**Resource Management APIs**:
+- `AdmissionController` - Request admission with configurable limits
+- `LoadShedder` - Automatic 503 responses when overloaded
+- `ResourceQuota` - Per-request resource limits
+- `MemoryMonitor` - Memory pressure detection with events
+- `BackpressureSignal` - Channel backpressure notifications
+
+### Testing
+
+- All core runtime tests pass (42/42 tests green)
+- Zero regressions in determinism, cleanup guarantees, or error handling
+- Stress tests validate no memory leaks in sustained high-load scenarios
+- Performance benchmarks establish baseline for future regression detection
+
+### Documentation
+
+- Complete API reference with TypeScript examples
+- Production deployment guides for observability and resource management
+- Pattern library documentation with use cases
+- Migration guide from internal APIs to public entry point
+
+### Examples
+
+- Production server with graceful shutdown, health checks, and structured logging
+- Observability demo with Prometheus metrics endpoint
+- Resource management demo with admission control and load shedding
+- Pattern examples for rate limiting, circuit breaking, worker pools, and retry logic
+
+### Design Principles
+
+This release follows specific constraints:
+- Deterministic scheduling preserved - batch-then-yield execution model unchanged
+- Opt-in features - observability and resource management are separate entry points
+- Zero overhead when disabled - metrics and resource management have fast-path inline checks
+- No breaking changes - all Phase 5 public API exports remain stable
+- Production-first - features designed for real-world deployment (graceful shutdown, health checks, metrics, admission control)
+
+### Known Limitations
+
+- HTTP handlers are the only supported entry point for scheduler integration (no CLI/batch support yet)
+- Distributed tracing not implemented (metrics only, no trace/span propagation)
+- Debug inspectors deferred (no runtime introspection endpoints for tasks/channels)
+- Worker pools are bounded but don't support dynamic scaling
+
+See individual phase documentation in `docs/` for detailed specifications and implementation notes.
+
 ## [1.5.0] - 2024-11-15
 
 ### Core Runtime
