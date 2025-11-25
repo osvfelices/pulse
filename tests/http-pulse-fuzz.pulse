@@ -1,0 +1,246 @@
+// HTTP Pulse-Only Fuzz Tests
+// Category 5: Fuzzing HTTP handler logic written purely in Pulse
+// Tests: randomized handler delays, random body sizes, random header sets
+
+import { createServer } from '../lib/http/server.js';
+import { fetch } from '../lib/http/client.js';
+
+async fn main() {
+  print('\n=== HTTP Pulse-Only Fuzz Tests ===\n');
+
+  await testRandomizedHandlerDelays();
+  await testRandomBodySizes();
+  await testRandomHeaderSets();
+
+  print('\n All Pulse-only fuzz tests completed');
+}
+
+// Test 1: Randomized handler delays
+async fn testRandomizedHandlerDelays() {
+  print('Test 1: Randomized handler delays (20 requests)...');
+
+  const server = createServer({ host: '127.0.0.1', port: 0, bufferSize: 10 });
+  server.listen();
+  await sleep(50);
+
+  const port = server.port;
+  const results = [];
+
+  // Handler with random delays
+  startRandomDelayHandler(server, results, 20);
+
+  await sleep(20);
+
+  // Send 20 requests
+  const requests = [];
+  for (let i = 0; i < 20; i = i + 1) {
+    requests.push(fetch(`http://127.0.0.1:${port}/random?id=${i}`));
+  }
+
+  await Promise.all(requests);
+  await sleep(500);
+
+  // Verify all requests handled despite random delays
+  if (results.length == 20) {
+    // Calculate delay range
+    let minDelay = results[0].delay;
+    let maxDelay = results[0].delay;
+    for (let i = 0; i < results.length; i = i + 1) {
+      if (results[i].delay < minDelay) minDelay = results[i].delay;
+      if (results[i].delay > maxDelay) maxDelay = results[i].delay;
+    }
+
+    print(`   All 20 requests handled with random delays`);
+    print(`   Delays ranged from ${minDelay}ms to ${maxDelay}ms`);
+  } else {
+    print(`   Expected 20 requests, got ${results.length}`);
+  }
+
+  await server.close();
+}
+
+async fn startRandomDelayHandler(server, results, count) {
+  for (let i = 0; i < count; i = i + 1) {
+    const [req, ok] = await server.requests.recv();
+    if (!ok) break;
+
+    // Random delay between 5-50ms
+    const delay = randomInt(5, 50);
+    await sleep(delay);
+
+    results.push({ id: req.query.id, delay: delay });
+    req.respond({ status: 200, body: `Delayed ${delay}ms` });
+  }
+}
+
+// Test 2: Random body sizes (stress test channel buffering)
+async fn testRandomBodySizes() {
+  print('\nTest 2: Random body sizes (30 requests)...');
+
+  const server = createServer({ host: '127.0.0.1', port: 0, bufferSize: 5 });
+  server.listen();
+  await sleep(50);
+
+  const port = server.port;
+  const bodySizes = [];
+
+  // Handler that tracks body sizes
+  startBodySizeHandler(server, bodySizes, 30);
+
+  await sleep(20);
+
+  // Send 30 requests with random body sizes (10-1000 bytes)
+  const requests = [];
+  const sentSizes = [];
+
+  for (let i = 0; i < 30; i = i + 1) {
+    const size = randomInt(10, 1000);
+    sentSizes.push(size);
+    const body = randomString(size);
+
+    requests.push(fetch(`http://127.0.0.1:${port}/body`, {
+      method: 'POST',
+      body: body
+    }));
+  }
+
+  await Promise.all(requests);
+  await sleep(300);
+
+  // Verify all bodies received correctly
+  if (bodySizes.length == 30) {
+    let allMatch = true;
+    for (let i = 0; i < 30; i = i + 1) {
+      if (bodySizes[i] != sentSizes[i]) {
+        allMatch = false;
+        break;
+      }
+    }
+
+    if (allMatch) {
+      let minSize = bodySizes[0];
+      let maxSize = bodySizes[0];
+      for (let i = 0; i < bodySizes.length; i = i + 1) {
+        if (bodySizes[i] < minSize) minSize = bodySizes[i];
+        if (bodySizes[i] > maxSize) maxSize = bodySizes[i];
+      }
+
+      print(`   All 30 random-sized bodies handled correctly`);
+      print(`   Sizes ranged from ${minSize} to ${maxSize} bytes`);
+    } else {
+      print(`   Some body sizes didn't match`);
+    }
+  } else {
+    print(`   Expected 30 requests, got ${bodySizes.length}`);
+  }
+
+  await server.close();
+}
+
+async fn startBodySizeHandler(server, bodySizes, count) {
+  for (let i = 0; i < count; i = i + 1) {
+    const [req, ok] = await server.requests.recv();
+    if (!ok) break;
+
+    bodySizes.push(req.body.length);
+    req.respond({ status: 200, body: 'OK' });
+  }
+}
+
+// Test 3: Random header sets
+async fn testRandomHeaderSets() {
+  print('\nTest 3: Random header sets (25 requests)...');
+
+  const server = createServer({ host: '127.0.0.1', port: 0 });
+  server.listen();
+  await sleep(50);
+
+  const port = server.port;
+  const headerCounts = [];
+
+  // Handler that counts headers
+  startHeaderHandler(server, headerCounts, 25);
+
+  await sleep(20);
+
+  // Send 25 requests with random number of headers (1-10)
+  const requests = [];
+  const expectedCounts = [];
+
+  for (let i = 0; i < 25; i = i + 1) {
+    const numHeaders = randomInt(1, 10);
+    expectedCounts.push(numHeaders);
+
+    const headers = {};
+    for (let j = 0; j < numHeaders; j = j + 1) {
+      headers[`X-Custom-${j}`] = `value-${j}`;
+    }
+
+    requests.push(fetch(`http://127.0.0.1:${port}/headers`, {
+      method: 'GET',
+      headers: headers
+    }));
+  }
+
+  await Promise.all(requests);
+  await sleep(200);
+
+  // Verify headers received
+  if (headerCounts.length == 25) {
+    let minCount = headerCounts[0];
+    let maxCount = headerCounts[0];
+    for (let i = 0; i < headerCounts.length; i = i + 1) {
+      if (headerCounts[i] < minCount) minCount = headerCounts[i];
+      if (headerCounts[i] > maxCount) maxCount = headerCounts[i];
+    }
+
+    print(`   All 25 random header sets handled`);
+    print(`   Header counts ranged from ${minCount} to ${maxCount}`);
+  } else {
+    print(`   Expected 25 requests, got ${headerCounts.length}`);
+  }
+
+  await server.close();
+}
+
+async fn startHeaderHandler(server, headerCounts, count) {
+  for (let i = 0; i < count; i = i + 1) {
+    const [req, ok] = await server.requests.recv();
+    if (!ok) break;
+
+    // Count custom headers
+    let customCount = 0;
+    for (const key in req.headers) {
+      if (key.startsWith('x-custom-')) {
+        customCount = customCount + 1;
+      }
+    }
+
+    headerCounts.push(customCount);
+    req.respond({ status: 200, body: 'OK' });
+  }
+}
+
+// Helper: Random integer between min and max (inclusive)
+fn randomInt(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+// Helper: Random string of given length
+fn randomString(length) {
+  const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+  let result = '';
+  for (let i = 0; i < length; i = i + 1) {
+    const index = Math.floor(Math.random() * chars.length);
+    result = result + chars[index];
+  }
+  return result;
+}
+
+async fn sleep(ms) {
+  return new Promise(fn(resolve) {
+    setTimeout(resolve, ms);
+  });
+}
+
+main();

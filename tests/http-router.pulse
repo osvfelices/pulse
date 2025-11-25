@@ -1,0 +1,296 @@
+// HTTP Router Tests (Week 5)
+// Tests routing, middleware, request/response helpers
+
+import { createServer } from '../lib/http/server.js';
+import { Router, cors, bodyParser, logger } from '../lib/http/router.js';
+import { fetch } from '../lib/http/client.js';
+
+async fn main() {
+  print('=== HTTP Router Tests (Week 5) ===\n');
+
+  await testBasicRouting();
+  await testRouteParameters();
+  await testMiddleware();
+  await testRequestHelpers();
+  await testResponseHelpers();
+  await test404Handling();
+
+  print('\n All router tests completed');
+}
+
+// Test 1: Basic routing (GET, POST, PUT, DELETE)
+async fn testBasicRouting() {
+  print('Test 1: Basic HTTP method routing...');
+
+  const app = new Router();
+
+  // Inline async fn handlers (now supported with compiler fix)
+  app.get('/get', async fn(req, res) {
+    res.json({ method: 'GET' });
+  });
+
+  app.post('/post', async fn(req, res) {
+    res.json({ method: 'POST' });
+  });
+
+  app.put('/put', async fn(req, res) {
+    res.json({ method: 'PUT' });
+  });
+
+  app.delete('/delete', async fn(req, res) {
+    res.json({ method: 'DELETE' });
+  });
+
+  const server = createServer({ host: '127.0.0.1', port: 0 });
+  server.listen();
+  await sleep(50);
+
+  const port = server.port;
+
+  // Start router in background
+  startRouter(app, server);
+  await sleep(10);
+
+  // Test GET
+  const getResp = await fetch(`http://127.0.0.1:${port}/get`);
+  const getData = JSON.parse(getResp.body);
+
+  // Test POST
+  const postResp = await fetch(`http://127.0.0.1:${port}/post`, { method: 'POST' });
+  const postData = JSON.parse(postResp.body);
+
+  // Test PUT
+  const putResp = await fetch(`http://127.0.0.1:${port}/put`, { method: 'PUT' });
+  const putData = JSON.parse(putResp.body);
+
+  // Test DELETE
+  const deleteResp = await fetch(`http://127.0.0.1:${port}/delete`, { method: 'DELETE' });
+  const deleteData = JSON.parse(deleteResp.body);
+
+  // Verify
+  if (getData.method == 'GET' && postData.method == 'POST' &&
+      putData.method == 'PUT' && deleteData.method == 'DELETE') {
+    print('   All HTTP methods routed correctly');
+  } else {
+    print('   Routing failed');
+  }
+
+  await server.close();
+}
+
+// Test 2: Route parameters (/users/:id)
+async fn testRouteParameters() {
+  print('\nTest 2: Route parameters...');
+
+  const app = new Router();
+
+  app.get('/users/:id', async fn(req, res) {
+    const id = req.param('id');
+    res.json({ userId: id });
+  });
+
+  app.get('/users/:userId/posts/:postId', async fn(req, res) {
+    const userId = req.param('userId');
+    const postId = req.param('postId');
+    res.json({ userId: userId, postId: postId });
+  });
+
+  const server = createServer({ host: '127.0.0.1', port: 0 });
+  server.listen();
+  await sleep(50);
+
+  const port = server.port;
+  startRouter(app, server);
+  await sleep(10);
+
+  // Test single param
+  const resp1 = await fetch(`http://127.0.0.1:${port}/users/123`);
+  const data1 = JSON.parse(resp1.body);
+
+  // Test multiple params
+  const resp2 = await fetch(`http://127.0.0.1:${port}/users/456/posts/789`);
+  const data2 = JSON.parse(resp2.body);
+
+  if (data1.userId == '123' && data2.userId == '456' && data2.postId == '789') {
+    print('   Route parameters extracted correctly');
+  } else {
+    print('   Parameter extraction failed');
+  }
+
+  await server.close();
+}
+
+// Test 3: Middleware execution order
+async fn testMiddleware() {
+  print('\nTest 3: Middleware execution...');
+
+  const app = new Router();
+  const log = [];
+
+  // Inline async fn middleware (now supported)
+  app.use(async fn(req, res, next) {
+    log.push('middleware1');
+    await next();
+  });
+
+  app.use(async fn(req, res, next) {
+    log.push('middleware2');
+    await next();
+  });
+
+  app.get('/test', async fn(req, res) {
+    log.push('route');
+    res.json({ ok: true });
+  });
+
+  const server = createServer({ host: '127.0.0.1', port: 0 });
+  server.listen();
+  await sleep(50);
+
+  const port = server.port;
+  startRouter(app, server);
+  await sleep(10);
+
+  await fetch(`http://127.0.0.1:${port}/test`);
+  await sleep(20);
+
+  // Verify execution order
+  if (log.length == 3 && log[0] == 'middleware1' &&
+      log[1] == 'middleware2' && log[2] == 'route') {
+    print('   Middleware executed in correct order');
+  } else {
+    print('   Middleware order incorrect:', JSON.stringify(log));
+  }
+
+  await server.close();
+}
+
+// Test 4: Request helpers (json(), header(), query())
+async fn testRequestHelpers() {
+  print('\nTest 4: Request helpers...');
+
+  const app = new Router();
+  app.use(bodyParser());
+
+  app.post('/test', async fn(req, res) {
+    const body = req.json();
+    const header = req.header('X-Custom');
+    const query = req.queryParam('foo');
+
+    res.json({
+      body: body,
+      header: header,
+      query: query
+    });
+  });
+
+  const server = createServer({ host: '127.0.0.1', port: 0 });
+  server.listen();
+  await sleep(50);
+
+  const port = server.port;
+  startRouter(app, server);
+  await sleep(10);
+
+  const resp = await fetch(`http://127.0.0.1:${port}/test?foo=bar`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-Custom': 'value' },
+    body: '{"test":"data"}'
+  });
+
+  const data = JSON.parse(resp.body);
+
+  if (data.body.test == 'data' && data.header == 'value' && data.query == 'bar') {
+    print('   Request helpers work correctly');
+  } else {
+    print('   Request helpers failed');
+  }
+
+  await server.close();
+}
+
+// Test 5: Response helpers (status(), json(), send())
+async fn testResponseHelpers() {
+  print('\nTest 5: Response helpers...');
+
+  const app = new Router();
+
+  app.get('/json', async fn(req, res) {
+    res.status(201).json({ created: true });
+  });
+
+  app.get('/text', async fn(req, res) {
+    res.status(200).send('Hello World');
+  });
+
+  const server = createServer({ host: '127.0.0.1', port: 0 });
+  server.listen();
+  await sleep(50);
+
+  const port = server.port;
+  startRouter(app, server);
+  await sleep(10);
+
+  // Test json()
+  const resp1 = await fetch(`http://127.0.0.1:${port}/json`);
+  const data1 = JSON.parse(resp1.body);
+
+  // Test send()
+  const resp2 = await fetch(`http://127.0.0.1:${port}/text`);
+
+  if (resp1.status == 201 && data1.created == true &&
+      resp2.status == 200 && resp2.body == 'Hello World') {
+    print('   Response helpers work correctly');
+  } else {
+    print('   Response helpers failed');
+  }
+
+  await server.close();
+}
+
+// Test 6: 404 handling
+async fn test404Handling() {
+  print('\nTest 6: 404 handling...');
+
+  const app = new Router();
+
+  app.get('/exists', async fn(req, res) {
+    res.json({ found: true });
+  });
+
+  const server = createServer({ host: '127.0.0.1', port: 0 });
+  server.listen();
+  await sleep(50);
+
+  const port = server.port;
+  startRouter(app, server);
+  await sleep(10);
+
+  // Test existing route
+  const resp1 = await fetch(`http://127.0.0.1:${port}/exists`);
+
+  // Test non-existent route
+  const resp2 = await fetch(`http://127.0.0.1:${port}/notfound`);
+  const data2 = JSON.parse(resp2.body);
+
+  if (resp1.status == 200 && resp2.status == 404 && data2.error == 'Not found') {
+    print('   404 handling works correctly');
+  } else {
+    print('   404 handling failed');
+  }
+
+  await server.close();
+}
+
+// Helper: Start router in background
+async fn startRouter(app, server) {
+  app.serve(server);
+}
+
+async fn sleep(ms) {
+  return new Promise(fn(resolve) {
+    setTimeout(resolve, ms);
+  });
+}
+
+main();

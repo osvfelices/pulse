@@ -1,0 +1,29 @@
+import { spawn, sleep } from 'std/async'
+
+let count = 0
+
+async fn worker(id) {
+  await sleep(1)
+  count = count + 1
+}
+
+async fn main() {
+  // Spawn 1000 concurrent tasks
+  for (let i = 0; i < 1000; i++) {
+    spawn(worker(i))
+  }
+  
+  // Wait for all tasks to complete
+  // Each task increments logical time when it starts (1-1000 ticks)
+  // Plus sleep duration (1 tick each), so total time ~1001
+  // Sleep longer to ensure all complete
+  await sleep(1500)
+  
+  if (count != 1000) {
+    throw('Expected 1000 completed tasks, got ' + count)
+  }
+  
+  print('✓ All 1000 spawned tasks completed successfully')
+}
+
+spawn(main())

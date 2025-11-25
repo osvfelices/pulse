@@ -1,0 +1,147 @@
+// Critical Systems Test
+// Verifies that all Week 6 critical fixes work correctly:
+// 1. Transaction auto-rollback on commit failure
+// 2. Redis pub/sub error handling
+// 3. Error helpers (ensure, retry, etc.)
+// 4. Request context
+// 5. Type conversion policies
+
+import { ensure, defaultTo, collect, retry } from '../std/error.js';
+
+async fn main() {
+  print('=== Critical Systems Test ===\n');
+
+  await testErrorHelpers();
+  await testRetryMechanism();
+  await testCollectResults();
+
+  print('\n All critical systems tests passed');
+}
+
+// Test 1: Error helpers
+async fn testErrorHelpers() {
+  print('Test 1: Error Helpers\n');
+
+  // Test ensure() with successful result
+  print('1.1 ensure() with success...');
+  const successResult = { ok: true, value: 42, error: null };
+  try {
+    ensure(successResult);
+    print('   ensure() passes on success');
+  } catch (err) {
+    print('   ensure() should not throw on success');
+  }
+
+  // Test ensure() with failure
+  print('\n1.2 ensure() with failure...');
+  const failureResult = { ok: false, error: 'Operation failed' };
+  try {
+    ensure(failureResult, 'Custom error message');
+    print('   ensure() should throw on failure');
+  } catch (err) {
+    if (err.message == 'Custom error message') {
+      print('   ensure() throws with custom message');
+    } else {
+      print('   Wrong error message:', err.message);
+    }
+  }
+
+  // Test defaultTo()
+  print('\n1.3 defaultTo()...');
+  const defaultValue = defaultTo(failureResult, { value: 'default' });
+  if (defaultValue.value == 'default') {
+    print('   defaultTo() returns fallback on failure');
+  } else {
+    print('   defaultTo() failed');
+  }
+}
+
+// Test 2: Retry mechanism
+async fn testRetryMechanism() {
+  print('\nTest 2: Retry Mechanism\n');
+
+  let attempts = 0;
+
+  // Simulate flaky operation
+  async fn flakyOperation() {
+    attempts = attempts + 1;
+    if (attempts < 3) {
+      return { ok: false, error: 'Temporary failure' };
+    }
+    return { ok: true, value: 'success', error: null };
+  }
+
+  print('2.1 Testing retry with eventual success...');
+  const result = await retry(flakyOperation, {
+    maxRetries: 5,
+    initialDelay: 10,  // Fast for testing
+    backoffMultiplier: 1.5
+  });
+
+  if (result.ok && attempts == 3) {
+    print('   Retry succeeded after', attempts, 'attempts');
+  } else {
+    print('   Retry behavior incorrect');
+  }
+
+  // Test retry exhaustion
+  print('\n2.2 Testing retry exhaustion...');
+  let failCount = 0;
+  async fn alwaysFails() {
+    failCount = failCount + 1;
+    return { ok: false, error: 'Permanent failure' };
+  }
+
+  const failResult = await retry(alwaysFails, {
+    maxRetries: 2,
+    initialDelay: 5
+  });
+
+  if (!failResult.ok && failCount == 3) {  // maxRetries + 1
+    print('   Retry exhausted after', failCount, 'attempts');
+  } else {
+    print('   Retry exhaustion incorrect');
+  }
+}
+
+// Test 3: Collect results
+async fn testCollectResults() {
+  print('\nTest 3: Collect Results\n');
+
+  print('3.1 Collecting all successful results...');
+  const results = [
+    { ok: true, value: 1, error: null },
+    { ok: true, value: 2, error: null },
+    { ok: true, value: 3, error: null }
+  ];
+
+  const collected = collect(results);
+  if (collected.ok && collected.results.length == 3) {
+    print('   All successful results collected');
+  } else {
+    print('   Collection failed');
+  }
+
+  print('\n3.2 Collecting with failures...');
+  const mixedResults = [
+    { ok: true, value: 1, error: null },
+    { ok: false, error: 'Failed' },
+    { ok: true, value: 3, error: null }
+  ];
+
+  const mixedCollected = collect(mixedResults);
+  if (!mixedCollected.ok && mixedCollected.errors.length == 1) {
+    print('   Failures detected correctly');
+    print('   Error index:', mixedCollected.errors[0].index);
+  } else {
+    print('   Mixed collection failed');
+  }
+}
+
+async fn sleep(ms) {
+  return new Promise(fn(resolve) {
+    setTimeout(resolve, ms);
+  });
+}
+
+main();

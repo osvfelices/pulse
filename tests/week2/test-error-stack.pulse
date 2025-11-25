@@ -1,0 +1,30 @@
+// Test error stack traces with source maps
+
+fn divideNumbers(a, b) {
+  if (b == 0) {
+    throw new Error("Division by zero!")
+  }
+  return a / b
+}
+
+fn processData(x, y) {
+  const result = divideNumbers(x, y)
+  return result * 2
+}
+
+fn main() {
+  try {
+    const result1 = processData(10, 2)
+    print("Result 1:", result1)
+
+    // This will throw an error
+    const result2 = processData(10, 0)
+    print("Result 2:", result2)
+  } catch (error) {
+    print("Error caught:", error.message)
+    print("Stack trace:")
+    print(error.stack)
+  }
+}
+
+main()

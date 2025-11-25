@@ -1,0 +1,23 @@
+// Test async/await with channels
+import { DeterministicScheduler, channel } from 'pulselang/runtime'
+
+const scheduler = new DeterministicScheduler()
+const ch = channel(5)
+
+scheduler.spawn(async () => {
+  for (let i = 1; i <= 5; i++) {
+    await ch.send(i * 10)
+    print("Sent:", i * 10)
+  }
+  ch.close()
+})
+
+scheduler.spawn(async () => {
+  for await (const value of ch) {
+    print("Received:", value)
+  }
+  print("Channel closed")
+})
+
+await scheduler.run()
+print("Scheduler finished")

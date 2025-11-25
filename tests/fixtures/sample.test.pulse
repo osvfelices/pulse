@@ -1,0 +1,21 @@
+// Sample Pulse test file for pulse test command validation
+
+fn test_basic_arithmetic() {
+  const sum = 2 + 2
+  if (sum != 4) {
+    throw('Arithmetic test failed: expected 4, got ' + sum)
+  }
+  print('✓ test_basic_arithmetic passed')
+}
+
+fn test_string_operations() {
+  const str = 'hello' + ' ' + 'world'
+  if (str != 'hello world') {
+    throw('String test failed')
+  }
+  print('✓ test_string_operations passed')
+}
+
+// Run tests
+test_basic_arithmetic()
+test_string_operations()

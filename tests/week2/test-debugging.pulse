@@ -1,0 +1,29 @@
+// Test file for VSCode debugging
+// This file tests breakpoints and stack traces
+
+fn calculateSquare(x) {
+  const result = x * x
+  return result  // <- Breakpoint here (line 5)
+}
+
+fn processNumbers(arr) {
+  const results = []
+  for (const num of arr) {
+    const squared = calculateSquare(num)  // <- Breakpoint here (line 12)
+    results.push(squared)
+  }
+  return results
+}
+
+fn main() {
+  const numbers = [1, 2, 3, 4, 5]
+  const squared = processNumbers(numbers)  // <- Breakpoint here (line 19)
+
+  for (const val of squared) {
+    print("Squared:", val)
+  }
+
+  print("All done!")
+}
+
+main()

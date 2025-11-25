@@ -1,0 +1,30 @@
+// Test reactive signals with source maps
+import { signal, effect } from 'pulselang/runtime'
+
+const [count, setCount] = signal(0)
+const [name, setName] = signal("Alice")
+
+effect(() => {
+  print("Count is:", count())
+})
+
+effect(() => {
+  print("Name is:", name())
+})
+
+fn incrementCounter() {
+  setCount(count() + 1)
+}
+
+fn changeName(newName) {
+  setName(newName)
+}
+
+// Execute
+incrementCounter()
+incrementCounter()
+changeName("Bob")
+incrementCounter()
+
+print("Final count:", count())
+print("Final name:", name())

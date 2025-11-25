@@ -1,0 +1,854 @@
+// Large Pulse file for stress testing
+
+fn func0(x) {
+  const a = x + 0
+  const b = a * 2
+  const c = b - 0
+  return c
+}
+
+fn func1(x) {
+  const a = x + 1
+  const b = a * 2
+  const c = b - 1
+  return c
+}
+
+fn func2(x) {
+  const a = x + 2
+  const b = a * 2
+  const c = b - 2
+  return c
+}
+
+fn func3(x) {
+  const a = x + 3
+  const b = a * 2
+  const c = b - 3
+  return c
+}
+
+fn func4(x) {
+  const a = x + 4
+  const b = a * 2
+  const c = b - 4
+  return c
+}
+
+fn func5(x) {
+  const a = x + 5
+  const b = a * 2
+  const c = b - 5
+  return c
+}
+
+fn func6(x) {
+  const a = x + 6
+  const b = a * 2
+  const c = b - 6
+  return c
+}
+
+fn func7(x) {
+  const a = x + 7
+  const b = a * 2
+  const c = b - 7
+  return c
+}
+
+fn func8(x) {
+  const a = x + 8
+  const b = a * 2
+  const c = b - 8
+  return c
+}
+
+fn func9(x) {
+  const a = x + 9
+  const b = a * 2
+  const c = b - 9
+  return c
+}
+
+fn func10(x) {
+  const a = x + 10
+  const b = a * 2
+  const c = b - 10
+  return c
+}
+
+fn func11(x) {
+  const a = x + 11
+  const b = a * 2
+  const c = b - 11
+  return c
+}
+
+fn func12(x) {
+  const a = x + 12
+  const b = a * 2
+  const c = b - 12
+  return c
+}
+
+fn func13(x) {
+  const a = x + 13
+  const b = a * 2
+  const c = b - 13
+  return c
+}
+
+fn func14(x) {
+  const a = x + 14
+  const b = a * 2
+  const c = b - 14
+  return c
+}
+
+fn func15(x) {
+  const a = x + 15
+  const b = a * 2
+  const c = b - 15
+  return c
+}
+
+fn func16(x) {
+  const a = x + 16
+  const b = a * 2
+  const c = b - 16
+  return c
+}
+
+fn func17(x) {
+  const a = x + 17
+  const b = a * 2
+  const c = b - 17
+  return c
+}
+
+fn func18(x) {
+  const a = x + 18
+  const b = a * 2
+  const c = b - 18
+  return c
+}
+
+fn func19(x) {
+  const a = x + 19
+  const b = a * 2
+  const c = b - 19
+  return c
+}
+
+fn func20(x) {
+  const a = x + 20
+  const b = a * 2
+  const c = b - 20
+  return c
+}
+
+fn func21(x) {
+  const a = x + 21
+  const b = a * 2
+  const c = b - 21
+  return c
+}
+
+fn func22(x) {
+  const a = x + 22
+  const b = a * 2
+  const c = b - 22
+  return c
+}
+
+fn func23(x) {
+  const a = x + 23
+  const b = a * 2
+  const c = b - 23
+  return c
+}
+
+fn func24(x) {
+  const a = x + 24
+  const b = a * 2
+  const c = b - 24
+  return c
+}
+
+fn func25(x) {
+  const a = x + 25
+  const b = a * 2
+  const c = b - 25
+  return c
+}
+
+fn func26(x) {
+  const a = x + 26
+  const b = a * 2
+  const c = b - 26
+  return c
+}
+
+fn func27(x) {
+  const a = x + 27
+  const b = a * 2
+  const c = b - 27
+  return c
+}
+
+fn func28(x) {
+  const a = x + 28
+  const b = a * 2
+  const c = b - 28
+  return c
+}
+
+fn func29(x) {
+  const a = x + 29
+  const b = a * 2
+  const c = b - 29
+  return c
+}
+
+fn func30(x) {
+  const a = x + 30
+  const b = a * 2
+  const c = b - 30
+  return c
+}
+
+fn func31(x) {
+  const a = x + 31
+  const b = a * 2
+  const c = b - 31
+  return c
+}
+
+fn func32(x) {
+  const a = x + 32
+  const b = a * 2
+  const c = b - 32
+  return c
+}
+
+fn func33(x) {
+  const a = x + 33
+  const b = a * 2
+  const c = b - 33
+  return c
+}
+
+fn func34(x) {
+  const a = x + 34
+  const b = a * 2
+  const c = b - 34
+  return c
+}
+
+fn func35(x) {
+  const a = x + 35
+  const b = a * 2
+  const c = b - 35
+  return c
+}
+
+fn func36(x) {
+  const a = x + 36
+  const b = a * 2
+  const c = b - 36
+  return c
+}
+
+fn func37(x) {
+  const a = x + 37
+  const b = a * 2
+  const c = b - 37
+  return c
+}
+
+fn func38(x) {
+  const a = x + 38
+  const b = a * 2
+  const c = b - 38
+  return c
+}
+
+fn func39(x) {
+  const a = x + 39
+  const b = a * 2
+  const c = b - 39
+  return c
+}
+
+fn func40(x) {
+  const a = x + 40
+  const b = a * 2
+  const c = b - 40
+  return c
+}
+
+fn func41(x) {
+  const a = x + 41
+  const b = a * 2
+  const c = b - 41
+  return c
+}
+
+fn func42(x) {
+  const a = x + 42
+  const b = a * 2
+  const c = b - 42
+  return c
+}
+
+fn func43(x) {
+  const a = x + 43
+  const b = a * 2
+  const c = b - 43
+  return c
+}
+
+fn func44(x) {
+  const a = x + 44
+  const b = a * 2
+  const c = b - 44
+  return c
+}
+
+fn func45(x) {
+  const a = x + 45
+  const b = a * 2
+  const c = b - 45
+  return c
+}
+
+fn func46(x) {
+  const a = x + 46
+  const b = a * 2
+  const c = b - 46
+  return c
+}
+
+fn func47(x) {
+  const a = x + 47
+  const b = a * 2
+  const c = b - 47
+  return c
+}
+
+fn func48(x) {
+  const a = x + 48
+  const b = a * 2
+  const c = b - 48
+  return c
+}
+
+fn func49(x) {
+  const a = x + 49
+  const b = a * 2
+  const c = b - 49
+  return c
+}
+
+fn func50(x) {
+  const a = x + 50
+  const b = a * 2
+  const c = b - 50
+  return c
+}
+
+fn func51(x) {
+  const a = x + 51
+  const b = a * 2
+  const c = b - 51
+  return c
+}
+
+fn func52(x) {
+  const a = x + 52
+  const b = a * 2
+  const c = b - 52
+  return c
+}
+
+fn func53(x) {
+  const a = x + 53
+  const b = a * 2
+  const c = b - 53
+  return c
+}
+
+fn func54(x) {
+  const a = x + 54
+  const b = a * 2
+  const c = b - 54
+  return c
+}
+
+fn func55(x) {
+  const a = x + 55
+  const b = a * 2
+  const c = b - 55
+  return c
+}
+
+fn func56(x) {
+  const a = x + 56
+  const b = a * 2
+  const c = b - 56
+  return c
+}
+
+fn func57(x) {
+  const a = x + 57
+  const b = a * 2
+  const c = b - 57
+  return c
+}
+
+fn func58(x) {
+  const a = x + 58
+  const b = a * 2
+  const c = b - 58
+  return c
+}
+
+fn func59(x) {
+  const a = x + 59
+  const b = a * 2
+  const c = b - 59
+  return c
+}
+
+fn func60(x) {
+  const a = x + 60
+  const b = a * 2
+  const c = b - 60
+  return c
+}
+
+fn func61(x) {
+  const a = x + 61
+  const b = a * 2
+  const c = b - 61
+  return c
+}
+
+fn func62(x) {
+  const a = x + 62
+  const b = a * 2
+  const c = b - 62
+  return c
+}
+
+fn func63(x) {
+  const a = x + 63
+  const b = a * 2
+  const c = b - 63
+  return c
+}
+
+fn func64(x) {
+  const a = x + 64
+  const b = a * 2
+  const c = b - 64
+  return c
+}
+
+fn func65(x) {
+  const a = x + 65
+  const b = a * 2
+  const c = b - 65
+  return c
+}
+
+fn func66(x) {
+  const a = x + 66
+  const b = a * 2
+  const c = b - 66
+  return c
+}
+
+fn func67(x) {
+  const a = x + 67
+  const b = a * 2
+  const c = b - 67
+  return c
+}
+
+fn func68(x) {
+  const a = x + 68
+  const b = a * 2
+  const c = b - 68
+  return c
+}
+
+fn func69(x) {
+  const a = x + 69
+  const b = a * 2
+  const c = b - 69
+  return c
+}
+
+fn func70(x) {
+  const a = x + 70
+  const b = a * 2
+  const c = b - 70
+  return c
+}
+
+fn func71(x) {
+  const a = x + 71
+  const b = a * 2
+  const c = b - 71
+  return c
+}
+
+fn func72(x) {
+  const a = x + 72
+  const b = a * 2
+  const c = b - 72
+  return c
+}
+
+fn func73(x) {
+  const a = x + 73
+  const b = a * 2
+  const c = b - 73
+  return c
+}
+
+fn func74(x) {
+  const a = x + 74
+  const b = a * 2
+  const c = b - 74
+  return c
+}
+
+fn func75(x) {
+  const a = x + 75
+  const b = a * 2
+  const c = b - 75
+  return c
+}
+
+fn func76(x) {
+  const a = x + 76
+  const b = a * 2
+  const c = b - 76
+  return c
+}
+
+fn func77(x) {
+  const a = x + 77
+  const b = a * 2
+  const c = b - 77
+  return c
+}
+
+fn func78(x) {
+  const a = x + 78
+  const b = a * 2
+  const c = b - 78
+  return c
+}
+
+fn func79(x) {
+  const a = x + 79
+  const b = a * 2
+  const c = b - 79
+  return c
+}
+
+fn func80(x) {
+  const a = x + 80
+  const b = a * 2
+  const c = b - 80
+  return c
+}
+
+fn func81(x) {
+  const a = x + 81
+  const b = a * 2
+  const c = b - 81
+  return c
+}
+
+fn func82(x) {
+  const a = x + 82
+  const b = a * 2
+  const c = b - 82
+  return c
+}
+
+fn func83(x) {
+  const a = x + 83
+  const b = a * 2
+  const c = b - 83
+  return c
+}
+
+fn func84(x) {
+  const a = x + 84
+  const b = a * 2
+  const c = b - 84
+  return c
+}
+
+fn func85(x) {
+  const a = x + 85
+  const b = a * 2
+  const c = b - 85
+  return c
+}
+
+fn func86(x) {
+  const a = x + 86
+  const b = a * 2
+  const c = b - 86
+  return c
+}
+
+fn func87(x) {
+  const a = x + 87
+  const b = a * 2
+  const c = b - 87
+  return c
+}
+
+fn func88(x) {
+  const a = x + 88
+  const b = a * 2
+  const c = b - 88
+  return c
+}
+
+fn func89(x) {
+  const a = x + 89
+  const b = a * 2
+  const c = b - 89
+  return c
+}
+
+fn func90(x) {
+  const a = x + 90
+  const b = a * 2
+  const c = b - 90
+  return c
+}
+
+fn func91(x) {
+  const a = x + 91
+  const b = a * 2
+  const c = b - 91
+  return c
+}
+
+fn func92(x) {
+  const a = x + 92
+  const b = a * 2
+  const c = b - 92
+  return c
+}
+
+fn func93(x) {
+  const a = x + 93
+  const b = a * 2
+  const c = b - 93
+  return c
+}
+
+fn func94(x) {
+  const a = x + 94
+  const b = a * 2
+  const c = b - 94
+  return c
+}
+
+fn func95(x) {
+  const a = x + 95
+  const b = a * 2
+  const c = b - 95
+  return c
+}
+
+fn func96(x) {
+  const a = x + 96
+  const b = a * 2
+  const c = b - 96
+  return c
+}
+
+fn func97(x) {
+  const a = x + 97
+  const b = a * 2
+  const c = b - 97
+  return c
+}
+
+fn func98(x) {
+  const a = x + 98
+  const b = a * 2
+  const c = b - 98
+  return c
+}
+
+fn func99(x) {
+  const a = x + 99
+  const b = a * 2
+  const c = b - 99
+  return c
+}
+
+const var0 = func0(0)
+const var1 = func1(1)
+const var2 = func2(2)
+const var3 = func3(3)
+const var4 = func4(4)
+const var5 = func5(5)
+const var6 = func6(6)
+const var7 = func7(7)
+const var8 = func8(8)
+const var9 = func9(9)
+const var10 = func10(10)
+const var11 = func11(11)
+const var12 = func12(12)
+const var13 = func13(13)
+const var14 = func14(14)
+const var15 = func15(15)
+const var16 = func16(16)
+const var17 = func17(17)
+const var18 = func18(18)
+const var19 = func19(19)
+const var20 = func20(20)
+const var21 = func21(21)
+const var22 = func22(22)
+const var23 = func23(23)
+const var24 = func24(24)
+const var25 = func25(25)
+const var26 = func26(26)
+const var27 = func27(27)
+const var28 = func28(28)
+const var29 = func29(29)
+const var30 = func30(30)
+const var31 = func31(31)
+const var32 = func32(32)
+const var33 = func33(33)
+const var34 = func34(34)
+const var35 = func35(35)
+const var36 = func36(36)
+const var37 = func37(37)
+const var38 = func38(38)
+const var39 = func39(39)
+const var40 = func40(40)
+const var41 = func41(41)
+const var42 = func42(42)
+const var43 = func43(43)
+const var44 = func44(44)
+const var45 = func45(45)
+const var46 = func46(46)
+const var47 = func47(47)
+const var48 = func48(48)
+const var49 = func49(49)
+const var50 = func50(50)
+const var51 = func51(51)
+const var52 = func52(52)
+const var53 = func53(53)
+const var54 = func54(54)
+const var55 = func55(55)
+const var56 = func56(56)
+const var57 = func57(57)
+const var58 = func58(58)
+const var59 = func59(59)
+const var60 = func60(60)
+const var61 = func61(61)
+const var62 = func62(62)
+const var63 = func63(63)
+const var64 = func64(64)
+const var65 = func65(65)
+const var66 = func66(66)
+const var67 = func67(67)
+const var68 = func68(68)
+const var69 = func69(69)
+const var70 = func70(70)
+const var71 = func71(71)
+const var72 = func72(72)
+const var73 = func73(73)
+const var74 = func74(74)
+const var75 = func75(75)
+const var76 = func76(76)
+const var77 = func77(77)
+const var78 = func78(78)
+const var79 = func79(79)
+const var80 = func80(80)
+const var81 = func81(81)
+const var82 = func82(82)
+const var83 = func83(83)
+const var84 = func84(84)
+const var85 = func85(85)
+const var86 = func86(86)
+const var87 = func87(87)
+const var88 = func88(88)
+const var89 = func89(89)
+const var90 = func90(90)
+const var91 = func91(91)
+const var92 = func92(92)
+const var93 = func93(93)
+const var94 = func94(94)
+const var95 = func95(95)
+const var96 = func96(96)
+const var97 = func97(97)
+const var98 = func98(98)
+const var99 = func99(99)
+
+print("Starting tests...")
+print("var0 =", var0)
+print("var1 =", var1)
+print("var2 =", var2)
+print("var3 =", var3)
+print("var4 =", var4)
+print("var5 =", var5)
+print("var6 =", var6)
+print("var7 =", var7)
+print("var8 =", var8)
+print("var9 =", var9)
+print("var10 =", var10)
+print("var11 =", var11)
+print("var12 =", var12)
+print("var13 =", var13)
+print("var14 =", var14)
+print("var15 =", var15)
+print("var16 =", var16)
+print("var17 =", var17)
+print("var18 =", var18)
+print("var19 =", var19)
+print("var20 =", var20)
+print("var21 =", var21)
+print("var22 =", var22)
+print("var23 =", var23)
+print("var24 =", var24)
+print("var25 =", var25)
+print("var26 =", var26)
+print("var27 =", var27)
+print("var28 =", var28)
+print("var29 =", var29)
+print("var30 =", var30)
+print("var31 =", var31)
+print("var32 =", var32)
+print("var33 =", var33)
+print("var34 =", var34)
+print("var35 =", var35)
+print("var36 =", var36)
+print("var37 =", var37)
+print("var38 =", var38)
+print("var39 =", var39)
+print("var40 =", var40)
+print("var41 =", var41)
+print("var42 =", var42)
+print("var43 =", var43)
+print("var44 =", var44)
+print("var45 =", var45)
+print("var46 =", var46)
+print("var47 =", var47)
+print("var48 =", var48)
+print("var49 =", var49)

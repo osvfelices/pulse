@@ -1,0 +1,14 @@
+// Math utilities module
+export fn add(a, b) {
+  return a + b
+}
+
+export fn multiply(a, b) {
+  return a * b
+}
+
+export fn square(x) {
+  return multiply(x, x)
+}
+
+export const PI = 3.14159

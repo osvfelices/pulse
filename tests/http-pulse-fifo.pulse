@@ -1,0 +1,142 @@
+// HTTP FIFO Ordering Test - Comparing testMode vs Network Mode
+// Demonstrates: Pulse's determinism boundaries
+//
+//  TEST MODE (injectRequest): 100% deterministic FIFO ordering
+//   NETWORK MODE (fetch): OS controls packet arrival order
+
+import { createServer } from '../lib/http/server.js';
+import { fetch } from '../lib/http/client.js';
+
+async fn main() {
+  print('\n=== HTTP FIFO Ordering: Test Mode vs Network Mode ===\n');
+
+  await testModeOrdering();
+  await networkModeOrdering();
+
+  print('\n All ordering tests completed');
+}
+
+// Test 1: Test mode - 100% deterministic
+async fn testModeOrdering() {
+  print('Test 1: TEST MODE ordering (injectRequest)...');
+
+  //  DETERMINISTIC: testMode bypasses network/OS
+  const server = createServer({
+    host: '127.0.0.1',
+    port: 0,
+    bufferSize: 5,
+    testMode: true
+  });
+
+  server.listen();
+
+  const received = [];
+
+  // Handler records arrival order
+  startOrderHandler(server, received, 5);
+
+  await sleep(10);
+
+  // Inject 5 requests - order is GUARANTEED
+  for (let i = 0; i < 5; i = i + 1) {
+    server.injectRequest({
+      method: 'GET',
+      path: '/test',
+      query: { id: i }
+    });
+  }
+
+  await sleep(50);
+
+  // Verify FIFO order
+  const expected = [0, 1, 2, 3, 4];
+  let passed = true;
+  for (let i = 0; i < 5; i = i + 1) {
+    if (received[i] != expected[i]) {
+      passed = false;
+      break;
+    }
+  }
+
+  if (passed) {
+    print(`   FIFO order preserved: [${received.join(', ')}]`);
+    print('   testMode guarantees deterministic ordering');
+  } else {
+    print(`   Order violated: [${received.join(', ')}]`);
+  }
+
+  await server.close();
+}
+
+// Test 2: Network mode - sequential requests (deterministic)
+async fn networkModeOrdering() {
+  print('\nTest 2: NETWORK MODE ordering (sequential fetch)...');
+
+  //   NETWORK BOUNDARY: OS controls packet arrival
+  // BUT: Sequential await guarantees send order
+  const server = createServer({
+    host: '127.0.0.1',
+    port: 0,
+    bufferSize: 5
+  });
+
+  server.listen();
+
+  await sleep(50);
+
+  const port = server.port;
+  const received = [];
+
+  // Handler records arrival order
+  startOrderHandler(server, received, 5);
+
+  await sleep(10);
+
+  // Send sequentially - order is DETERMINISTIC
+  // (each request completes before next starts)
+  for (let i = 0; i < 5; i = i + 1) {
+    await fetch(`http://127.0.0.1:${port}/test?id=${i}`);
+  }
+
+  await sleep(50);
+
+  // Verify FIFO order
+  const expected = [0, 1, 2, 3, 4];
+  let passed = true;
+  for (let i = 0; i < 5; i = i + 1) {
+    if (received[i] != expected[i]) {
+      passed = false;
+      break;
+    }
+  }
+
+  if (passed) {
+    print(`   FIFO order preserved: [${received.join(', ')}]`);
+    print('   Sequential fetch is deterministic');
+  } else {
+    print(`    Order varied: [${received.join(', ')}]`);
+    print('  ℹ️  This can happen with network timing');
+  }
+
+  await server.close();
+}
+
+async fn startOrderHandler(server, received, count) {
+  for (let i = 0; i < count; i = i + 1) {
+    const [req, ok] = await server.requests.recv();
+    if (!ok) break;
+
+    const id = parseInt(req.query.id);
+    received.push(id);
+
+    req.respond({ status: 200, body: `OK ${id}` });
+  }
+}
+
+async fn sleep(ms) {
+  return new Promise(fn(resolve) {
+    setTimeout(resolve, ms);
+  });
+}
+
+main();

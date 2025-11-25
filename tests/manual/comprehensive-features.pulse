@@ -1,0 +1,143 @@
+// Comprehensive test of Pulse language features with source maps
+
+print("=== Testing Language Features ===\n")
+
+// 1. Functions
+fn add(a, b) {
+  return a + b
+}
+print("1. Functions:", add(5, 3))
+
+// 2. Arrow functions
+const multiply = (x, y) => x * y
+print("2. Arrow functions:", multiply(4, 6))
+
+// 3. Classes
+class Counter {
+  constructor(initial) {
+    this.count = initial
+  }
+
+  increment() {
+    this.count = this.count + 1
+  }
+
+  getCount() {
+    return this.count
+  }
+}
+
+const counter = new Counter(10)
+counter.increment()
+counter.increment()
+print("3. Classes:", counter.getCount())
+
+// 4. Destructuring
+const arr = [1, 2, 3, 4, 5]
+const [first, second, ...rest] = arr
+print("4. Destructuring array:", first, second, rest)
+
+const obj = { name: "Alice", age: 30, city: "NYC" }
+const { name, age } = obj
+print("4. Destructuring object:", name, age)
+
+// 5. Spread operator
+const arr1 = [1, 2, 3]
+const arr2 = [4, 5, 6]
+const combined = [...arr1, ...arr2]
+print("5. Spread:", combined)
+
+// 6. Template strings
+const greeting = `Hello, ${name}! You are ${age} years old.`
+print("6. Template strings:", greeting)
+
+// 7. For loops
+print("7. For loop:")
+for (let i = 0; i < 5; i = i + 1) {
+  print("  ", i)
+}
+
+// 8. For-of loops
+print("8. For-of loop:")
+for (const item of [10, 20, 30]) {
+  print("  ", item)
+}
+
+// 9. While loops
+print("9. While loop:")
+let j = 0
+while (j < 3) {
+  print("  ", j)
+  j = j + 1
+}
+
+// 10. If-else
+const x = 15
+if (x > 10) {
+  print("10. If-else: x is greater than 10")
+} else {
+  print("10. If-else: x is not greater than 10")
+}
+
+// 11. Ternary operator
+const result = x > 10 ? "yes" : "no"
+print("11. Ternary:", result)
+
+// 12. Try-catch
+try {
+  const data = { value: 42 }
+  print("12. Try-catch:", data.value)
+} catch (error) {
+  print("12. Error:", error)
+}
+
+// 13. Switch statement
+const color = "blue"
+switch (color) {
+  case "red":
+    print("13. Switch: Red color")
+    break
+  case "blue":
+    print("13. Switch: Blue color")
+    break
+  default:
+    print("13. Switch: Unknown color")
+}
+
+// 14. Nullish coalescing
+const value1 = null
+const value2 = value1 ?? "default"
+print("14. Nullish coalescing:", value2)
+
+// 15. Optional chaining
+const user = { profile: { name: "Bob" } }
+const userName = user?.profile?.name
+print("15. Optional chaining:", userName)
+
+// 16. Async/await
+async fn fetchData() {
+  return "data loaded"
+}
+
+const data = await fetchData()
+print("16. Async/await:", data)
+
+// 17. Binary expressions
+print("17. Binary:", 10 + 5, 10 - 5, 10 * 5, 10 / 5, 10 % 3)
+
+// 18. Unary expressions
+print("18. Unary:", !true, !false, typeof "string")
+
+// 19. Boolean literals
+print("19. Booleans:", true, false)
+
+// 20. Null literal
+print("20. Null:", null)
+
+// 21. Number literals
+print("21. Numbers:", 42, 3.14, 1000000)
+
+// 22. String literals
+print("22. Strings:", "double", 'single', `template`)
+
+print("\n=== All Features Tested Successfully! ===")

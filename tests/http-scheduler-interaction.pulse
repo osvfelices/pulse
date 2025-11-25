@@ -1,0 +1,274 @@
+// HTTP Scheduler Interaction Tests
+// Category 1: Verifies HTTP works correctly with Pulse's deterministic scheduler
+// Tests: concurrent handlers, nested channels, select statements
+
+import { createServer } from '../lib/http/server.js';
+import { fetch } from '../lib/http/client.js';
+import { Channel } from '../lib/runtime/channel-deterministic.js';
+
+async fn main() {
+  print('\n=== HTTP Scheduler Interaction Tests ===\n');
+
+  await testConcurrentHandlersWithCPUAndAsync();
+  await testNestedChannelsInHandlers();
+  await testSelectWithRequestChannel();
+
+  print('\n All scheduler interaction tests completed');
+}
+
+// Test 1: Multiple concurrent handlers with mixed CPU-bound and async tasks
+async fn testConcurrentHandlersWithCPUAndAsync() {
+  print('Test 1: Concurrent handlers with mixed CPU/async workload...');
+
+  const server = createServer({ host: '127.0.0.1', port: 0 });
+  server.listen();
+  await sleep(50);
+
+  const port = server.port;
+  const results = [];
+
+  // Handler 1: CPU-bound (fibonacci calculation)
+  startCPUBoundHandler(server, results);
+
+  // Handler 2: Async-bound (sleeps)
+  startAsyncBoundHandler(server, results);
+
+  // Handler 3: Mixed (CPU + async)
+  startMixedHandler(server, results);
+
+  await sleep(20);
+
+  // Send 6 requests (2 per handler type)
+  const requests = [];
+  for (let i = 0; i < 6; i = i + 1) {
+    requests.push(fetch(`http://127.0.0.1:${port}/test?id=${i}`));
+  }
+
+  await Promise.all(requests);
+  await sleep(200);
+
+  // Verify all handlers processed requests
+  if (results.length == 6) {
+    print('   All 6 requests handled by concurrent handlers');
+    print('   Mixed CPU/async workload completed');
+  } else {
+    print(`   Expected 6 results, got ${results.length}`);
+  }
+
+  await server.close();
+}
+
+async fn startCPUBoundHandler(server, results) {
+  for (let i = 0; i < 2; i = i + 1) {
+    const [req, ok] = await server.requests.recv();
+    if (!ok) break;
+
+    // CPU-bound work: calculate fibonacci
+    const fib = fibonacci(15);
+    results.push({ type: 'cpu', id: req.query.id, fib: fib });
+
+    req.respond({ status: 200, body: `CPU: ${fib}` });
+  }
+}
+
+async fn startAsyncBoundHandler(server, results) {
+  for (let i = 0; i < 2; i = i + 1) {
+    const [req, ok] = await server.requests.recv();
+    if (!ok) break;
+
+    // Async-bound work: sleep
+    await sleep(10);
+    results.push({ type: 'async', id: req.query.id });
+
+    req.respond({ status: 200, body: 'Async' });
+  }
+}
+
+async fn startMixedHandler(server, results) {
+  for (let i = 0; i < 2; i = i + 1) {
+    const [req, ok] = await server.requests.recv();
+    if (!ok) break;
+
+    // Mixed work: CPU then async
+    const fib = fibonacci(10);
+    await sleep(5);
+    results.push({ type: 'mixed', id: req.query.id, fib: fib });
+
+    req.respond({ status: 200, body: `Mixed: ${fib}` });
+  }
+}
+
+fn fibonacci(n) {
+  if (n <= 1) return n;
+  return fibonacci(n - 1) + fibonacci(n - 2);
+}
+
+// Test 2: Nested channel usage inside HTTP handlers
+async fn testNestedChannelsInHandlers() {
+  print('\nTest 2: Nested channels inside HTTP handlers...');
+
+  const server = createServer({ host: '127.0.0.1', port: 0 });
+  server.listen();
+  await sleep(50);
+
+  const port = server.port;
+  const workChannel = new Channel(10);
+  const resultChannel = new Channel(10);
+
+  // Worker that processes jobs from nested channel
+  startWorker(workChannel, resultChannel);
+
+  // HTTP handler that uses nested channels
+  startHandlerWithNestedChannels(server, workChannel, resultChannel);
+
+  await sleep(20);
+
+  // Send 3 requests
+  const responses = [];
+  for (let i = 0; i < 3; i = i + 1) {
+    const resp = await fetch(`http://127.0.0.1:${port}/work?job=${i}`);
+    responses.push(resp);
+  }
+
+  await sleep(100);
+
+  // Verify all responses completed
+  let allOk = true;
+  for (let i = 0; i < responses.length; i = i + 1) {
+    if (!responses[i].ok) allOk = false;
+  }
+
+  if (allOk) {
+    print('   Nested channels worked correctly');
+    print('   HTTP -> work channel -> result channel -> HTTP response');
+  } else {
+    print('   Some requests failed');
+  }
+
+  workChannel.close();
+  resultChannel.close();
+  await server.close();
+}
+
+async fn startWorker(workChannel, resultChannel) {
+  for (let i = 0; i < 3; i = i + 1) {
+    const [job, ok] = await workChannel.recv();
+    if (!ok) break;
+
+    // Process job
+    const result = `Processed job ${job}`;
+    await resultChannel.send(result);
+  }
+}
+
+async fn startHandlerWithNestedChannels(server, workChannel, resultChannel) {
+  for (let i = 0; i < 3; i = i + 1) {
+    const [req, ok] = await server.requests.recv();
+    if (!ok) break;
+
+    // Send work to nested channel
+    const jobId = req.query.job;
+    await workChannel.send(jobId);
+
+    // Wait for result from nested channel
+    const [result, resultOk] = await resultChannel.recv();
+
+    if (resultOk) {
+      req.respond({ status: 200, body: result });
+    } else {
+      req.respond({ status: 500, body: 'Worker failed' });
+    }
+  }
+}
+
+// Test 3: Select statements interacting with request channels
+async fn testSelectWithRequestChannel() {
+  print('\nTest 3: Select statements with request channel...');
+
+  const server = createServer({ host: '127.0.0.1', port: 0 });
+  server.listen();
+  await sleep(50);
+
+  const port = server.port;
+  const cancelChannel = new Channel(1);
+  const results = [];
+
+  // Handler that uses select with request channel and cancel channel
+  startSelectHandler(server, cancelChannel, results);
+
+  await sleep(20);
+
+  // Send 2 requests
+  fetch(`http://127.0.0.1:${port}/select?id=1`);
+  await sleep(10);
+  fetch(`http://127.0.0.1:${port}/select?id=2`);
+  await sleep(10);
+
+  // Send cancel signal
+  await cancelChannel.send('cancel');
+
+  await sleep(100);
+
+  // Verify select handled both requests and cancel
+  if (results.length >= 2) {
+    print('   Select statement handled request channel correctly');
+    print(`   Processed ${results.length} events through select`);
+  } else {
+    print(`   Expected at least 2 events, got ${results.length}`);
+  }
+
+  cancelChannel.close();
+  await server.close();
+}
+
+async fn startSelectHandler(server, cancelChannel, results) {
+  let running = true;
+  while (running) {
+    const cases = [
+      { channel: server.requests, type: 'recv' },
+      { channel: cancelChannel, type: 'recv' }
+    ];
+
+    try {
+      const selected = await selectFirst(cases);
+
+      if (selected.caseIndex == 0 && selected.ok) {
+        // Request received
+        const req = selected.value;
+        results.push({ type: 'request', id: req.query.id });
+        req.respond({ status: 200, body: 'Selected' });
+      } else if (selected.caseIndex == 1) {
+        // Cancel received
+        results.push({ type: 'cancel' });
+        running = false;
+      }
+    } catch (err) {
+      running = false;
+    }
+  }
+}
+
+// Simple select implementation for first-match
+async fn selectFirst(cases) {
+  // Try each case in order
+  for (let i = 0; i < cases.length; i = i + 1) {
+    const c = cases[i];
+    if (c.type == 'recv') {
+      // Non-blocking check (simplified - in real Pulse this would be atomic)
+      const [value, ok] = await c.channel.recv();
+      return { caseIndex: i, value: value, ok: ok };
+    }
+  }
+
+  // Fallback: wait on first channel
+  const [value, ok] = await cases[0].channel.recv();
+  return { caseIndex: 0, value: value, ok: ok };
+}
+
+async fn sleep(ms) {
+  return new Promise(fn(resolve) {
+    setTimeout(resolve, ms);
+  });
+}
+
+main();

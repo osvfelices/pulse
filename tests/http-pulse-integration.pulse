@@ -1,0 +1,68 @@
+// Pulse HTTP Integration Test
+// Verifies HTTP client+server work with compiled Pulse code and deterministic scheduler
+
+import { createServer } from '../lib/http/server.js';
+import { fetch } from '../lib/http/client.js';
+
+async fn main() {
+  print('Starting Pulse HTTP integration test...');
+
+  // Create server
+  const server = createServer({ host: '127.0.0.1', port: 0 });
+  server.listen();
+
+  // Wait for server to start
+  await sleep(50);
+
+  const port = server.port;
+  print('Server listening on port:', port);
+
+  // Start request handler
+  handleRequest(server);
+
+  // Wait for handler to be ready
+  await sleep(10);
+
+  // Send request
+  print('Sending HTTP request...');
+  const response = await fetch(`http://127.0.0.1:${port}/test`, {
+    method: 'POST',
+    headers: { 'X-Test': 'pulse' },
+    body: '{"test":"data"}'
+  });
+
+  print('Response received:');
+  print('  Status:', response.status);
+  print('  OK:', response.ok);
+  print('  Body:', response.body);
+
+  // Verify
+  if (response.ok && response.status == 200) {
+    print(' HTTP integration test PASSED');
+  } else {
+    print(' HTTP integration test FAILED');
+  }
+
+  await server.close();
+  print('Server closed');
+}
+
+async fn handleRequest(server) {
+  const [req, ok] = await server.requests.recv();
+  if (ok) {
+    print('Handler received request:', req.method, req.path);
+    req.respond({
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+      body: '{"message":"Hello from Pulse!"}'
+    });
+  }
+}
+
+async fn sleep(ms) {
+  return new Promise(fn(resolve) {
+    setTimeout(resolve, ms);
+  });
+}
+
+main();

@@ -1,0 +1,230 @@
+// HTTP Deterministic Replay Tests
+// Category 3: Verifies deterministic execution across multiple runs
+// Tests: 100-run replay, same outputs, same ordering, no jitter
+
+import { createServer } from '../lib/http/server.js';
+import { fetch } from '../lib/http/client.js';
+
+async fn main() {
+  print('\n=== HTTP Deterministic Replay Tests ===\n');
+
+  const runs = 100;
+  print(`Running ${runs} deterministic replay tests...\n`);
+
+  await test100RunsIdenticalOutput(runs);
+  await test100RunsIdenticalOrdering(runs);
+  await test100RunsNoJitter(runs);
+
+  print('\n All deterministic replay tests completed');
+}
+
+// Test 1: Same request sequence executed 100 times produces same outputs
+async fn test100RunsIdenticalOutput(runs) {
+  print(`Test 1: ${runs} runs with identical output...`);
+
+  const outputs = [];
+
+  for (let run = 0; run < runs; run = run + 1) {
+    const result = await runSingleTest();
+    outputs.push(result);
+  }
+
+  // Verify all outputs are identical
+  const first = JSON.stringify(outputs[0]);
+  let allIdentical = true;
+
+  for (let i = 1; i < outputs.length; i = i + 1) {
+    if (JSON.stringify(outputs[i]) != first) {
+      allIdentical = false;
+      print(`   Run ${i} differs from run 0`);
+      break;
+    }
+  }
+
+  if (allIdentical) {
+    print(`   All ${runs} runs produced identical output`);
+    print(`   Output: ${first}`);
+  } else {
+    print(`   Outputs were not deterministic`);
+  }
+}
+
+async fn runSingleTest() {
+  const server = createServer({ host: '127.0.0.1', port: 0 });
+  server.listen();
+  await sleep(30);
+
+  const port = server.port;
+
+  // Handler
+  startTestHandler(server);
+  await sleep(10);
+
+  // Send 3 requests in sequence
+  const responses = [];
+  for (let i = 0; i < 3; i = i + 1) {
+    const resp = await fetch(`http://127.0.0.1:${port}/test?n=${i}`);
+    responses.push({ status: resp.status, body: resp.body });
+  }
+
+  await server.close();
+
+  return responses;
+}
+
+async fn startTestHandler(server) {
+  for (let i = 0; i < 3; i = i + 1) {
+    const [req, ok] = await server.requests.recv();
+    if (!ok) break;
+
+    const n = parseInt(req.query.n);
+    req.respond({ status: 200, body: `Response ${n}` });
+  }
+}
+
+// Test 2: Same request sequence executed 100 times produces same ordering
+async fn test100RunsIdenticalOrdering(runs) {
+  print(`\nTest 2: ${runs} runs with identical ordering...`);
+
+  const orderings = [];
+
+  for (let run = 0; run < runs; run = run + 1) {
+    const order = await runOrderingTest();
+    orderings.push(order);
+  }
+
+  // Verify all orderings are identical
+  const first = JSON.stringify(orderings[0]);
+  let allIdentical = true;
+
+  for (let i = 1; i < orderings.length; i = i + 1) {
+    if (JSON.stringify(orderings[i]) != first) {
+      allIdentical = false;
+      print(`   Run ${i} ordering differs: ${JSON.stringify(orderings[i])} vs ${first}`);
+      break;
+    }
+  }
+
+  if (allIdentical) {
+    print(`   All ${runs} runs produced identical ordering`);
+    print(`   Order: ${first}`);
+  } else {
+    print(`   Orderings were not deterministic`);
+  }
+}
+
+async fn runOrderingTest() {
+  const server = createServer({ host: '127.0.0.1', port: 0 });
+  server.listen();
+  await sleep(30);
+
+  const port = server.port;
+  const received = [];
+
+  // Handler that records order
+  startOrderHandler(server, received);
+  await sleep(10);
+
+  // Send 5 requests
+  const requests = [];
+  for (let i = 0; i < 5; i = i + 1) {
+    requests.push(fetch(`http://127.0.0.1:${port}/order?id=${i}`));
+  }
+
+  await Promise.all(requests);
+  await sleep(50);
+
+  await server.close();
+
+  return received;
+}
+
+async fn startOrderHandler(server, received) {
+  for (let i = 0; i < 5; i = i + 1) {
+    const [req, ok] = await server.requests.recv();
+    if (!ok) break;
+
+    const id = parseInt(req.query.id);
+    received.push(id);
+    req.respond({ status: 200, body: 'OK' });
+  }
+}
+
+// Test 3: No jitter in timing (within tolerance)
+async fn test100RunsNoJitter(runs) {
+  print(`\nTest 3: ${runs} runs with no timing jitter...`);
+
+  const durations = [];
+
+  for (let run = 0; run < runs; run = run + 1) {
+    const duration = await runTimingTest();
+    durations.push(duration);
+  }
+
+  // Calculate statistics
+  let sum = 0;
+  let min = durations[0];
+  let max = durations[0];
+
+  for (let i = 0; i < durations.length; i = i + 1) {
+    sum = sum + durations[i];
+    if (durations[i] < min) min = durations[i];
+    if (durations[i] > max) max = durations[i];
+  }
+
+  const avg = sum / durations.length;
+  const range = max - min;
+
+  print(`  -> Min: ${min}ms, Max: ${max}ms, Avg: ${avg.toFixed(1)}ms, Range: ${range}ms`);
+
+  // Range should be relatively small (< 50% of average) for deterministic execution
+  const tolerance = avg * 0.5;
+
+  if (range < tolerance) {
+    print(`   Timing is consistent across ${runs} runs`);
+    print(`   Range (${range}ms) < tolerance (${tolerance.toFixed(1)}ms)`);
+  } else {
+    print(`   Timing shows variation (range ${range}ms > tolerance ${tolerance.toFixed(1)}ms)`);
+    print('  ℹ This may be acceptable depending on system load');
+  }
+}
+
+async fn runTimingTest() {
+  const server = createServer({ host: '127.0.0.1', port: 0 });
+  server.listen();
+  await sleep(30);
+
+  const port = server.port;
+  const startTime = Date.now();
+
+  // Handler
+  startTimingHandler(server);
+  await sleep(10);
+
+  // Send 3 requests
+  for (let i = 0; i < 3; i = i + 1) {
+    await fetch(`http://127.0.0.1:${port}/timing?n=${i}`);
+  }
+
+  const duration = Date.now() - startTime;
+
+  await server.close();
+
+  return duration;
+}
+
+async fn startTimingHandler(server) {
+  for (let i = 0; i < 3; i = i + 1) {
+    const [req, ok] = await server.requests.recv();
+    if (!ok) break;
+    req.respond({ status: 200, body: 'OK' });
+  }
+}
+
+async fn sleep(ms) {
+  return new Promise(fn(resolve) {
+    setTimeout(resolve, ms);
+  });
+}
+
+main();

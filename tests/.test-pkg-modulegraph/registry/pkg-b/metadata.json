@@ -1,0 +1,10 @@
+{
+  "name": "pkg-b",
+  "versions": {
+    "1.0.0": {
+      "version": "1.0.0",
+      "integrity": "5963b4430671d0a1a6ff146b01eccd8e3da079212bd8df85a8df62ead8eb08dd",
+      "tarball": "./1.0.0"
+    }
+  }
+}

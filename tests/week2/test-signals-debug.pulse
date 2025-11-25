@@ -1,0 +1,37 @@
+// Test debugging with reactive signals
+import { signal, effect, computed } from 'pulselang/runtime'
+
+fn createCounter(initial) {
+  const [count, setCount] = signal(initial)  // <- Breakpoint here (line 5)
+
+  const doubled = computed(() => {
+    const val = count()
+    return val * 2  // <- Breakpoint here (line 9)
+  })
+
+  const tripled = computed(() => {
+    return count() * 3
+  })
+
+  effect(() => {
+    print("Count changed:", count(), "doubled:", doubled())  // <- Breakpoint here (line 17)
+  })
+
+  return { count, setCount, doubled, tripled }
+}
+
+fn main() {
+  const counter = createCounter(0)  // <- Breakpoint here (line 24)
+
+  print("Initial:", counter.count())
+  print("Doubled:", counter.doubled())
+  print("Tripled:", counter.tripled())
+
+  counter.setCount(5)  // <- Breakpoint here (line 30)
+  counter.setCount(10)
+  counter.setCount(15)
+
+  print("Final count:", counter.count())
+}
+
+main()

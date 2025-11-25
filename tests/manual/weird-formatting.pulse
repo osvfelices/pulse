@@ -1,0 +1,31 @@
+// Test weird formatting and layouts
+
+
+fn  spaced  (  x  ,  y  )  {
+return  x  +  y
+}
+
+
+
+const   result   =   spaced( 10 , 20 )
+
+
+print(result)
+
+// Lots of newlines
+
+
+fn compressed(){const a=1;const b=2;return a+b}
+print(compressed())
+
+// Mixed indentation
+fn mixed() {
+		const tab = 1
+    const space = 2
+  		return tab + space
+}
+print(mixed())
+
+
+// Single line everything
+fn oneLiner(x){return x*2}const val=oneLiner(21)print("Answer:",val)

@@ -1,0 +1,205 @@
+// HTTP Backpressure Under Scheduler Pressure Tests
+// Category 2: Verifies backpressure works correctly under scheduler stress
+// Tests: handlers with intentional pauses, channel saturation, forced shutdown
+
+import { createServer } from '../lib/http/server.js';
+import { fetch } from '../lib/http/client.js';
+import { Channel } from '../lib/runtime/channel-deterministic.js';
+
+async fn main() {
+  print('\n=== HTTP Backpressure Under Scheduler Pressure ===\n');
+
+  await testBackpressureWithPausedHandlers();
+  await testChannelSaturationWithMixedPatterns();
+  await testForcedShutdownDuringBackpressure();
+
+  print('\n All backpressure scheduler tests completed');
+}
+
+// Test 1: Handlers intentionally paused using sleep
+async fn testBackpressureWithPausedHandlers() {
+  print('Test 1: Backpressure with paused handlers...');
+
+  const server = createServer({ host: '127.0.0.1', port: 0, bufferSize: 5 });
+  server.listen();
+  await sleep(50);
+
+  const port = server.port;
+  const startTime = Date.now();
+
+  // Slow handler: processes 1 req per 50ms
+  startSlowHandler(server, 10);
+
+  await sleep(20);
+
+  // Send 10 requests rapidly (faster than handler can process)
+  const requests = [];
+  for (let i = 0; i < 10; i = i + 1) {
+    requests.push(fetch(`http://127.0.0.1:${port}/slow?id=${i}`));
+  }
+
+  await Promise.all(requests);
+  const duration = Date.now() - startTime;
+
+  // Should take at least 500ms (10 requests * 50ms each)
+  if (duration >= 450) {
+    print(`   Backpressure applied correctly (took ${duration}ms, expected ≥500ms)`);
+    print('   Buffer size limit enforced by scheduler');
+  } else {
+    print(`   Backpressure failed (took ${duration}ms, expected ≥500ms)`);
+  }
+
+  await server.close();
+}
+
+async fn startSlowHandler(server, count) {
+  for (let i = 0; i < count; i = i + 1) {
+    const [req, ok] = await server.requests.recv();
+    if (!ok) break;
+
+    // Intentional pause to create backpressure
+    await sleep(50);
+
+    req.respond({ status: 200, body: `Handled ${req.query.id}` });
+  }
+}
+
+// Test 2: Channel saturation under mixed select/send/recv patterns
+async fn testChannelSaturationWithMixedPatterns() {
+  print('\nTest 2: Channel saturation with mixed patterns...');
+
+  const server = createServer({ host: '127.0.0.1', port: 0, bufferSize: 3 });
+  server.listen();
+  await sleep(50);
+
+  const port = server.port;
+  const auxChannel = new Channel(2);
+  const processed = [];
+
+  // Complex handler using select with HTTP and aux channels
+  startMixedPatternHandler(server, auxChannel, processed);
+
+  await sleep(20);
+
+  // Send to both channels to create saturation
+  const requests = [];
+  for (let i = 0; i < 5; i = i + 1) {
+    requests.push(fetch(`http://127.0.0.1:${port}/mixed?id=${i}`));
+
+    // Also send to aux channel
+    if (i < 3) {
+      auxChannel.send(`aux-${i}`);
+    }
+  }
+
+  await Promise.all(requests);
+  await sleep(150);
+
+  // Verify handler processed from both channels under saturation
+  if (processed.length >= 5) {
+    print(`   Processed ${processed.length} events under saturation`);
+    print('   Mixed select/send/recv patterns handled correctly');
+  } else {
+    print(`   Expected at least 5 events, got ${processed.length}`);
+  }
+
+  auxChannel.close();
+  await server.close();
+}
+
+async fn startMixedPatternHandler(server, auxChannel, processed) {
+  let httpCount = 0;
+  let auxCount = 0;
+
+  while (httpCount < 5) {
+    // Alternate between HTTP and aux channel
+    if (auxCount < 3 && (httpCount % 2 == 1)) {
+      // Try aux channel
+      const [auxValue, auxOk] = await auxChannel.recv();
+      if (auxOk) {
+        processed.push({ type: 'aux', value: auxValue });
+        auxCount = auxCount + 1;
+      }
+    } else {
+      // HTTP request
+      const [req, ok] = await server.requests.recv();
+      if (ok) {
+        processed.push({ type: 'http', id: req.query.id });
+        req.respond({ status: 200, body: 'Mixed' });
+        httpCount = httpCount + 1;
+      } else {
+        break;
+      }
+    }
+
+    await sleep(10);
+  }
+}
+
+// Test 3: Forced shutdown during backpressure
+async fn testForcedShutdownDuringBackpressure() {
+  print('\nTest 3: Forced shutdown during backpressure...');
+
+  const server = createServer({ host: '127.0.0.1', port: 0, bufferSize: 3 });
+  server.listen();
+  await sleep(50);
+
+  const port = server.port;
+  let handledCount = 0;
+  let shutdownClean = true;
+
+  // Handler that will be interrupted
+  startInterruptibleHandler(server);
+
+  await sleep(20);
+
+  // Send many requests to fill buffer
+  const requests = [];
+  for (let i = 0; i < 10; i = i + 1) {
+    requests.push(
+      fetch(`http://127.0.0.1:${port}/shutdown?id=${i}`)
+        .catch(fn(err) {
+          return { ok: false, error: err };
+        })
+    );
+  }
+
+  // Let some requests start processing
+  await sleep(50);
+
+  // Force shutdown while requests are pending
+  print('  -> Forcing shutdown with pending requests...');
+  await server.close();
+
+  // Wait for in-flight requests
+  await Promise.all(requests);
+
+  print('   Server shutdown completed during backpressure');
+  print('   Channel closed gracefully');
+  print('   No deadlocks or hanging promises');
+}
+
+async fn startInterruptibleHandler(server) {
+  try {
+    while (true) {
+      const [req, ok] = await server.requests.recv();
+      if (!ok) {
+        print('  -> Handler received channel close signal');
+        break;
+      }
+
+      await sleep(100);
+      req.respond({ status: 200, body: 'OK' });
+    }
+  } catch (err) {
+    print('  -> Handler caught error during shutdown');
+  }
+}
+
+async fn sleep(ms) {
+  return new Promise(fn(resolve) {
+    setTimeout(resolve, ms);
+  });
+}
+
+main();

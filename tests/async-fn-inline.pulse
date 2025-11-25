@@ -1,0 +1,51 @@
+// Test async fn inline expressions
+// Verifies compiler correctly emits async function for inline fn with await
+
+async fn main() {
+  print('Testing inline async fn expressions...');
+
+  // Test 1: Inline async fn with await
+  const fn1 = async fn(x) {
+    await sleep(10);
+    return x * 2;
+  };
+
+  const result1 = await fn1(5);
+  print('Test 1 result:', result1); // Should be 10
+
+  // Test 2: Passing async fn as callback
+  const callbacks = [];
+  callbacks.push(async fn() {
+    await sleep(5);
+    return 'done';
+  });
+
+  const result2 = await callbacks[0]();
+  print('Test 2 result:', result2); // Should be 'done'
+
+  // Test 3: Nested async fn
+  async fn outer() {
+    const inner = async fn() {
+      await sleep(1);
+      return 'nested';
+    };
+    return await inner();
+  }
+
+  const result3 = await outer();
+  print('Test 3 result:', result3); // Should be 'nested'
+
+  if (result1 == 10 && result2 == 'done' && result3 == 'nested') {
+    print(' All inline async fn tests passed');
+  } else {
+    print(' Some tests failed');
+  }
+}
+
+async fn sleep(ms) {
+  return new Promise(fn(resolve) {
+    setTimeout(resolve, ms);
+  });
+}
+
+main();

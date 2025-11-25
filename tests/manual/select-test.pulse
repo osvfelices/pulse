@@ -1,0 +1,27 @@
+// Test select expressions with statement syntax
+import { DeterministicScheduler, channel, select, selectCase } from 'pulselang/runtime'
+
+const scheduler = new DeterministicScheduler()
+const ch1 = channel()
+const ch2 = channel()
+
+scheduler.spawn(async () => {
+  await ch1.send("From channel 1")
+})
+
+scheduler.spawn(async () => {
+  await ch2.send("From channel 2")
+})
+
+scheduler.spawn(async () => {
+  // Using select as a function call (correct runtime API)
+  const cases = [
+    selectCase({ channel: ch1, op: 'recv' }),
+    selectCase({ channel: ch2, op: 'recv' })
+  ]
+  const result = await select(cases)
+  print("Selected channel:", result.caseIndex, "value:", result.value)
+})
+
+await scheduler.run()
+print("Test complete")

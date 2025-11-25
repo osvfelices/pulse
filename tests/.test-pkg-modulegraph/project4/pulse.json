@@ -1,0 +1,9 @@
+{
+  "name": "test-project",
+  "version": "1.0.0",
+  "entry": "src/main.pulse",
+  "dependencies": {
+    "pkg-a": "1.0.0",
+    "pkg-b": "1.0.0"
+  }
+}

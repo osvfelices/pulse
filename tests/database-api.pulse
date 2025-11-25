@@ -1,0 +1,126 @@
+// Database API Tests
+// Tests the database driver APIs without requiring actual databases
+//
+// These tests verify:
+// - API structure and function signatures
+// - Helper functions (buildInsert, buildUpdate, buildWhere)
+// - Error handling patterns
+
+import { buildInsert, buildUpdate, buildWhere } from '../lib/db/postgres.js';
+import { buildInsert as buildInsertMySQL, buildUpdate as buildUpdateMySQL, buildWhere as buildWhereMySQL } from '../lib/db/mysql.js';
+
+async fn main() {
+  print('=== Database API Tests ===\n');
+
+  await testPostgresHelpers();
+  await testMySQLHelpers();
+
+  print('\n All database API tests completed');
+}
+
+// Test Postgres SQL builder helpers
+async fn testPostgresHelpers() {
+  print('Test 1: Postgres SQL Builders\n');
+
+  // Test buildInsert
+  print('1.1 buildInsert()...');
+  const insert = buildInsert('users', {
+    name: 'Alice',
+    email: 'alice@example.com',
+    age: 30
+  });
+
+  if (insert.sql == 'INSERT INTO users (name, email, age) VALUES ($1, $2, $3) RETURNING *') {
+    print('   SQL correct');
+  } else {
+    print('   SQL incorrect:', insert.sql);
+  }
+
+  if (insert.values.length == 3 && insert.values[0] == 'Alice') {
+    print('   Values correct');
+  } else {
+    print('   Values incorrect:', JSON.stringify(insert.values));
+  }
+
+  // Test buildUpdate
+  print('\n1.2 buildUpdate()...');
+  const update = buildUpdate('users', { age: 31 }, { id: 1 });
+
+  if (update.sql.includes('UPDATE users SET age = $1') && update.sql.includes('WHERE id = $2')) {
+    print('   SQL correct');
+  } else {
+    print('   SQL incorrect:', update.sql);
+  }
+
+  if (update.values.length == 2 && update.values[0] == 31 && update.values[1] == 1) {
+    print('   Values correct');
+  } else {
+    print('   Values incorrect:', JSON.stringify(update.values));
+  }
+
+  // Test buildWhere
+  print('\n1.3 buildWhere()...');
+  const where = buildWhere({ email: 'alice@example.com', active: true });
+
+  if (where.clause.includes('WHERE') && where.clause.includes('email = $1') && where.clause.includes('active = $2')) {
+    print('   WHERE clause correct');
+  } else {
+    print('   WHERE clause incorrect:', where.clause);
+  }
+
+  if (where.values.length == 2) {
+    print('   Values correct');
+  } else {
+    print('   Values incorrect:', JSON.stringify(where.values));
+  }
+
+  // Test empty conditions
+  print('\n1.4 buildWhere() with empty conditions...');
+  const emptyWhere = buildWhere({});
+
+  if (emptyWhere.clause == '' && emptyWhere.values.length == 0) {
+    print('   Empty WHERE handled correctly');
+  } else {
+    print('   Empty WHERE incorrect');
+  }
+}
+
+// Test MySQL SQL builder helpers
+async fn testMySQLHelpers() {
+  print('\nTest 2: MySQL SQL Builders\n');
+
+  // Test buildInsert
+  print('2.1 buildInsert()...');
+  const insert = buildInsertMySQL('users', {
+    name: 'Bob',
+    email: 'bob@example.com'
+  });
+
+  if (insert.sql == 'INSERT INTO users (name, email) VALUES (?, ?)') {
+    print('   SQL correct (uses ? placeholders)');
+  } else {
+    print('   SQL incorrect:', insert.sql);
+  }
+
+  // Test buildUpdate
+  print('\n2.2 buildUpdate()...');
+  const update = buildUpdateMySQL('users', { name: 'Robert' }, { id: 1 });
+
+  if (update.sql.includes('UPDATE users SET name = ?') && update.sql.includes('WHERE id = ?')) {
+    print('   SQL correct (uses ? placeholders)');
+  } else {
+    print('   SQL incorrect:', update.sql);
+  }
+
+  // Test buildWhere
+  print('\n2.3 buildWhere()...');
+  const where = buildWhereMySQL({ email: 'bob@example.com' });
+
+  if (where.clause.includes('WHERE') && where.clause.includes('email = ?')) {
+    print('   WHERE clause correct');
+  } else {
+    print('   WHERE clause incorrect:', where.clause);
+  }
+}
+
+main();

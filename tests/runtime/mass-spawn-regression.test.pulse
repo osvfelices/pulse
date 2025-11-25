@@ -1,0 +1,25 @@
+import { spawn, sleep } from 'std/async'
+
+let count = 0
+
+async fn worker(id) {
+  await sleep(1)
+  count = count + 1
+}
+
+async fn main() {
+  for (let i = 0; i < 1000; i++) {
+    spawn(worker(i))
+  }
+
+  await sleep(100)
+  print("Completed:", count)
+
+  if (count != 1000) {
+    throw("Expected 1000, got " + count)
+  }
+  
+  print("✓ Mass spawn regression test passed")
+}
+
+spawn(main())

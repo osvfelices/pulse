@@ -1,0 +1,17 @@
+// Test standard library imports with source maps
+import { signal, effect, computed } from 'pulselang/runtime/reactivity'
+
+print("=== Testing Standard Library Imports ===")
+
+// Test reactivity
+const [count, setCount] = signal(10)
+const doubled = computed(() => count() * 2)
+
+effect(() => {
+  print("Count:", count(), "Doubled:", doubled())
+})
+
+setCount(20)
+setCount(30)
+
+print("=== Reactivity test complete ===")

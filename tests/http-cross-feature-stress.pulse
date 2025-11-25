@@ -1,0 +1,256 @@
+// HTTP Cross-Feature Stress Tests
+// Category 4: Verifies HTTP integrates with other Pulse features
+// Tests: nested state management, concurrent channel patterns, fan-out
+
+import { createServer } from '../lib/http/server.js';
+import { fetch } from '../lib/http/client.js';
+import { Channel } from '../lib/runtime/channel-deterministic.js';
+
+async fn main() {
+  print('\n=== HTTP Cross-Feature Stress Tests ===\n');
+
+  await testStateManagementInHandlers();
+  await testConcurrentChannelPatterns();
+  await testChannelFanOut();
+
+  print('\n All cross-feature stress tests completed');
+}
+
+// Test 1: State management in HTTP handlers
+async fn testStateManagementInHandlers() {
+  print('Test 1: State management in HTTP handlers...');
+
+  const server = createServer({ host: '127.0.0.1', port: 0 });
+  server.listen();
+  await sleep(50);
+
+  const port = server.port;
+
+  // Shared state object
+  const state = {
+    requestCount: 0,
+    totalBytes: 0,
+    requests: []
+  };
+
+  // Handler that manages state
+  startStateHandler(server, state);
+
+  await sleep(20);
+
+  // Send 5 requests with varying body sizes
+  const requests = [];
+  for (let i = 0; i < 5; i = i + 1) {
+    const body = 'x'.repeat((i + 1) * 10);
+    requests.push(fetch(`http://127.0.0.1:${port}/state`, {
+      method: 'POST',
+      body: body
+    }));
+  }
+
+  await Promise.all(requests);
+  await sleep(100);
+
+  // Verify state was updated correctly
+  if (state.requestCount == 5 && state.totalBytes == 150) {
+    print(`   State updated correctly: ${state.requestCount} requests, ${state.totalBytes} bytes`);
+    print('   Shared state works inside HTTP handlers');
+  } else {
+    print(`   Expected 5 requests and 150 bytes, got ${state.requestCount} and ${state.totalBytes}`);
+  }
+
+  await server.close();
+}
+
+async fn startStateHandler(server, state) {
+  for (let i = 0; i < 5; i = i + 1) {
+    const [req, ok] = await server.requests.recv();
+    if (!ok) break;
+
+    // Update shared state
+    state.requestCount = state.requestCount + 1;
+    state.totalBytes = state.totalBytes + req.body.length;
+    state.requests.push({ method: req.method, path: req.path });
+
+    req.respond({ status: 200, body: 'OK' });
+  }
+}
+
+// Test 2: Concurrent channel patterns
+async fn testConcurrentChannelPatterns() {
+  print('\nTest 2: Concurrent channel patterns...');
+
+  const server = createServer({ host: '127.0.0.1', port: 0 });
+  server.listen();
+  await sleep(50);
+
+  const port = server.port;
+
+  // Multiple channels for different concerns
+  const highPriority = new Channel(5);
+  const lowPriority = new Channel(5);
+  const results = [];
+
+  // Router that prioritizes requests
+  startPriorityRouter(server, highPriority, lowPriority);
+
+  // Workers for each priority
+  startHighPriorityWorker(highPriority, results);
+  startLowPriorityWorker(lowPriority, results);
+
+  await sleep(20);
+
+  // Send mix of high and low priority requests
+  const requests = [];
+  for (let i = 0; i < 6; i = i + 1) {
+    const priority = (i % 2 == 0) ? 'high' : 'low';
+    requests.push(fetch(`http://127.0.0.1:${port}/priority?p=${priority}&id=${i}`));
+  }
+
+  await Promise.all(requests);
+  await sleep(150);
+
+  // Verify both priorities were handled
+  const highCount = results.filter(fn(r) { return r.priority == 'high'; }).length;
+  const lowCount = results.filter(fn(r) { return r.priority == 'low'; }).length;
+
+  if (highCount == 3 && lowCount == 3) {
+    print(`   Priority routing worked: ${highCount} high, ${lowCount} low`);
+    print('   Concurrent channels handled correctly');
+  } else {
+    print(`   Expected 3 high and 3 low, got ${highCount} high and ${lowCount} low`);
+  }
+
+  highPriority.close();
+  lowPriority.close();
+  await server.close();
+}
+
+async fn startPriorityRouter(server, highPriority, lowPriority) {
+  for (let i = 0; i < 6; i = i + 1) {
+    const [req, ok] = await server.requests.recv();
+    if (!ok) break;
+
+    const priority = req.query.p;
+    const id = req.query.id;
+
+    if (priority == 'high') {
+      await highPriority.send({ id: id });
+    } else {
+      await lowPriority.send({ id: id });
+    }
+
+    req.respond({ status: 200, body: 'Routed' });
+  }
+}
+
+async fn startHighPriorityWorker(highPriority, results) {
+  for (let i = 0; i < 3; i = i + 1) {
+    const [data, ok] = await highPriority.recv();
+    if (!ok) break;
+    results.push({ priority: 'high', id: data.id });
+  }
+}
+
+async fn startLowPriorityWorker(lowPriority, results) {
+  for (let i = 0; i < 3; i = i + 1) {
+    const [data, ok] = await lowPriority.recv();
+    if (!ok) break;
+    results.push({ priority: 'low', id: data.id });
+  }
+}
+
+// Test 3: Channel fan-out (one request stream shared across handlers)
+async fn testChannelFanOut() {
+  print('\nTest 3: Channel fan-out pattern...');
+
+  const server = createServer({ host: '127.0.0.1', port: 0 });
+  server.listen();
+  await sleep(50);
+
+  const port = server.port;
+
+  // Fan-out channels
+  const processingChannel = new Channel(10);
+  const loggingChannel = new Channel(10);
+  const results = [];
+
+  // Router that fans out to multiple channels
+  startFanOutRouter(server, processingChannel, loggingChannel);
+
+  // Processing worker
+  startProcessingWorker(processingChannel, results);
+
+  // Logging worker
+  startLoggingWorker(loggingChannel, results);
+
+  await sleep(20);
+
+  // Send 5 requests
+  const requests = [];
+  for (let i = 0; i < 5; i = i + 1) {
+    requests.push(fetch(`http://127.0.0.1:${port}/fanout?id=${i}`));
+  }
+
+  await Promise.all(requests);
+  await sleep(150);
+
+  // Verify fan-out worked (each request should be processed and logged)
+  const processedCount = results.filter(fn(r) { return r.type == 'processed'; }).length;
+  const loggedCount = results.filter(fn(r) { return r.type == 'logged'; }).length;
+
+  if (processedCount == 5 && loggedCount == 5) {
+    print(`   Fan-out pattern worked: ${processedCount} processed, ${loggedCount} logged`);
+    print('   Single HTTP stream distributed to multiple handlers');
+  } else {
+    print(`   Expected 5 processed and 5 logged, got ${processedCount} and ${loggedCount}`);
+  }
+
+  processingChannel.close();
+  loggingChannel.close();
+  await server.close();
+}
+
+async fn startFanOutRouter(server, processingChannel, loggingChannel) {
+  for (let i = 0; i < 5; i = i + 1) {
+    const [req, ok] = await server.requests.recv();
+    if (!ok) break;
+
+    // Fan out to both channels
+    const reqData = { id: req.query.id, method: req.method, path: req.path };
+
+    processingChannel.send(reqData);
+    loggingChannel.send(reqData);
+
+    req.respond({ status: 200, body: 'Routed' });
+  }
+}
+
+async fn startProcessingWorker(processingChannel, results) {
+  for (let i = 0; i < 5; i = i + 1) {
+    const [reqData, ok] = await processingChannel.recv();
+    if (!ok) break;
+
+    // Simulate processing
+    await sleep(10);
+    results.push({ type: 'processed', id: reqData.id });
+  }
+}
+
+async fn startLoggingWorker(loggingChannel, results) {
+  for (let i = 0; i < 5; i = i + 1) {
+    const [reqData, ok] = await loggingChannel.recv();
+    if (!ok) break;
+
+    // Simulate logging
+    results.push({ type: 'logged', id: reqData.id });
+  }
+}
+
+async fn sleep(ms) {
+  return new Promise(fn(resolve) {
+    setTimeout(resolve, ms);
+  });
+}
+
+main();

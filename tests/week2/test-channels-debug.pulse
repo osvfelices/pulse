@@ -1,0 +1,38 @@
+// Test debugging with channels and async code
+import { DeterministicScheduler, channel } from 'pulselang/runtime'
+
+const scheduler = new DeterministicScheduler()
+
+async fn producer(ch, name, count) {
+  for (let i = 1; i <= count; i++) {
+    const message = name + " message " + i
+    await ch.send(message)  // <- Breakpoint here (line 9)
+    print("Sent:", message)
+  }
+  ch.close()
+}
+
+async fn consumer(ch, name) {
+  for await (const msg of ch) {
+    print(name, "received:", msg)  // <- Breakpoint here (line 17)
+  }
+  print(name, "done")
+}
+
+fn main() {
+  const ch1 = channel(5)
+  const ch2 = channel(3)
+
+  // Spawn producers
+  scheduler.spawn(() => producer(ch1, "Producer1", 3))  // <- Breakpoint here (line 27)
+  scheduler.spawn(() => producer(ch2, "Producer2", 2))
+
+  // Spawn consumers
+  scheduler.spawn(() => consumer(ch1, "Consumer1"))
+  scheduler.spawn(() => consumer(ch2, "Consumer2"))
+
+  return scheduler.run()
+}
+
+await main()
+print("All tasks complete!")

@@ -1,0 +1,18 @@
+// Main file that imports from other modules
+import { add, multiply, square, PI } from './math-utils.pulse'
+import { greet, uppercase, repeat } from './string-utils.pulse'
+
+print("=== Math Tests ===")
+print("add(5, 3) =", add(5, 3))
+print("multiply(4, 7) =", multiply(4, 7))
+print("square(9) =", square(9))
+print("PI =", PI)
+
+print("\n=== String Tests ===")
+print(greet("Alice"))
+print(uppercase("hello world"))
+print(repeat("*", 10))
+
+// Nested function calls
+const result = add(square(3), multiply(2, 5))
+print("\nadd(square(3), multiply(2, 5)) =", result)

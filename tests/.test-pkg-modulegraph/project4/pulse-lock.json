@@ -1,0 +1,17 @@
+{
+  "version": "1.0",
+  "dependencies": {
+    "pkg-a": {
+      "version": "1.0.0",
+      "integrity": "f1242104f84fccc24f6b2e322de1a70d4394a5fc87eaa64be7e000c18467cdc0",
+      "source": "registry",
+      "resolved": "pkg-a"
+    },
+    "pkg-b": {
+      "version": "1.0.0",
+      "integrity": "5963b4430671d0a1a6ff146b01eccd8e3da079212bd8df85a8df62ead8eb08dd",
+      "source": "registry",
+      "resolved": "pkg-b"
+    }
+  }
+}
