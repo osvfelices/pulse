@@ -73,6 +73,8 @@ scripts/verify-lang-release.sh
 ROADMAP.md
 pre_release_audit/
 tools/vscode-pulse/
+tools/pulse-vscode/
+tests/
 
 # Internal development files
 benchmarks/
