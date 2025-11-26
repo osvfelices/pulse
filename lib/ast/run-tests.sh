@@ -35,5 +35,10 @@ echo "------------------------"
 node lib/ast/test-strict-cli.js
 echo ""
 
+echo "6. Final Migration Tests"
+echo "------------------------"
+node lib/ast/test-final-migrations.js
+echo ""
+
 echo "========================"
 echo "All AST tests passed!"
