@@ -25,5 +25,10 @@ echo "----------------------------"
 node lib/ast/test-parser-integration.js
 echo ""
 
+echo "4. Import/Export/Pattern Tests"
+echo "-------------------------------"
+node lib/ast/test-import-export-patterns.js
+echo ""
+
 echo "========================"
 echo "All AST tests passed!"
