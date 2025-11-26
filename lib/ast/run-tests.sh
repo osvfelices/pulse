@@ -30,5 +30,10 @@ echo "-------------------------------"
 node lib/ast/test-import-export-patterns.js
 echo ""
 
+echo "5. CLI Strict Mode Tests"
+echo "------------------------"
+node lib/ast/test-strict-cli.js
+echo ""
+
 echo "========================"
 echo "All AST tests passed!"
