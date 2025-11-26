@@ -20,5 +20,10 @@ echo "------------------"
 node lib/ast/test-validator.js
 echo ""
 
+echo "3. Parser Integration Tests"
+echo "----------------------------"
+node lib/ast/test-parser-integration.js
+echo ""
+
 echo "========================"
 echo "All AST tests passed!"
