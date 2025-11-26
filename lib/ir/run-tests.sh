@@ -25,7 +25,12 @@ echo "---------------------------------"
 node lib/ir/test-builder-control-flow.js
 echo ""
 
-echo "4. IR Validator Tests"
+echo "4. IR Builder Select/Spawn/Iteration Tests"
+echo "-------------------------------------------"
+node lib/ir/test-builder-select-spawn.js
+echo ""
+
+echo "5. IR Validator Tests"
 echo "--------------------"
 node lib/ir/test-validator.js
 echo ""
