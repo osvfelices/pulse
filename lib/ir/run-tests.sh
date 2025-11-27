@@ -30,19 +30,29 @@ echo "-------------------------------------------"
 node lib/ir/test-builder-select-spawn.js
 echo ""
 
-echo "5. IR Builder Advanced Control Flow Tests"
+echo "5. IR Builder Expression Tests"
+echo "-------------------------------"
+node lib/ir/test-builder-expressions.js
+echo ""
+
+echo "6. IR Builder Advanced Control Flow Tests"
 echo "------------------------------------------"
 node lib/ir/test-builder-advanced.js
 echo ""
 
-echo "6. IR Validator Tests"
-echo "--------------------"
+echo "7. IR Validator Tests"
+echo "---------------------"
 node lib/ir/test-validator.js
 echo ""
 
-echo "7. IR Optimizer Tests"
+echo "8. IR Optimizer Tests"
 echo "---------------------"
 node lib/ir/test-optimizer.js
+echo ""
+
+echo "9. IR Backend Pipeline Integration Tests"
+echo "-----------------------------------------"
+node lib/ir/test-pipeline-ir-backend.js
 echo ""
 
 echo "================"
