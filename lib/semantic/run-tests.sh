@@ -20,5 +20,10 @@ echo "---------------------"
 node lib/semantic/test-semantic-cli.js
 echo ""
 
+echo "3. Semantic Type Integration Tests"
+echo "-----------------------------------"
+node lib/semantic/test-semantic-types.js
+echo ""
+
 echo "================================"
 echo "All semantic tests passed!"
