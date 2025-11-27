@@ -25,5 +25,10 @@ echo "-----------------------------------"
 node lib/semantic/test-semantic-types.js
 echo ""
 
+echo "4. Type Checker Tests"
+echo "---------------------"
+node lib/semantic/test-type-checker.js
+echo ""
+
 echo "================================"
 echo "All semantic tests passed!"
