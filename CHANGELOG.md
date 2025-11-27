@@ -2,6 +2,19 @@
 
 All notable changes to Pulse will be documented in this file.
 
+## [Unreleased]
+
+### Optional Type System (Stage 3.2)
+
+**Type Annotations and Checking**:
+- Added optional type annotation syntax for variables, parameters, and return types (`x: int`, `fn(a: string): bool`)
+- Implemented conservative type checker that validates only explicitly annotated code - unannotated code is never checked
+- Type system supports primitives (int, float, bool, string) and generics (Channel<T>, Array<T>, Task<T>)
+- Enabled via `--strict-types` flag - zero overhead and zero behavior change when disabled
+- Type checking integrated into IR pipeline with optional metadata attachment pass
+- IR metadata pass never modifies control flow or generated JavaScript - purely informational
+- All invariants locked in with surgical tests: type checker never errors on unannotated code, metadata doesn't affect optimization
+
 ## [2.0.0] - 2025-11-19
 
 ### Breaking Changes

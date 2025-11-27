@@ -30,5 +30,10 @@ echo "---------------------"
 node lib/semantic/test-type-checker.js
 echo ""
 
+echo "5. Type System Invariant Tests"
+echo "-------------------------------"
+node lib/semantic/test-type-invariants.js
+echo ""
+
 echo "================================"
 echo "All semantic tests passed!"
