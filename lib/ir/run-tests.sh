@@ -56,8 +56,13 @@ node lib/ir/test-optimizer.js
 echo ""
 
 echo "10. IR Backend Pipeline Integration Tests"
-echo "-----------------------------------------"
+echo "------------------------------------------"
 node lib/ir/test-pipeline-ir-backend.js
+echo ""
+
+echo "11. IR Type Pass Tests"
+echo "----------------------"
+node lib/ir/test-type-pass.js
 echo ""
 
 echo "================"
