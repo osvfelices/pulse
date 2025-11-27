@@ -40,5 +40,10 @@ echo "--------------------"
 node lib/ir/test-validator.js
 echo ""
 
+echo "7. IR Optimizer Tests"
+echo "---------------------"
+node lib/ir/test-optimizer.js
+echo ""
+
 echo "================"
 echo "All IR tests passed!"
