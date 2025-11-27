@@ -30,7 +30,12 @@ echo "-------------------------------------------"
 node lib/ir/test-builder-select-spawn.js
 echo ""
 
-echo "5. IR Validator Tests"
+echo "5. IR Builder Advanced Control Flow Tests"
+echo "------------------------------------------"
+node lib/ir/test-builder-advanced.js
+echo ""
+
+echo "6. IR Validator Tests"
 echo "--------------------"
 node lib/ir/test-validator.js
 echo ""
