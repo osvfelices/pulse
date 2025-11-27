@@ -40,17 +40,22 @@ echo "------------------------------------------"
 node lib/ir/test-builder-advanced.js
 echo ""
 
-echo "7. IR Validator Tests"
+echo "7. IR Builder Destructuring/Spread Tests"
+echo "-----------------------------------------"
+node lib/ir/test-builder-destructuring.js
+echo ""
+
+echo "8. IR Validator Tests"
 echo "---------------------"
 node lib/ir/test-validator.js
 echo ""
 
-echo "8. IR Optimizer Tests"
+echo "9. IR Optimizer Tests"
 echo "---------------------"
 node lib/ir/test-optimizer.js
 echo ""
 
-echo "9. IR Backend Pipeline Integration Tests"
+echo "10. IR Backend Pipeline Integration Tests"
 echo "-----------------------------------------"
 node lib/ir/test-pipeline-ir-backend.js
 echo ""
