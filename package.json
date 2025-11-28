@@ -1,9 +1,9 @@
 {
   "name": "pulselang",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "private": false,
   "license": "MIT",
-  "description": "Pulse Runtime 2.0.0 - Production HTTP integration with full scheduler support: spawn, sleep, channels in HTTP handlers",
+  "description": "Pulse 3.0 - Programming language with CSP concurrency, structured concurrency, optional type system, and IR-based compiler",
   "type": "module",
   "main": "lib/parser.js",
   "bin": {
@@ -46,8 +46,8 @@
     "bench:scheduler": "node tests/extreme/stress-1000tasks.test.js",
     "run:quickstart": "node lib/run.js quickstart/ping.pulse",
     "prepublishOnly": "npm pack --dry-run",
-    "docs": "node lib/run.js docs/scripts/build-docs.pulse",
-    "docs:serve": "node lib/run.js docs/scripts/serve.pulse",
+    "docs": "node lib/run.js docs/scripts/build-docs.pulse --legacy-backend",
+    "docs:serve": "node lib/run.js docs/scripts/serve.pulse --legacy-backend",
     "gen:snippets": "node tools/shiki/generate-snippets.mjs",
     "gen:snippets:light": "node tools/shiki/generate-snippets.mjs --light",
     "pulse:build": "node tools/build/build.mjs --src examples/fullstack --out examples/fullstack-dist",

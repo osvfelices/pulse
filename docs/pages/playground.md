@@ -169,9 +169,9 @@ Full name: Bob Jones
 Full name: Charlie Brown
 ```
 
-### HTTP Server (v2.0.0)
+### HTTP Server
 
-HTTP handlers in v2.0.0 have full scheduler integration and can use spawn(), sleep(), channels(), async/await, and signals.
+HTTP handlers have full scheduler integration and can use spawn(), sleep(), channels(), async/await, and signals.
 
 ```pulse
 import { createServer } from 'std/http'
@@ -194,7 +194,7 @@ server.listen(3000, () => {
 })
 ```
 
-HTTP handlers can now use all scheduler primitives including spawn, sleep, and channels in v2.0.0.
+HTTP handlers can use all scheduler primitives including spawn, sleep, and channels.
 
 ## Try It Locally
 

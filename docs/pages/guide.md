@@ -2,7 +2,7 @@
 
 Learn the fundamentals of Pulse programming in this guide.
 
-## Quickstart (v2.0.0)
+## Quickstart
 
 ### Installation
 
@@ -354,7 +354,7 @@ import { readFile, writeFile } from 'std/fs'
 Pulse includes a standard library:
 
 - **std/async** - spawn, sleep, channel, select, asyncAll, asyncRace
-- **std/http** - createServer, serve, json, text, redirect (Full scheduler support in v2.0.0)
+- **std/http** - createServer, serve, json, text, redirect (Full scheduler support)
 - **std/fs** - File system operations (readFile, writeFile, exists, mkdir, etc.)
 - **std/json** - JSON parsing and stringification with error handling
 - **std/math** - Mathematical functions (abs, min, max, clamp, etc.)
@@ -366,9 +366,9 @@ Pulse includes a standard library:
 
 Explore the [API Reference](api.html) for complete documentation.
 
-## HTTP + Scheduler Integration (v2.0.0)
+## HTTP + Scheduler Integration
 
-In v2.0.0, HTTP handlers now have full scheduler support. You can use `spawn()`, `sleep()`, and `channels()` alongside `async/await` and signals.
+HTTP handlers have full scheduler support. You can use `spawn()`, `sleep()`, and `channels()` alongside `async/await` and signals.
 
 Example with channels in HTTP handlers:
 
@@ -388,7 +388,7 @@ const server = createServer(async (req, res) => {
 server.listen(3000)
 ```
 
-This now works correctly in v2.0.0. The scheduler is fully integrated with HTTP request handling.
+The scheduler is fully integrated with HTTP request handling.
 
 ## Next Steps
 

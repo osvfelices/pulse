@@ -1,17 +1,17 @@
-# Getting Started with Pulse Runtime 2.0
+# Getting Started with Pulse 3.0
 
-> **Note:** This guide covers the legacy Pulse language features.
+> **Note:** This guide covers the Pulse language and runtime features.
 >
-> For Pulse Runtime 2.0 (the JavaScript/TypeScript library), see:
-> - [README.md](../README.md) - Runtime 2.0 overview and quick start
+> For detailed API documentation, see:
+> - [README.md](../README.md) - Pulse 3.0 overview and quick start
 > - [API Reference](api-reference.md) - Complete API documentation
-> - Runtime 2.0 is a JavaScript library, not a language compiler
+> - [Migration Guide](../MIGRATION.md) - Upgrading from Pulse 2.x
 
 ---
 
-# Getting Started with Pulse Language (v2.0.0)
+# Getting Started with Pulse Language (v3.0.0)
 
-Pulse is a deterministic runtime for concurrent applications. This guide covers installation, project setup, and core CLI usage.
+Pulse is a programming language with CSP-style concurrency, structured concurrency, and cooperative scheduling. This guide covers installation, project setup, and core CLI usage.
 
 ## Installation
 
@@ -24,7 +24,7 @@ npm install -g pulselang
 Verify installation:
 
 ```bash
-pulse --version  # Should output: 2.0.0
+pulse --version  # Should output: 3.0.0
 ```
 
 ## Basic Program
@@ -32,15 +32,25 @@ pulse --version  # Should output: 2.0.0
 Create `hello.pulse`:
 
 ```pulse
-import { log } from 'std/console';
-
-log('Hello, Pulse');
+print('Hello, Pulse!');
 ```
 
 Execute:
 
 ```bash
-pulse run hello.pulse
+pulse hello.pulse
+```
+
+## Compiler Flags
+
+Pulse 3.0 supports several compiler flags:
+
+```bash
+pulse script.pulse                   # Default: IR backend
+pulse script.pulse --legacy-backend  # Use legacy codegen (fallback)
+pulse script.pulse --strict-types    # Enable type checking
+pulse script.pulse --strict-semantic # Treat semantic warnings as errors
+pulse script.pulse --sourcemap       # Generate source maps
 ```
 
 ## Project Structure
@@ -50,82 +60,60 @@ Initialize a project directory:
 ```bash
 mkdir my-pulse-app
 cd my-pulse-app
-```
-
-Create `pulse.json`:
-
-```json
-{
-  "name": "my-pulse-app",
-  "version": "1.0.0",
-  "entry": "src/main.pulse",
-  "dependencies": {}
-}
+npm init -y
+npm install pulselang
 ```
 
 Create `src/main.pulse`:
 
 ```pulse
-import { log } from 'std/console';
-
-log('Application started');
+fn main() {
+  print('Application started');
+}
+main();
 ```
 
 Run:
 
 ```bash
-pulse run src/main.pulse
+pulse src/main.pulse
 ```
 
-## Development Server
+## Type Annotations (Optional)
 
-Start development mode with hot reload:
+Pulse 3.0 supports optional type annotations:
 
-```bash
-pulse dev
+```pulse
+fn add(a: number, b: number): number {
+  return a + b;
+}
+
+const result: number = add(2, 3);
+print(result);
 ```
 
-The Pulse Runtime Server (PRS) provides:
-- File system watcher with automatic reload
-- Runtime inspector at `http://localhost:3000/snapshot`
-- Debugger integration (see [Debugging Guide](./DEBUGGING.md))
-
-## Package Management
-
-Add dependencies:
+Enable type checking with `--strict-types`:
 
 ```bash
-pulse add package-name
-pulse install
-```
-
-Remove dependencies:
-
-```bash
-pulse remove package-name
+pulse typed-app.pulse --strict-types
 ```
 
 ## CLI Reference
 
 ```bash
-pulse run <file>        # Execute a Pulse file
-pulse dev               # Start dev server with hot reload
-pulse test              # Execute test suite
-pulse prs               # Start standalone PRS server
-pulse install           # Install all dependencies
-pulse add <pkg>         # Add dependency to pulse.json
-pulse remove <pkg>      # Remove dependency from pulse.json
-pulse --version         # Display version
-pulse --help            # Display help
+pulse <file>                # Execute a Pulse file
+pulse <file> --legacy-backend  # Use legacy codegen
+pulse <file> --strict-types    # Enable type checking
+pulse <file> --strict-semantic # Strict semantic errors
+pulse <file> --sourcemap       # Generate source maps
+pulse --help                   # Display help
 ```
 
 ## Additional Documentation
 
-- [HTTP Guide](./HTTP-GUIDE.md) - HTTP server and client APIs
-- [Concurrency Guide](./CONCURRENCY.md) - Channels, async functions, and select expressions
-- [Debugging Guide](./DEBUGGING.md) - VS Code integration and debugging workflows
-- [Database Guide](./DB-GUIDE.md) - Database drivers and connection pooling
-- [Package Manager](./PACKAGE-MANAGER.md) - Dependency management and module resolution
+- [Language Guide](guide.md) - Complete language reference
+- [API Reference](api-reference.md) - Runtime API documentation
+- [Migration Guide](../MIGRATION.md) - Upgrading from Pulse 2.x
 
 ## Repository
 
