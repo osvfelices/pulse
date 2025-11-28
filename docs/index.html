@@ -230,31 +230,35 @@ main()
 
 <p>Ready to start? Check out the <a href="guide.html">Getting Started Guide</a> to write your first Pulse program, or explore the <a href="api.html">API Reference</a> to learn about the standard library.</p>
 
+<h2>What's New in 3.0</h2>
+
+<strong>Current version: v3.0.0</strong>
+
+<ul>
+<li>IR-based compiler backend (default)</li>
+<li>Optional type system with <code>--strict-types</code></li>
+<li>Semantic analysis with scope tracking</li>
+<li>Legacy backend available via <code>--legacy-backend</code></li>
+<li>Full backward compatibility with Pulse 2.x code</li>
+</ul>
+
 <h2>Known Limitations</h2>
-
-<strong>Current version: v2.0.0</strong>
-
-<strong>HTTP + Scheduler Integration</strong> - RESOLVED IN 2.0.0 - HTTP handlers now fully support <code>spawn()</code>, <code>sleep()</code>, and <code>channels()</code> alongside <code>async/await</code> and signals. The scheduler has been integrated with HTTP request handling.
 
 <strong>Platforms</strong> - Tested on Node.js 18+. Deno/Bun/Browser support not verified.
 
-<strong>Type safety</strong> - No TypeScript integration yet. Runtime errors instead of compile-time checks. Planning .d.ts files.
+<strong>IR Backend</strong> - Import declarations not yet supported in IR backend. Use <code>--legacy-backend</code> for scripts with import statements.
 
-<strong>Error messages</strong> - Parser errors could be clearer. Working on better diagnostics. Some errors may include raw JavaScript stack traces.
+<strong>Type System</strong> - Optional and conservative. No generics, union types, or type inference. Only annotated code is type-checked.
 
-<strong>Debugging</strong> - Source maps are functional but under refinement. You may be debugging compiled JavaScript output in some cases.
+<strong>Debugging</strong> - Source maps are functional but under refinement.
 
-<strong>Channels</strong> - No timeout or cancellation for blocked operations (workaround: use selectWithTimeout from std/async). Task priorities exist (HIGH, NORMAL, LOW) but are not exposed in public API.
+<strong>Channels</strong> - No timeout or cancellation for blocked operations (workaround: use selectWithTimeout from std/async).
 
-<strong>JS interop</strong> - Calling JavaScript from Pulse works, but mixing deterministic scheduler with Node's event loop requires care. Channels don't auto-bridge to Promises.
+<strong>JS interop</strong> - Calling JavaScript from Pulse works, but mixing deterministic scheduler with Node's event loop requires care.
 
-<strong>Stdlib</strong> - File operations are basic wrappers around Node's fs. HTTP client not included (use fetch). CLI utilities are minimal.
+<strong>LSP and Debugger</strong> - LSP server is in early development. Debugger and inspector are experimental.
 
-<strong>LSP and Debugger</strong> - LSP server is in early development. Debugger and inspector are experimental, not production-ready.
-
-<strong>Package Manager</strong> - Basic functionality only (pulse add/install/remove). Not feature-complete.
-
-<p>Hit an issue? Open a GitHub issue. Some limitations are on the roadmap, others are design tradeoffs.</p>
+<p>Hit an issue? Open a GitHub issue.</p>
 
 <h2>Community</h2>
 
@@ -264,7 +268,7 @@ main()
 <li>GitHub: <a href="https://github.com/osvfelices/pulse">github.com/osvfelices/pulse</a></li>
 <li>Documentation: <a href="https://osvfelices.github.io/pulse/">https://osvfelices.github.io/pulse/</a></li>
 <li>License: MIT</li>
-<li>Version: 2.0.0</li>
+<li>Version: 3.0.0</li>
 </ul>
 
       </article>

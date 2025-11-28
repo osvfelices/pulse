@@ -56,7 +56,7 @@
 
 <p>Learn the fundamentals of Pulse programming in this guide.</p>
 
-<h2>Quickstart (v2.0.0)</h2>
+<h2>Quickstart</h2>
 
 <h3>Installation</h3>
 
@@ -388,7 +388,7 @@ import { readFile, writeFile } from 'std/fs'
 
 <ul>
 <li><strong>std/async</strong> - spawn, sleep, channel, select, asyncAll, asyncRace</li>
-<li><strong>std/http</strong> - createServer, serve, json, text, redirect (Full scheduler support in v2.0.0)</li>
+<li><strong>std/http</strong> - createServer, serve, json, text, redirect (Full scheduler support)</li>
 <li><strong>std/fs</strong> - File system operations (readFile, writeFile, exists, mkdir, etc.)</li>
 <li><strong>std/json</strong> - JSON parsing and stringification with error handling</li>
 <li><strong>std/math</strong> - Mathematical functions (abs, min, max, clamp, etc.)</li>
@@ -401,9 +401,9 @@ import { readFile, writeFile } from 'std/fs'
 
 <p>Explore the <a href="api.html">API Reference</a> for complete documentation.</p>
 
-<h2>HTTP + Scheduler Integration (v2.0.0)</h2>
+<h2>HTTP + Scheduler Integration</h2>
 
-<p>In v2.0.0, HTTP handlers now have full scheduler support. You can use <code>spawn()</code>, <code>sleep()</code>, and <code>channels()</code> alongside <code>async/await</code> and signals.</p>
+<p>HTTP handlers have full scheduler support. You can use <code>spawn()</code>, <code>sleep()</code>, and <code>channels()</code> alongside <code>async/await</code> and signals.</p>
 
 <p>Example with channels in HTTP handlers:</p>
 
@@ -422,7 +422,7 @@ const server = createServer(async (req, res) =&gt; {
 server.listen(3000)
 </code></pre>
 
-<p>This now works correctly in v2.0.0. The scheduler is fully integrated with HTTP request handling.</p>
+<p>The scheduler is fully integrated with HTTP request handling.</p>
 
 <h2>Next Steps</h2>
 
