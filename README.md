@@ -2,23 +2,22 @@
   <img src="pulse.svg" alt="Pulse" width="200"/>
 </p>
 
-# Pulse Runtime 2.0
+# Pulse 3.0
 
-Cooperative scheduler for Node.js with structured concurrency, deterministic task execution, and HTTP integration.
+A programming language with CSP-style concurrency, structured concurrency, and cooperative scheduling.
 
-## What is Pulse Runtime?
+## What is Pulse?
 
-Pulse Runtime is a JavaScript/TypeScript library that provides:
+Pulse is a programming language built for concurrent systems programming with:
 
-- **Cooperative scheduler** - Deterministic task execution with spawn/sleep primitives
-- **CSP-style channels** - Go-like channels for inter-task communication
-- **Select statement** - Multiplex channel operations with deterministic ordering
-- **HTTP integration** - Scheduler pool for handling concurrent HTTP requests
-- **Structured concurrency** - Parent-child task relationships with automatic cancellation
-- **Resource management** - Admission control, load shedding, and backpressure
-- **Production observability** - Prometheus metrics, health checks, graceful shutdown
+- **Native CSP primitives** - `spawn`, channels, and `select` statements built into the language
+- **Structured concurrency** - Parent tasks automatically manage child task lifecycles
+- **Cooperative scheduler** - Deterministic task execution with predictable behavior
+- **Optional type system** - Gradual typing with `--strict-types` flag
+- **JavaScript interop** - Compiles to JavaScript, imports from npm seamlessly
+- **Advanced compiler** - Multi-stage IR-based backend with optimization passes
 
-Built for backend services that need predictable concurrency behavior, resource control, and production-grade reliability.
+Pulse 3.0 includes a new compiler architecture with intermediate representation (IR), semantic analysis, and optional static type checking.
 
 ## When to Use This
 
@@ -56,6 +55,73 @@ npm install pulselang
 ```
 
 Requires Node.js 18 or higher.
+
+## New in Pulse 3.0
+
+### Compiler Architecture
+
+**Multi-Stage Compilation Pipeline**:
+- Lexer → Parser → AST → Semantic Analysis → Type Checking → IR → Optimization → Backend
+
+**Intermediate Representation (IR)**:
+- IR-based backend (default in 3.0.0)
+- SSA-form register-based IR with control flow graph
+- Dead code elimination and constant folding optimizations
+- Full validation pass for IR correctness
+- ECMAScript-style completion records for exception handling
+
+**Semantic Analysis**:
+- Variable resolution with scope tracking
+- Temporal dead zone (TDZ) detection
+- const/let enforcement
+- Control flow validation (return/break/continue)
+
+**Optional Type System**:
+- Gradual typing with `--strict-types` flag
+- Type annotations: `const x: number = 42`
+- Function signatures: `fn add(a: number, b: number): number`
+- Type checking for annotated code only (unannotated code is never checked)
+
+### Compiler Flags
+
+Run Pulse files with the `pulse` or `pulselang` CLI:
+
+```bash
+pulse script.pulse                   # Default: IR backend
+pulse script.pulse --legacy-backend  # Use legacy codegen (fallback)
+pulse script.pulse --strict-types    # Enable type checking
+pulse script.pulse --strict-semantic # Treat semantic warnings as errors
+pulse script.pulse --sourcemap       # Generate source maps
+```
+
+**Available Flags**:
+- `--legacy-backend`: Use legacy codegen instead of IR (fallback for compatibility)
+- `--strict-types`: Enable optional static type checking
+- `--strict-semantic`: Fail on semantic errors (default: warnings)
+- `--strict-ast`: Enable strict AST validation
+- `--sourcemap`: Generate inline source maps for debugging
+
+### Language Features
+
+**Type Annotations** (optional, requires `--strict-types`):
+```pulse
+// Variable type annotations
+const x: number = 42;
+let name: string = "Alice";
+
+// Function signatures
+fn add(a: number, b: number): number {
+  return a + b;
+}
+
+// Type checking only applies to annotated code
+const untyped = "hello"; // No type checking
+```
+
+**Compiler Modes**:
+- **Default**: IR-based backend with optimization passes
+- **Legacy Backend** (`--legacy-backend`): Original codegen, available as fallback
+- **Type Checked** (`--strict-types`): Static type checking for annotated code
 
 ## Quick Start
 

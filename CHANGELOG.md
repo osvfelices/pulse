@@ -2,18 +2,88 @@
 
 All notable changes to Pulse will be documented in this file.
 
-## [Unreleased]
+## [3.0.0] - 2025-11-28
 
-### Optional Type System (Stage 3.2)
+Stable release of Pulse 3.0 with production-ready IR backend.
+
+The IR backend is now semantically equivalent to the legacy backend for all supported language constructs. Exception handling uses an ECMAScript-style completion record model with explicit finally-chain unwinding, validated against 41 adversarial tests covering nested try/catch/finally, return/throw suppression, and loop control flow through protected regions. Four bugs were identified and fixed during the RC cycle: try_exit misclassification, catch-vs-finally nesting priority, and missing forof/forin exit patterns. The legacy backend remains available via `--legacy-backend` for fallback.
+
+### Changes from 3.0.0-rc1
+
+**IR Backend Now Default**:
+- IR-based compilation is now the default backend
+- Legacy backend available via `--legacy-backend` flag
+- All previously reported IR issues have been fixed
+
+**Bug Fixes**:
+- Fixed try_exit block misclassification as break target
+- Fixed throw routing when catch-only try is nested inside try-finally
+- Fixed forof_exit and forin_exit patterns in loop control block detection
+- Fixed constant propagation removing live code in optimizer
+
+**Testing**:
+- 41/41 adversarial tests passing (try/catch/finally, loops, exception propagation)
+- 36/36 backend equivalence tests passing
+- All pipeline invariant and hardening tests passing
+
+### Compiler Architecture
+
+**Multi-Stage Compilation Pipeline**:
+- Lexer -> Parser -> AST -> Semantic Analysis -> Type Checking -> IR -> Optimization -> Backend
+- Intermediate representation (IR) with SSA-form register-based design
+- Control flow graph with basic blocks and terminators
+- Dead code elimination and constant folding optimizations
+- Full IR validation pass with error context (function/block/instruction)
+- ECMAScript-style completion records for exception handling
+
+**Semantic Analysis**:
+- Variable resolution with lexical scope tracking
+- Temporal dead zone (TDZ) detection for let/const
+- Duplicate declaration detection
+- const assignment validation
+- Control flow validation (return/break/continue in valid contexts)
+- Undefined variable detection with warnings
+
+**Error Quality**:
+- All errors include line and column information
+- Parser errors show code snippets with visual pointers
+- Type errors show expected vs actual types
+- IR validator errors include function/block/instruction context
+- "Did you mean?" suggestions using Levenshtein distance
+- Colorized terminal output
+
+**Compiler Flags**:
+- `--legacy-backend`: Use legacy codegen instead of IR (fallback)
+- `--strict-types`: Enable optional static type checking
+- `--strict-semantic`: Treat semantic warnings as errors
+- `--strict-ast`: Enable strict AST validation
+- `--sourcemap`: Generate inline source maps
+
+### Optional Type System
 
 **Type Annotations and Checking**:
-- Added optional type annotation syntax for variables, parameters, and return types (`x: int`, `fn(a: string): bool`)
-- Implemented conservative type checker that validates only explicitly annotated code - unannotated code is never checked
-- Type system supports primitives (int, float, bool, string) and generics (Channel<T>, Array<T>, Task<T>)
-- Enabled via `--strict-types` flag - zero overhead and zero behavior change when disabled
-- Type checking integrated into IR pipeline with optional metadata attachment pass
-- IR metadata pass never modifies control flow or generated JavaScript - purely informational
-- All invariants locked in with surgical tests: type checker never errors on unannotated code, metadata doesn't affect optimization
+- Optional type annotation syntax for variables, parameters, and return types
+- Conservative type checker that validates only explicitly annotated code
+- Type system supports primitives (number, string, boolean, object)
+- Enabled via `--strict-types` flag
+- Type checking integrated into compilation pipeline with scope-based type resolution
+
+**Type System Limitations**:
+- No type inference (types must be explicit)
+- No generics (Channel<T>, Array<T> not yet supported)
+- No union types (number | string not supported)
+- No type aliases or interfaces
+
+### Documentation
+
+- Updated README.md with Pulse 3.0 overview
+- Created MIGRATION.md guide for upgrading from 2.0
+- Created docs/guide.md with type annotation examples
+- Error message quality audit completed
+
+## [Unreleased]
+
+### Future Work
 
 ## [2.0.0] - 2025-11-19
 

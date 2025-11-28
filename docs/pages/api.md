@@ -1,6 +1,6 @@
 # API Reference
 
-Complete reference for the Pulse v2.0.0 standard library.
+Complete reference for the Pulse v3.0.0 standard library.
 
 ## Async (std/async)
 
@@ -521,7 +521,7 @@ Stats object contains:
 
 ## HTTP (std/http)
 
-HTTP server primitives. In v2.0.0, HTTP handlers have full scheduler support and can use `spawn()`, `sleep()`, and `channels()` alongside `async/await` and signals.
+HTTP server primitives. HTTP handlers have full scheduler support and can use `spawn()`, `sleep()`, and `channels()` alongside `async/await` and signals.
 
 ### createServer
 
@@ -555,7 +555,7 @@ The request handler receives:
 - `req`: Node.js IncomingMessage (has `url`, `method`, `headers`, etc.)
 - `res`: Node.js ServerResponse (has `writeHead()`, `end()`, etc.)
 
-Handlers are async functions with full scheduler integration in v2.0.0. They can use all Pulse scheduler primitives including spawn, sleep, and channels.
+Handlers are async functions with full scheduler integration. They can use all Pulse scheduler primitives including spawn, sleep, and channels.
 
 ---
 
@@ -1013,9 +1013,9 @@ hello world
 
 For more examples and tutorials, visit the [Getting Started Guide](guide.html).
 
-## Known Limitations (v2.0.0)
+## Known Limitations
 
-**HTTP + Scheduler Integration**: RESOLVED IN 2.0.0 - HTTP handlers now fully support `spawn()`, `sleep()`, and `channels()`.
+**IR Backend**: Import declarations are not yet supported in the IR backend. Use `--legacy-backend` for scripts with import statements.
 
 **Database Clients**: `std/db` provides client stubs for MySQL, PostgreSQL, and Redis, but they are not fully implemented. SQLite integration (sqlite.js) is functional.
 
