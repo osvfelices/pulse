@@ -52,10 +52,10 @@ function generateSourceMap(originalCode, generatedCode, sourceFile) {
 }
 
 /**
- * Vite plugin for .pulse files
+ * Vite plugin for .pls/.pulse files
  */
 export default function pulseLang(options = {}) {
-  const { include = /\.pulse$/, exclude, debug = false } = options;
+  const { include = /\.(pls|pulse)$/, exclude, debug = false } = options;
 
   let projectRoot = process.cwd();
 
@@ -67,11 +67,11 @@ export default function pulseLang(options = {}) {
     },
 
     /**
-     * Transform .pulse files to JavaScript
+     * Transform .pls/.pulse files to JavaScript
      */
     async transform(code, id) {
-      // Only process .pulse files
-      if (!id.endsWith('.pulse')) {
+      // Only process .pls or .pulse files
+      if (!id.endsWith('.pls') && !id.endsWith('.pulse')) {
         return null;
       }
 
@@ -121,10 +121,10 @@ export default function pulseLang(options = {}) {
     },
 
     /**
-     * Handle HMR for .pulse files
+     * Handle HMR for .pls/.pulse files
      */
     handleHotUpdate({ file, server }) {
-      if (file.endsWith('.pulse')) {
+      if (file.endsWith('.pls') || file.endsWith('.pulse')) {
         // Get the module from the module graph
         const module = server.moduleGraph.getModuleById(file);
         if (!module) {

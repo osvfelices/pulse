@@ -46,12 +46,12 @@ function Counter() {
 
 Call the getter as a function to read the value. React automatically re-renders when the signal changes.
 
-## Using .pulse Files
+## Using .pls Files
 
-You can create `.pulse` files for async logic or data processing:
+You can create `.pls` files for async logic or data processing:
 
 ```pulse
-// example.pulse
+// example.pls
 import { signal, effect } from 'pulselang/runtime'
 
 const [count, setCount] = signal(0)
@@ -66,7 +66,7 @@ setCount(10)
 Import them in your React components:
 
 ```jsx
-import { runExample } from './example.pulse'
+import { runExample } from './example.pls'
 ```
 
 The vite-plugin-pulse handles compilation automatically.
@@ -76,9 +76,9 @@ The vite-plugin-pulse handles compilation automatically.
 Two different commands for different purposes:
 
 - `npm run dev` - Starts the Vite dev server for your web app
-- `pulse myfile.pulse` - Runs a standalone Pulse file from the command line
+- `pulse myfile.pls` - Runs a standalone Pulse file from the command line
 
-The `pulse` CLI is for running `.pulse` files directly, not for starting web servers.
+The `pulse` CLI is for running `.pls` files directly, not for starting web servers.
 
 ## selectCase Requirement
 

@@ -15,11 +15,18 @@ Development cycle for Pulse 3.1.
 
 ### Added
 
-- (Placeholder for new features)
+- **M13.1 Unified CLI**: Centralized compilation utilities in `lib/cli/`
+- **File Extension Migration**: `.pls` is now the primary source file extension
+  - Both `.pls` and `.pulse` are supported for backward compatibility
+  - All tooling (CLI, vite-plugin, VS Code) recognizes both extensions
+  - `.pls` takes priority when both extensions exist
 
 ### Changed
 
-- (Placeholder for changes)
+- Primary file extension changed from `.pulse` to `.pls`
+- All examples and templates updated to use `.pls` extension
+- Vite plugin default pattern updated to `/\.(pls|pulse)$/`
+- VS Code extension recognizes both `.pls` and `.pulse` files
 
 ### Fixed
 

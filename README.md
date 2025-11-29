@@ -87,11 +87,11 @@ Requires Node.js 18 or higher.
 Run Pulse files with the `pulse` or `pulselang` CLI:
 
 ```bash
-pulse script.pulse                   # Default: IR backend
-pulse script.pulse --legacy-backend  # Use legacy codegen (fallback)
-pulse script.pulse --strict-types    # Enable type checking
-pulse script.pulse --strict-semantic # Treat semantic warnings as errors
-pulse script.pulse --sourcemap       # Generate source maps
+pulse script.pls                   # Default: IR backend
+pulse script.pls --legacy-backend  # Use legacy codegen (fallback)
+pulse script.pls --strict-types    # Enable type checking
+pulse script.pls --strict-semantic # Treat semantic warnings as errors
+pulse script.pls --sourcemap       # Generate source maps
 ```
 
 **Available Flags**:
