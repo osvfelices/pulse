@@ -2,6 +2,29 @@
 
 All notable changes to Pulse will be documented in this file.
 
+## [3.1.0] - Unreleased
+
+Development cycle for Pulse 3.1.
+
+### Planned
+
+- **M13.1 Unified Integration**: Merge CLI, LSP, backend, IR validator into single cohesive tool
+- **M14 Advanced Async**: Improved channel operations and structured concurrency patterns
+- **Test Infrastructure**: Comprehensive test plan for M13.1 architectural changes
+- **IR Semantic Parity**: Maintain full backward compatibility with 3.0.0
+
+### Added
+
+- (Placeholder for new features)
+
+### Changed
+
+- (Placeholder for changes)
+
+### Fixed
+
+- (Placeholder for bug fixes)
+
 ## [3.0.0] - 2025-11-28
 
 Stable release of Pulse 3.0 with production-ready IR backend.
