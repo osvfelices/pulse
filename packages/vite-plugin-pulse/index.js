@@ -2,12 +2,13 @@
  * vite-plugin-pulse
  *
  * Vite plugin that transforms .pulse files to JavaScript ESM modules
- * Supports both dev and production builds with source maps
+ * Uses unified Pulse 3.1 compilation pipeline with IR backend
  */
 
-// Use pulselang package imports for npm compatibility
-import { Parser } from 'pulselang/parser';
-import { emitProgram } from 'pulselang/codegen';
+// Note: When published to npm, this import will resolve via package exports:
+// import { compileFile } from 'pulselang/cli/utils/compile';
+// During development, use relative path to avoid requiring npm link
+import { compileFile } from '../../lib/cli/utils/compile.js';
 import { relative } from 'node:path';
 
 /**
@@ -83,12 +84,14 @@ export default function pulseLang(options = {}) {
           console.log(`[vite-plugin-pulse] Compiling ${id}`);
         }
 
-        // Parse Pulse source
-        const parser = new Parser(code);
-        const ast = parser.parseProgram();
-
-        // Generate JavaScript
-        let js = emitProgram(ast);
+        // Compile using unified pipeline (IR backend default)
+        let js = await compileFile(id, {
+          sourcemap: false, // Vite handles source maps
+          strictAST: false,
+          strictSemantic: false,
+          strictTypes: false,
+          legacyBackend: false // Use IR backend
+        });
 
         // Fix runtime import paths
         js = fixRuntimeImports(js, id, projectRoot);
