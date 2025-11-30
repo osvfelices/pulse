@@ -43,28 +43,47 @@ Pulse 3.1 is the first post-3.0 development cycle. This release focuses on archi
 - [ ] Integration test suite
 - [ ] Updated developer documentation
 
-### 2. M14: Advanced Async & Channel Improvements
+### 2. M14: Deterministic Async/Await and Structured Concurrency
 
-**Goal**: Enhance channel operations and structured concurrency patterns.
+**Status**: COMPLETE
 
-**Planned Features**:
-- Channel timeout primitives (integrated, not select-based)
-- Graceful cancellation for long-running tasks
-- Channel multiplexing utilities
-- Buffered channel performance improvements
-- Better error propagation in spawned tasks
+**M14.1: Deterministic Async/Await**
+- Production-ready async/await with deterministic scheduling
+- IR-level lowering via `__async_spawn` primitive
+- PulsePromise: Promise-compatible wrapper over channels
+- Channel-based await with scheduler control
+- Module initialization with automatic `drain()`
+- `spawn(asyncFn) + drain()` semantics: no deadlocks
 
-**Constraints**:
-- Must maintain deterministic scheduler behavior
-- No breaking changes to existing channel API
-- Performance must not regress
+**M14.2: Select with Await Cases**
+- `select { case x = await fn(): ... }` syntax
+- AsyncResult type for error propagation
+- Deterministic dispatch by channel readiness
+- Backend support in IR and legacy codegen
+- Scheduler microtask pumping for Promise interop
+
+**M14.2: Structured Concurrency**
+- `asyncGroup()` for scoped task management
+- `group.spawn(fn)` and `group.wait()` with error propagation
+- `withTimeout(ms, fn)` and `withDeadline(ts, fn)`
+- Deterministic cancellation in reverse spawn order
+- CancelledError and TimeoutError
+- No task leaks: guaranteed cleanup
+
+**Architecture Guarantees**:
+- Deterministic execution: same inputs → same task order
+- No microtask races: all async ops route through scheduler
+- No deadlocks: spawn+drain completes correctly
+- Proper cancellation: reverse-spawn order
+- Resource safety: no task leaks
 
 **Deliverables**:
-- [ ] Channel timeout API design
-- [ ] Cancellation token implementation
-- [ ] Performance benchmarks
-- [ ] Migration guide for new patterns
-- [ ] Updated async documentation
+- [x] Async/await IR lowering and backend emission
+- [x] Select+await parsing, lowering, and dispatch
+- [x] AsyncGroup and cancellation scopes
+- [x] withTimeout/withDeadline utilities
+- [x] Comprehensive test coverage
+- [x] Documentation updates
 
 ### 3. Test Infrastructure for M13.1
 

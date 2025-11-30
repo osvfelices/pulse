@@ -6,31 +6,77 @@ All notable changes to Pulse will be documented in this file.
 
 Development cycle for Pulse 3.1.
 
-### Planned
-
-- **M13.1 Unified Integration**: Merge CLI, LSP, backend, IR validator into single cohesive tool
-- **M14 Advanced Async**: Improved channel operations and structured concurrency patterns
-- **Test Infrastructure**: Comprehensive test plan for M13.1 architectural changes
-- **IR Semantic Parity**: Maintain full backward compatibility with 3.0.0
-
 ### Added
 
+- **M15 Phase 1: Standard Library Scaffolding**
+  - Created `lib/std/` directory structure for standard library modules
+  - Implemented stub modules: fs, path, json, math, cli, async
+  - Added function signatures with JSDoc documentation
+  - Created placeholder test files in `tests/std/`
+  - Module exports: `std/fs`, `std/path`, `std/json`, `std/math`, `std/cli`, `std/async`
+  - Error classes for fs operations (FileNotFoundError, PermissionDeniedError, etc.)
+  - Error classes for json operations (JSONParseError, CircularReferenceError)
+  - Error classes for cli operations (UnknownFlagError, MissingRequiredArgumentError, InvalidValueError)
+
 - **M13.1 Unified CLI**: Centralized compilation utilities in `lib/cli/`
+  - Single `pulse` command for run, build, test operations
+  - Unified compilation pipeline in `lib/cli/utils/compile.js`
+  - Support for both `.pls` and `.pulse` extensions
+  - Deterministic file resolution with `.pls` priority
+
+- **M14.1 Deterministic Async/Await**: Production-ready async/await with deterministic scheduling
+  - IR-level async function lowering with `__async_spawn` primitive
+  - PulsePromise: Promise-compatible wrapper over deterministic channels
+  - Async functions compile to synchronous functions returning PulsePromises
+  - Channel-based await with explicit scheduler control
+  - Module initialization with automatic `drain()` for top-level async
+  - Full integration with completion records (try/catch/finally)
+  - `spawn(asyncFn) + drain()` semantics: no deadlocks, deterministic task lifecycle
+
+- **M14.2 Select with Await Cases**: Advanced async coordination primitives
+  - `select { case x = await fn(): ... }` syntax for async rendezvous
+  - AsyncResult type for error propagation through channels
+  - Select returns `{caseIndex, value, ok}` with proper value extraction
+  - Deterministic dispatch: earliest ready channel wins, ties broken by case order
+  - Full backend support in both IR and legacy codegen
+  - Integration with scheduler microtask pumping for native Promise interop
+
+- **M14.2 Structured Concurrency**: Task groups and cancellation scopes
+  - `asyncGroup()` for scoped task management with automatic cleanup
+  - `group.spawn(fn)` spawns tasks within group lifecycle
+  - `group.wait()` waits for all tasks, cancels on first error
+  - Deterministic cancellation order: reverse spawn order
+  - `withTimeout(ms, fn)` and `withDeadline(ts, fn)` for timeout control
+  - CancelledError and TimeoutError for explicit cancellation signaling
+  - No task leaks: all spawned tasks either complete or are cancelled
+
 - **File Extension Migration**: `.pls` is now the primary source file extension
-  - Both `.pls` and `.pulse` are supported for backward compatibility
+  - Both `.pls` and `.pulse` supported for backward compatibility
   - All tooling (CLI, vite-plugin, VS Code) recognizes both extensions
   - `.pls` takes priority when both extensions exist
+  - All examples migrated to `.pls`
 
 ### Changed
 
 - Primary file extension changed from `.pulse` to `.pls`
-- All examples and templates updated to use `.pls` extension
-- Vite plugin default pattern updated to `/\.(pls|pulse)$/`
-- VS Code extension recognizes both `.pls` and `.pulse` files
+- Async/await is now production-ready (no longer experimental)
+- Scheduler is authoritative event loop: no reliance on microtask queue races
+- `spawn()` pattern works correctly with async functions and `drain()`
 
 ### Fixed
 
-- (Placeholder for bug fixes)
+- **M14.1 Spawn Closure Semantics**: IR Spawn instruction now uses `spawn(() => fn(args))` to match runtime signature
+- **M14.1 PulsePromise Scheduler Integration**: Scheduler receives from PulsePromise channels directly instead of `.then()` chains
+- **M14.2 Select Value Extraction**: Backend codegen removes incorrect `[0]` array indexing on AsyncResult
+- **M14.2 Async Value Unwrapping**: `__async_spawn` now awaits native Promises from IR-generated async functions
+
+### Architecture Guarantees
+
+- **Deterministic Execution**: Same inputs produce same task execution order across all runs
+- **No Microtask Races**: All async operations route through deterministic scheduler
+- **No Deadlocks**: `spawn(main) + drain()` completes correctly when main uses async/select
+- **Proper Cancellation**: Tasks cancelled in deterministic reverse-spawn order
+- **Resource Safety**: No task leaks, all spawned tasks tracked and cleaned up
 
 ## [3.0.0] - 2025-11-28
 
