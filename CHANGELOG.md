@@ -18,6 +18,27 @@ Development cycle for Pulse 3.1.
   - Error classes for json operations (JSONParseError, CircularReferenceError)
   - Error classes for cli operations (UnknownFlagError, MissingRequiredArgumentError, InvalidValueError)
 
+- **M15 Phase 2: Core Modules Implementation**
+  - **std/path**: Cross-platform path manipulation with platform-aware separators
+    - `join()`, `normalize()`, `resolve()`: Path composition and resolution
+    - `relative()`: Compute relative paths between locations
+    - `dirname()`, `basename()`, `extname()`: Path decomposition
+    - `isAbsolute()`: Platform-aware absolute path detection
+    - Platform-specific `sep` and `delimiter` constants
+  - **std/json**: JSON parsing and serialization with error reporting
+    - `parse()`: Parse JSON with line/column error information
+    - `stringify()`: Serialize with circular reference detection
+    - Optional sorted keys for deterministic output
+    - Optional indentation for pretty-printing
+  - **std/math**: Mathematical functions and utilities
+    - Constants: PI, E, TAU
+    - Trigonometric: sin, cos, tan, asin, acos, atan, atan2
+    - Exponential: exp, log, log10, log2, pow, sqrt
+    - Rounding: floor, ceil, round, trunc
+    - Aggregation: min, max
+    - Utilities: `clamp()` for range limiting, `randomInt()` for integer generation
+  - Comprehensive test coverage: 80 tests across all three modules
+
 - **M13.1 Unified CLI**: Centralized compilation utilities in `lib/cli/`
   - Single `pulse` command for run, build, test operations
   - Unified compilation pipeline in `lib/cli/utils/compile.js`
