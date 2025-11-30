@@ -39,6 +39,30 @@ Development cycle for Pulse 3.1.
     - Utilities: `clamp()` for range limiting, `randomInt()` for integer generation
   - Comprehensive test coverage: 80 tests across all three modules
 
+- **M15 Phase 3: CLI and Async Modules**
+  - **std/fs**: Synchronous filesystem operations with deterministic error handling
+    - File I/O: `readFile()`, `writeFile()`, `readFileBytes()`, `writeFileBytes()`
+    - Metadata: `exists()`, `stat()` with size, mtime, isFile, isDirectory
+    - Directories: `mkdir()`, `mkdirRecursive()`, `readDirectory()`
+    - File operations: `copyFile()`, `moveFile()`, `remove()`, `removeRecursive()`
+    - Error mapping: Node.js errors to stdlib error classes (FileNotFoundError, PermissionDeniedError, etc.)
+  - **std/cli**: Command-line argument parsing with schema validation
+    - `parseArgs()`: Parse argv with flags, options, and positional arguments
+    - Boolean flags: `--flag`, `-f` with defaults
+    - Value options: `--option=value`, `--option value`, `-o value` with type validation
+    - Type support: string, number, integer with automatic parsing
+    - Required argument validation with clear error messages
+    - Error classes: UnknownFlagError, MissingRequiredArgumentError, InvalidValueError
+  - **std/async**: Async utility functions with deterministic scheduling
+    - `retry()`: Exponential backoff retry with configurable attempts and delays
+    - `timeout()`: Promise timeout wrapper using withTimeout from runtime
+    - `delay()`: Sleep wrapper using deterministic scheduler
+    - `race()`: Deterministic promise race (first settled wins)
+    - `all()`: Wait for all promises, fail on first error
+    - `allSettled()`: Wait for all promises, collect all results
+    - `parallel()`: Run tasks with concurrency limit, preserve order
+  - Comprehensive test coverage: 80+ tests across all three modules
+
 - **M13.1 Unified CLI**: Centralized compilation utilities in `lib/cli/`
   - Single `pulse` command for run, build, test operations
   - Unified compilation pipeline in `lib/cli/utils/compile.js`
