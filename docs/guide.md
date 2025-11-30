@@ -11,6 +11,7 @@ This guide covers the Pulse language syntax and new features in 3.0.
 - [Concurrency](#concurrency)
 - [Type Annotations (New in 3.0)](#type-annotations-new-in-30)
 - [Compiler Flags](#compiler-flags)
+- [Standard Library](#standard-library)
 
 ## Basic Syntax
 
@@ -440,6 +441,49 @@ pulse src/main.pulse --strict-semantic --strict-types --strict-ast
 pulse src/main.pulse
 ```
 
+## Standard Library
+
+Pulse 3.1 includes a production-grade standard library with modules for common operations:
+
+### Available Modules
+
+- **[std/fs](std/fs.md)** - Filesystem operations (read, write, directories)
+- **[std/path](std/path.md)** - Cross-platform path manipulation
+- **[std/json](std/json.md)** - JSON parsing and serialization
+- **[std/math](std/math.md)** - Mathematical functions and constants
+- **[std/cli](std/cli.md)** - Command-line argument parsing
+- **[std/async](std/async.md)** - Asynchronous utilities (retry, race, parallel)
+
+### Quick Example
+
+```javascript
+import { readFile, writeFile } from 'pulselang/std/fs';
+import { parse, stringify } from 'pulselang/std/json';
+import { join } from 'pulselang/std/path';
+
+// Read and parse JSON configuration
+const configPath = join(process.cwd(), 'config.json');
+const content = readFile(configPath);
+const config = parse(content);
+
+// Update configuration
+config.version = '2.0.0';
+config.lastUpdated = new Date().toISOString();
+
+// Write back with formatting
+const updated = stringify(config, { sorted: true, indent: 2 });
+writeFile(configPath, updated);
+```
+
+### Documentation
+
+See the [std/](std/) directory for complete documentation of each module:
+
+- Function signatures and parameters
+- Error conditions and handling
+- Determinism guarantees
+- Usage examples
+
 ## Examples
 
 See the `examples/` directory for complete working examples:
@@ -459,6 +503,7 @@ pulse examples/hello.pulse
 - [README.md](../README.md) - Overview and quick start
 - [MIGRATION.md](../MIGRATION.md) - Migration guide from 2.0
 - [API Reference](api-reference.md) - Runtime API documentation
+- [Standard Library Documentation](std/) - stdlib module references
 
 ---
 

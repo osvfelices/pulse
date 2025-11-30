@@ -63,6 +63,37 @@ Development cycle for Pulse 3.1.
     - `parallel()`: Run tasks with concurrency limit, preserve order
   - Comprehensive test coverage: 80+ tests across all three modules
 
+- **M15 Phase 4: Standard Library Documentation**
+  - Complete documentation for all stdlib modules in `docs/std/`
+  - **docs/std/fs.md**: Filesystem operations reference with all 13 functions
+    - Overview, function signatures, error conditions, determinism guarantees, examples
+    - Documentation for readFile, writeFile, exists, stat, mkdir, copyFile, and more
+  - **docs/std/path.md**: Path manipulation utilities
+    - Cross-platform path handling (sep, delimiter constants)
+    - Path construction (join, resolve, normalize, relative)
+    - Path parsing (dirname, basename, extname, isAbsolute)
+  - **docs/std/json.md**: JSON processing
+    - parse() with detailed error reporting (line/column information)
+    - stringify() with sorted keys and indentation options
+    - Circular reference detection and error handling
+  - **docs/std/math.md**: Mathematical functions
+    - Constants (PI, E, TAU) and trigonometric functions
+    - Exponential/logarithmic functions (exp, log, pow, sqrt)
+    - Rounding functions (floor, ceil, round, trunc)
+    - Utilities (clamp, min, max, random, randomInt)
+  - **docs/std/cli.md**: Command-line argument parsing
+    - Schema-based parseArgs() with flags, options, positional arguments
+    - Type validation (string, number, integer)
+    - Error handling (UnknownFlagError, MissingRequiredArgumentError, InvalidValueError)
+  - **docs/std/async.md**: Asynchronous utilities
+    - retry() with exponential backoff configuration
+    - Promise aggregation (race, all, allSettled)
+    - Concurrency control with parallel()
+    - Determinism guarantees for scheduler-based operations
+  - Updated main guide (docs/guide.md) with Standard Library section
+  - Added stdlib module links to Further Reading section
+  - All documentation follows consistent structure: Overview, API reference, Errors, Determinism, Examples
+
 - **M13.1 Unified CLI**: Centralized compilation utilities in `lib/cli/`
   - Single `pulse` command for run, build, test operations
   - Unified compilation pipeline in `lib/cli/utils/compile.js`
