@@ -132,6 +132,29 @@ Development cycle for Pulse 3.1.
   - `.pls` takes priority when both extensions exist
   - All examples migrated to `.pls`
 
+- **M16 Phase 1: Snapshot Engine**
+  - Snapshot data structures: TaskSnapshot, ChannelSnapshot, SchedulerSnapshot, TimelineSnapshot
+  - SnapshotEngine: Deterministic capture of runtime state (tasks, channels, scheduler)
+  - SnapshotDiff: Incremental snapshot diffing for optimization
+  - Resource limits: Max 100k tasks, 10k channels, 100MB snapshot size
+  - JSON serialization/deserialization support
+  - Performance: <10ms capture for typical workloads
+  - All operations are read-only and preserve determinism
+  - 23 tests covering data structures, capture, diffing, performance
+
+- **M16 Phase 2: Inspector Read-Only API**
+  - Inspector class with enable/disable lifecycle management
+  - getTasks(), getTask(id): Read task state with proper error codes
+  - getChannels(), getChannel(id): Read channel state
+  - getSchedulerState(): Snapshot scheduler state (logical time, queues)
+  - getSupervisorTree(): Placeholder for future supervisor integration
+  - getSnapshot(): Full timeline snapshot using SnapshotEngine from Phase 1
+  - getStatistics(): Runtime statistics (gated by NODE_ENV=test or PULSE_DEBUG=1)
+  - Integration with SnapshotEngine for deterministic state capture
+  - Error codes: INSPECTOR_NOT_ENABLED, TASK_NOT_FOUND, CHANNEL_NOT_FOUND, STATS_NOT_AVAILABLE, SNAPSHOT_TOO_LARGE
+  - All operations preserve scheduler determinism (no microtask injection)
+  - Test coverage: read-api, snapshots, concurrency tests
+
 ### Changed
 
 - Primary file extension changed from `.pulse` to `.pls`
