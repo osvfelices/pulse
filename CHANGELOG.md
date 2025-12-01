@@ -181,6 +181,18 @@ Development cycle for Pulse 3.1.
   - Test coverage: endpoints (35 tests), handler (44 tests)
   - Zero modifications to scheduler or snapshot engine - pure LSP wiring layer
 
+- **M16 Phase 5: Tests & Validation**
+  - Determinism validation tests: 100-run tests verify identical execution order with debugger/inspector enabled
+  - Determinism tests cover: tasks, channels, breakpoints, inspector reads, complex workloads (100 tasks + 10 channels)
+  - Microtask count validation: Verify exactly 1 microtask per drain() call across all scenarios
+  - Microtask tests cover: debugger disabled (baseline), debugger enabled (no breakpoints), breakpoints set but not hit, pause/resume operations, varying workload sizes (10-1000 tasks)
+  - Performance benchmarks: Measure debugger overhead (<5% target), breakpoint check performance (O(1) verification), inspector query overhead
+  - Performance tests cover: 100-1000 tasks, channel operations, snapshot capture time, workload scaling
+  - Edge case coverage: pause/resume edge cases, breakpoint validation, stack frame errors, stepping modes, inspector errors, concurrent operations, resource limits, state consistency
+  - Edge case tests: 65+ tests covering timeout handling, invalid parameters, state transitions, error codes (ErrorCodes.*)
+  - Test infrastructure: Created tests/validation/ directory with 4 comprehensive test suites
+  - Zero modifications to runtime code - pure test additions preserving scheduler invariants
+
 ### Changed
 
 - Primary file extension changed from `.pulse` to `.pls`
