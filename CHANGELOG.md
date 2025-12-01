@@ -168,6 +168,19 @@ Development cycle for Pulse 3.1.
   - Preserves determinism: pause uses Promise mechanism, no microtask injection
   - Test coverage: pause-resume (16 tests), stepping (21 tests), frames (17 tests), breakpoints (24 tests)
 
+- **M16 Phase 4: LSP Wiring**
+  - DebugLSPAPI class providing JSON-RPC 2.0 compatible endpoints
+  - JSON-RPC error code mapping: Pulse error codes to standard JSON-RPC errors (-32600 to -32603)
+  - handleDebugRequest(): JSON-RPC method router with parameter validation
+  - All pulse/debug/* endpoints: initialize, shutdown, breakpoint management, execution control, stepping, stack inspection, inspector queries
+  - Complete API documentation: docs/debug-protocol.md with all 24 endpoints documented
+  - Parameter validation for all endpoints with proper error responses
+  - Error mapping: DEBUGGER_NOT_ENABLED -> INVALID_REQUEST (-32600), INVALID_BREAKPOINT -> INVALID_PARAMS (-32602), etc.
+  - Debugger endpoints: pause, resume, stepOver, stepInto, stepOut, getFrames, getLocals, evaluate (not supported), getState
+  - Inspector endpoints: getSnapshot, getTasks, getTask, getChannels, getChannel, getSchedulerState, getSupervisors, getStatistics
+  - Test coverage: endpoints (35 tests), handler (44 tests)
+  - Zero modifications to scheduler or snapshot engine - pure LSP wiring layer
+
 ### Changed
 
 - Primary file extension changed from `.pulse` to `.pls`
