@@ -155,6 +155,19 @@ Development cycle for Pulse 3.1.
   - All operations preserve scheduler determinism (no microtask injection)
   - Test coverage: read-api, snapshots, concurrency tests
 
+- **M16 Phase 3: Debugger Command Interface**
+  - DebugSession class with complete pause/resume functionality
+  - pause(), resume(): Control execution with promise-based coordination
+  - pauseExecution(): Pause with 30-second auto-resume timeout
+  - Step modes: stepOver(), stepInto(), stepOut() with correct depth semantics
+  - shouldBreak(file, line, depth): Breakpoint and stepping logic
+  - Stack frame inspection: getCurrentFrames(), getLocals(frameId), captureFrames()
+  - Breakpoint management: setBreakpoint(), clearBreakpoint(), clearAllBreakpoints(), getBreakpoints()
+  - Path normalization and traversal attack prevention in setBreakpoint()
+  - Error codes: DEBUGGER_NOT_ENABLED, DEBUGGER_ALREADY_PAUSED, DEBUGGER_NOT_PAUSED, INVALID_BREAKPOINT, BREAKPOINT_NOT_FOUND, INVALID_FRAME_ID, EVAL_NOT_SUPPORTED
+  - Preserves determinism: pause uses Promise mechanism, no microtask injection
+  - Test coverage: pause-resume (16 tests), stepping (21 tests), frames (17 tests), breakpoints (24 tests)
+
 ### Changed
 
 - Primary file extension changed from `.pulse` to `.pls`
