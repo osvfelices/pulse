@@ -2,9 +2,10 @@
  * Math Module Tests
  */
 
-import { describe, it } from 'node:test';
+import { describe, it, beforeEach } from 'node:test';
 import { strict as assert } from 'node:assert';
 import * as math from '../../lib/std/math.js';
+import { DeterministicScheduler, resetScheduler, getScheduler } from '../../lib/runtime/scheduler-deterministic.js';
 
 describe('std/math', () => {
   describe('constants', () => {
@@ -118,40 +119,180 @@ describe('std/math', () => {
     });
   });
 
-  describe('randomInt', () => {
-    it('should generate integers in range', () => {
+  // ============================================================================
+  // DETERMINISTIC PRNG TESTS (P0-3 fix + P0-NEW-1 scheduler-local)
+  // ============================================================================
+  // All PRNG tests now use scheduler context since PRNG state is scheduler-local
+
+  describe('seedRandom', () => {
+    beforeEach(() => {
+      // Initialize scheduler for each test
+      getScheduler();
+    });
+
+    it('should require integer seed', () => {
+      assert.throws(() => math.seedRandom(3.14), /integer seed/);
+      assert.throws(() => math.seedRandom('123'), /integer seed/);
+      assert.throws(() => math.seedRandom(null), /integer seed/);
+    });
+
+    it('should accept valid integer seeds', () => {
+      assert.doesNotThrow(() => math.seedRandom(0));
+      assert.doesNotThrow(() => math.seedRandom(12345));
+      assert.doesNotThrow(() => math.seedRandom(-1)); // Converted to unsigned
+    });
+  });
+
+  describe('randomSeeded (deterministic)', () => {
+    beforeEach(() => {
+      resetScheduler();
+      getScheduler(); // Reinitialize scheduler
+      math.resetPRNG();
+    });
+
+    it('should throw if not seeded', () => {
+      assert.throws(() => math.randomSeeded(), /not seeded/);
+    });
+
+    it('should generate values between 0 and 1', () => {
+      math.seedRandom(42);
       for (let i = 0; i < 10; i++) {
-        const value = math.randomInt(0, 10);
-        assert.ok(value >= 0);
-        assert.ok(value < 10);
-        assert.equal(Math.floor(value), value);
+        const value = math.randomSeeded();
+        assert.ok(value >= 0, `Value ${value} should be >= 0`);
+        assert.ok(value < 1, `Value ${value} should be < 1`);
+      }
+    });
+
+    it('should produce identical sequence from same seed', () => {
+      math.seedRandom(12345);
+      const seq1 = [];
+      for (let i = 0; i < 10; i++) {
+        seq1.push(math.randomSeeded());
+      }
+
+      math.seedRandom(12345);
+      const seq2 = [];
+      for (let i = 0; i < 10; i++) {
+        seq2.push(math.randomSeeded());
+      }
+
+      assert.deepEqual(seq1, seq2, 'Same seed should produce identical sequence');
+    });
+
+    it('should produce different sequences from different seeds', () => {
+      math.seedRandom(111);
+      const val1 = math.randomSeeded();
+
+      math.seedRandom(222);
+      const val2 = math.randomSeeded();
+
+      assert.notEqual(val1, val2, 'Different seeds should produce different values');
+    });
+  });
+
+  describe('randomIntSeeded (deterministic)', () => {
+    beforeEach(() => {
+      resetScheduler();
+      getScheduler();
+      math.resetPRNG();
+    });
+
+    it('should throw if not seeded', () => {
+      assert.throws(() => math.randomIntSeeded(0, 10), /not seeded/);
+    });
+
+    it('should generate integers in range', () => {
+      math.seedRandom(42);
+      for (let i = 0; i < 100; i++) {
+        const value = math.randomIntSeeded(0, 10);
+        assert.ok(value >= 0, `Value ${value} should be >= 0`);
+        assert.ok(value < 10, `Value ${value} should be < 10`);
+        assert.equal(Math.floor(value), value, 'Should be integer');
       }
     });
 
     it('should handle different ranges', () => {
-      for (let i = 0; i < 10; i++) {
-        const value = math.randomInt(5, 15);
+      math.seedRandom(42);
+      for (let i = 0; i < 100; i++) {
+        const value = math.randomIntSeeded(5, 15);
         assert.ok(value >= 5);
         assert.ok(value < 15);
       }
     });
 
     it('should handle negative ranges', () => {
-      for (let i = 0; i < 10; i++) {
-        const value = math.randomInt(-10, 0);
+      math.seedRandom(42);
+      for (let i = 0; i < 100; i++) {
+        const value = math.randomIntSeeded(-10, 0);
         assert.ok(value >= -10);
         assert.ok(value < 0);
       }
     });
+
+    it('should produce identical sequence from same seed', () => {
+      math.seedRandom(12345);
+      const seq1 = [];
+      for (let i = 0; i < 10; i++) {
+        seq1.push(math.randomIntSeeded(0, 100));
+      }
+
+      math.seedRandom(12345);
+      const seq2 = [];
+      for (let i = 0; i < 10; i++) {
+        seq2.push(math.randomIntSeeded(0, 100));
+      }
+
+      assert.deepEqual(seq1, seq2, 'Same seed should produce identical sequence');
+    });
+
+    it('should throw for invalid ranges', () => {
+      math.seedRandom(42);
+      assert.throws(() => math.randomIntSeeded(10, 5), /min < max/);
+      assert.throws(() => math.randomIntSeeded(5, 5), /min < max/);
+    });
+
+    it('should throw for non-numeric arguments', () => {
+      math.seedRandom(42);
+      assert.throws(() => math.randomIntSeeded('0', 10), /numeric/);
+      assert.throws(() => math.randomIntSeeded(0, '10'), /numeric/);
+    });
   });
 
-  describe('random', () => {
-    it('should generate values between 0 and 1', () => {
-      for (let i = 0; i < 10; i++) {
-        const value = math.random();
-        assert.ok(value >= 0);
-        assert.ok(value < 1);
-      }
+  describe('PRNG scheduler isolation (P0-NEW-1)', () => {
+    it('should have independent state per scheduler', async () => {
+      // First scheduler
+      resetScheduler();
+      const scheduler1 = getScheduler();
+      math.seedRandom(42);
+      const val1_a = math.randomSeeded();
+      const val1_b = math.randomSeeded();
+
+      // Second scheduler (reset creates a new one)
+      resetScheduler();
+      const scheduler2 = getScheduler();
+      math.seedRandom(42);
+      const val2_a = math.randomSeeded();
+      const val2_b = math.randomSeeded();
+
+      // Same seed should produce same sequence in each scheduler
+      assert.equal(val1_a, val2_a, 'Same seed should produce same first value');
+      assert.equal(val1_b, val2_b, 'Same seed should produce same second value');
+    });
+  });
+
+  // ============================================================================
+  // DEPRECATED NONDETERMINISTIC FUNCTIONS
+  // ============================================================================
+
+  describe('randomInt (deprecated)', () => {
+    it('should throw by default (determinism protection)', () => {
+      assert.throws(() => math.randomInt(0, 10), /nondeterministic/);
+    });
+  });
+
+  describe('random (deprecated)', () => {
+    it('should throw by default (determinism protection)', () => {
+      assert.throws(() => math.random(), /nondeterministic/);
     });
   });
 });

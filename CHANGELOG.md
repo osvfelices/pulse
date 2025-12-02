@@ -6,6 +6,62 @@ All notable changes to Pulse will be documented in this file.
 
 Development cycle for Pulse 3.1.
 
+### Fixed (L11 Security Audit)
+
+- **P0-1: Debugger wall-clock timeout breaks determinism**
+  - `lib/runtime/debugger.js`: Disabled wall-clock setTimeout by default
+  - Auto-resume now opt-in via `PULSE_DEBUGGER_WALL_CLOCK_TIMEOUT=1` environment variable
+  - Debugger remains paused indefinitely until resume() is called (deterministic)
+
+- **P0-3: std/math random functions break determinism**
+  - `lib/std/math.js`: Implemented Mulberry32 seeded PRNG
+  - New functions: `seedRandom(seed)`, `randomSeeded()`, `randomIntSeeded(min, max)`, `resetPRNG()`
+  - Deprecated `random()` and `randomInt()` now throw by default
+  - Override with `PULSE_ALLOW_NONDETERMINISTIC_RANDOM=1` (not recommended)
+
+- **P0-2: std/fs blocking operations documentation**
+  - `lib/std/fs.js`: Added comprehensive determinism warning header
+  - Documented when synchronous I/O is acceptable vs. problematic
+  - Added `PULSE_WARN_BLOCKING_FS=1` for runtime warnings
+  - Clear guidance: use for config files, avoid for large files/network FS
+
+- **std/async retry() uses wall-clock setTimeout**
+  - `lib/std/async.js`: Changed retry() to use scheduler sleep (logical time)
+  - Retries now execute in deterministic logical time, not wall-clock
+
+- **P1-4: std/async parallel() doesn't stop on first error**
+  - `lib/std/async.js`: parallel() now stops scheduling new tasks on first failure
+  - Fail-fast behavior: pending tasks are not started after error
+  - Already-running tasks complete but results are discarded
+
+- **P0-NEW-1: PRNG state now scheduler-local (fixes multi-scheduler determinism)**
+  - `lib/runtime/scheduler-deterministic.js`: Added `prngState` field to scheduler instance
+  - `lib/std/math.js`: PRNG functions now use scheduler-local state instead of module global
+  - Each scheduler instance has independent PRNG state for true isolation
+  - Enables deterministic parallel test execution
+
+- **P0-NEW-2: retry() now validates scheduler context immediately**
+  - `lib/std/async.js`: Added `requireSchedulerContext()` check at function entry
+  - Clear error message when called outside Pulse scheduler context
+  - Prevents cryptic failures from schedulerSleep() deep in call stack
+
+### Breaking Changes
+
+- **std/math `random()` and `randomInt()` now throw by default**
+  - These functions used `Math.random()` which breaks determinism guarantees
+  - **Migration**: Replace with `seedRandom(seed)` + `randomSeeded()` or `randomIntSeeded(min, max)`
+  - **Override**: Set `PULSE_ALLOW_NONDETERMINISTIC_RANDOM=1` (not recommended, breaks determinism)
+
+- **std/math PRNG functions require scheduler context**
+  - `seedRandom()`, `randomSeeded()`, `randomIntSeeded()` now require active scheduler
+  - PRNG state is per-scheduler, not global
+  - **Migration**: Ensure these are called from within Pulse tasks or after scheduler initialization
+
+- **std/async `retry()` requires scheduler context**
+  - `retry()` now throws immediately if called outside Pulse scheduler
+  - **Migration**: Wrap retry calls in `spawn()` or use within Pulse runtime
+  - Error message clearly indicates the requirement
+
 ### Added
 
 - **M15 Phase 1: Standard Library Scaffolding**
@@ -192,6 +248,26 @@ Development cycle for Pulse 3.1.
   - Edge case tests: 65+ tests covering timeout handling, invalid parameters, state transitions, error codes (ErrorCodes.*)
   - Test infrastructure: Created tests/validation/ directory with 4 comprehensive test suites
   - Zero modifications to runtime code - pure test additions preserving scheduler invariants
+
+- **M16 Phase 6: Documentation & Finalization**
+  - Complete API reference: docs/api/debugger.md documenting DebugSession, Inspector, and Snapshot types
+  - DebugSession API documentation: enable/disable, breakpoint management, execution control, stepping modes, stack inspection, state queries
+  - Inspector API documentation: enable/disable, task/channel queries, scheduler state, snapshot capture, statistics
+  - Snapshot types reference: TaskSnapshot, ChannelSnapshot, SchedulerSnapshot, TimelineSnapshot with serialization
+  - Error codes documentation: All debugger and inspector error codes with usage context
+  - Determinism guarantees: Zero microtask injection, read-only introspection, scheduler invariants preserved
+  - Performance characteristics: <5% debugger overhead, O(1) breakpoint checks, <10ms snapshot capture
+  - Integration guide: docs/debugger-integration.md with architecture overview, JSON-RPC basics, typical workflows
+  - LSP/JSON-RPC integration patterns: stdin/stdout transport, VS Code DAP mapping, client examples
+  - Practical workflow examples: initialize, set breakpoints, pause/resume, inspect state, step through code
+  - End-to-end examples: docs/debugger-examples.md with three concrete debugging scenarios
+  - Example 1: Simple debug session with producer-consumer tasks and channels
+  - Example 2: Inspecting concurrency bugs with breakpoints and runtime state queries
+  - Example 3: Using snapshots for offline analysis and bottleneck identification
+  - Best practices: When to use breakpoints vs inspector vs snapshots, performance tips, security considerations
+  - Common patterns: Conditional breakpoints, hit counting, state diffing, call stack navigation
+  - All documentation follows technical, factual style with no emojis or marketing language
+  - Zero runtime code changes - pure documentation additions
 
 ### Changed
 

@@ -12,17 +12,26 @@ import { compileFile } from '../../lib/cli/utils/compile.js';
 import { relative } from 'node:path';
 
 /**
- * Fix runtime import paths in generated code
- * Converts relative paths to node_modules imports
+ * Normalize runtime import specifiers for npm package distribution
+ *
+ * Rewrites absolute file:// URLs and relative paths in generated code
+ * to package-relative import specifiers (e.g., 'pulselang/runtime').
+ * This ensures imports resolve correctly when code is bundled by Vite.
+ *
+ * @param {string} code - Generated JavaScript code
+ * @param {string} sourceFilePath - Original .pls source file path
+ * @param {string} projectRoot - Vite project root directory
+ * @returns {string} Code with normalized import specifiers
  */
-function fixRuntimeImports(code, sourceFilePath, projectRoot) {
-  // Replace './lib/runtime/index.js' with 'pulselang/runtime'
-  let fixed = code.replace(/from ['"]\.\/lib\/runtime\/index\.js['"]/g, "from 'pulselang/runtime'");
+function normalizeRuntimeImportSpecifiers(code, sourceFilePath, projectRoot) {
+  // Normalize file:// URLs to package imports
+  let normalized = code.replace(/from ['"]file:\/\/.*?\/lib\/runtime\/index\.js['"]/g, "from 'pulselang/runtime'");
 
-  // Replace './lib/runtime/reactivity.js' with 'pulselang/runtime/reactivity'
-  fixed = fixed.replace(/from ['"]\.\/lib\/runtime\/reactivity\.js['"]/g, "from 'pulselang/runtime/reactivity'");
+  // Normalize relative paths to package imports
+  normalized = normalized.replace(/from ['"]\.\.?\/.*?\/lib\/runtime\/index\.js['"]/g, "from 'pulselang/runtime'");
+  normalized = normalized.replace(/from ['"]\.\.?\/.*?\/lib\/runtime\/reactivity\.js['"]/g, "from 'pulselang/runtime/reactivity'");
 
-  return fixed;
+  return normalized;
 }
 
 /**
@@ -93,8 +102,8 @@ export default function pulseLang(options = {}) {
           legacyBackend: false // Use IR backend
         });
 
-        // Fix runtime import paths
-        js = fixRuntimeImports(js, id, projectRoot);
+        // Normalize runtime import specifiers for bundling
+        js = normalizeRuntimeImportSpecifiers(js, id, projectRoot);
 
         if (debug) {
           console.log('[vite-plugin-pulse] Generated code:');

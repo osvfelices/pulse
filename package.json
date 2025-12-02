@@ -1,6 +1,6 @@
 {
   "name": "pulselang",
-  "version": "3.1.0-dev",
+  "version": "3.1.0",
   "private": false,
   "license": "MIT",
   "description": "Pulse 3.1 - Programming language with CSP concurrency, structured concurrency, optional type system, and IR-based compiler",
