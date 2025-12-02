@@ -73,6 +73,8 @@ scripts/verify-lang-release.sh
 ROADMAP.md
 RUNTIME-2.0.md
 pre_release_audit/
+docs/M16-*.md
+docs/3.1-roadmap/
 tools/vscode-pulse/
 tools/pulse-vscode/
 tests/
