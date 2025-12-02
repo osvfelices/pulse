@@ -1,4 +1,35 @@
-# Migration Guide: Pulse 2.0.x to 3.0.0
+# Migration Guide
+
+This guide helps you upgrade between Pulse versions.
+
+## Pulse 3.0.x to 3.1.0
+
+### File Extension Change
+
+Pulse 3.1 introduces `.pls` as the primary source file extension, replacing `.pulse`.
+
+**What You Need to Know**:
+- Both `.pls` and `.pulse` extensions are supported
+- Existing `.pulse` files continue to work without modification
+- New projects should use `.pls` extension
+- If both `.pls` and `.pulse` exist, `.pls` takes priority
+
+**Migration Steps** (Optional):
+
+```bash
+# Rename your source files
+mv myfile.pulse myfile.pls
+
+# Update imports in your code (if using relative imports)
+# Before: import { foo } from './module.pulse'
+# After:  import { foo } from './module.pls'
+```
+
+**No Action Required**: Your existing `.pulse` files will continue to work. The extension change is opt-in for existing projects.
+
+---
+
+## Pulse 2.0.x to 3.0.0
 
 This guide helps you upgrade from Pulse 2.0.x to Pulse 3.0.0.
 

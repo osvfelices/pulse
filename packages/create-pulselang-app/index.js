@@ -19,7 +19,7 @@ function showUsage() {
   console.log(`
 Usage: npx create-pulselang-app <project-name>
 
-Creates Pulse 1.5.0 full-stack application with React 19, Vite, and Tailwind CSS 4.
+Creates Pulse 3.1 full-stack application with React 19, Vite, and Tailwind CSS 4.
 
 Includes:
   - Backend API server (Pulse runtime with std/http)

@@ -60,6 +60,7 @@ export const RuntimeErrors = {
   PULSE_RUNTIME_291: 'PULSE_RUNTIME_291',
   PULSE_RUNTIME_292: 'PULSE_RUNTIME_292',
   PULSE_RUNTIME_293: 'PULSE_RUNTIME_293',
+  PULSE_RUNTIME_294: 'PULSE_RUNTIME_294',
 
   // Package Manager errors (400-419)
   PULSE_PKG_400: 'PULSE_PKG_400',
@@ -211,6 +212,7 @@ export const ErrorCodes = {
   TASK_NOT_FOUND: RuntimeErrors.PULSE_RUNTIME_291,
   CHANNEL_NOT_FOUND: RuntimeErrors.PULSE_RUNTIME_292,
   STATS_NOT_AVAILABLE: RuntimeErrors.PULSE_RUNTIME_293,
+  SNAPSHOT_TOO_LARGE: RuntimeErrors.PULSE_RUNTIME_294,
   PACKAGE_NOT_FOUND: RuntimeErrors.PULSE_PKG_400,
   VERSION_NOT_FOUND: RuntimeErrors.PULSE_PKG_401,
   REGISTRY_UNAVAILABLE: RuntimeErrors.PULSE_PKG_402,
@@ -339,6 +341,7 @@ export const ErrorDescriptions = {
   [ErrorCodes.TASK_NOT_FOUND]: 'Task not found',
   [ErrorCodes.CHANNEL_NOT_FOUND]: 'Channel not found',
   [ErrorCodes.STATS_NOT_AVAILABLE]: 'Statistics not available',
+  [ErrorCodes.SNAPSHOT_TOO_LARGE]: 'Snapshot exceeds resource limits',
 
   // Package Manager
   [ErrorCodes.PACKAGE_NOT_FOUND]: 'Package not found in registry',

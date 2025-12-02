@@ -1,9 +1,9 @@
 {
   "name": "pulselang",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "private": false,
   "license": "MIT",
-  "description": "Pulse 3.0 - Programming language with CSP concurrency, structured concurrency, optional type system, and IR-based compiler",
+  "description": "Pulse 3.1 - Programming language with CSP concurrency, structured concurrency, optional type system, and IR-based compiler",
   "type": "module",
   "main": "lib/parser.js",
   "bin": {
@@ -15,6 +15,10 @@
     "./lexer": "./lib/lexer.js",
     "./parser": "./lib/parser.js",
     "./codegen": "./lib/codegen.js",
+    "./cli/main": "./lib/cli/main.js",
+    "./cli/utils/compile": "./lib/cli/utils/compile.js",
+    "./cli/utils/parse-args": "./lib/cli/utils/parse-args.js",
+    "./cli/utils/version": "./lib/cli/utils/version.js",
     "./runtime": "./lib/runtime/index.js",
     "./runtime/reactivity": "./lib/runtime/reactivity.js",
     "./runtime/scheduler": "./lib/runtime/scheduler-deterministic.js",

@@ -1,6 +1,6 @@
 {
   "name": "@pulselang/react",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "React hooks for Pulse language primitives",
   "type": "module",
   "main": "index.js",

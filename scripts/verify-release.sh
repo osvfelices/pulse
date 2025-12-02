@@ -32,18 +32,18 @@ fi
 # Test 3: Examples work with IR backend (default)
 echo ""
 echo "Test 3: Example files (IR backend - default)..."
-node lib/run.js examples/hello.pulse > /dev/null 2>&1
+node lib/run.js examples/hello.pls > /dev/null 2>&1
 if [ $? -eq 0 ]; then
-  echo "  examples/hello.pulse works"
+  echo "  examples/hello.pls works"
 else
-  echo "  examples/hello.pulse failed"
+  echo "  examples/hello.pls failed"
   exit 1
 fi
 
 # Test 4: Legacy backend works (fallback)
 echo ""
 echo "Test 4: Legacy backend (fallback)..."
-node lib/run.js examples/hello.pulse --legacy-backend > /dev/null 2>&1
+node lib/run.js examples/hello.pls --legacy-backend > /dev/null 2>&1
 if [ $? -eq 0 ]; then
   echo "  Legacy backend works on simple example"
 else

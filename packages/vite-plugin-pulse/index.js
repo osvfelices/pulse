@@ -2,26 +2,36 @@
  * vite-plugin-pulse
  *
  * Vite plugin that transforms .pulse files to JavaScript ESM modules
- * Supports both dev and production builds with source maps
+ * Uses unified Pulse 3.1 compilation pipeline with IR backend
  */
 
-// Use pulselang package imports for npm compatibility
-import { Parser } from 'pulselang/parser';
-import { emitProgram } from 'pulselang/codegen';
+// Note: When published to npm, this import will resolve via package exports:
+// import { compileFile } from 'pulselang/cli/utils/compile';
+// During development, use relative path to avoid requiring npm link
+import { compileFile } from '../../lib/cli/utils/compile.js';
 import { relative } from 'node:path';
 
 /**
- * Fix runtime import paths in generated code
- * Converts relative paths to node_modules imports
+ * Normalize runtime import specifiers for npm package distribution
+ *
+ * Rewrites absolute file:// URLs and relative paths in generated code
+ * to package-relative import specifiers (e.g., 'pulselang/runtime').
+ * This ensures imports resolve correctly when code is bundled by Vite.
+ *
+ * @param {string} code - Generated JavaScript code
+ * @param {string} sourceFilePath - Original .pls source file path
+ * @param {string} projectRoot - Vite project root directory
+ * @returns {string} Code with normalized import specifiers
  */
-function fixRuntimeImports(code, sourceFilePath, projectRoot) {
-  // Replace './lib/runtime/index.js' with 'pulselang/runtime'
-  let fixed = code.replace(/from ['"]\.\/lib\/runtime\/index\.js['"]/g, "from 'pulselang/runtime'");
+function normalizeRuntimeImportSpecifiers(code, sourceFilePath, projectRoot) {
+  // Normalize file:// URLs to package imports
+  let normalized = code.replace(/from ['"]file:\/\/.*?\/lib\/runtime\/index\.js['"]/g, "from 'pulselang/runtime'");
 
-  // Replace './lib/runtime/reactivity.js' with 'pulselang/runtime/reactivity'
-  fixed = fixed.replace(/from ['"]\.\/lib\/runtime\/reactivity\.js['"]/g, "from 'pulselang/runtime/reactivity'");
+  // Normalize relative paths to package imports
+  normalized = normalized.replace(/from ['"]\.\.?\/.*?\/lib\/runtime\/index\.js['"]/g, "from 'pulselang/runtime'");
+  normalized = normalized.replace(/from ['"]\.\.?\/.*?\/lib\/runtime\/reactivity\.js['"]/g, "from 'pulselang/runtime/reactivity'");
 
-  return fixed;
+  return normalized;
 }
 
 /**
@@ -51,10 +61,10 @@ function generateSourceMap(originalCode, generatedCode, sourceFile) {
 }
 
 /**
- * Vite plugin for .pulse files
+ * Vite plugin for .pls/.pulse files
  */
 export default function pulseLang(options = {}) {
-  const { include = /\.pulse$/, exclude, debug = false } = options;
+  const { include = /\.(pls|pulse)$/, exclude, debug = false } = options;
 
   let projectRoot = process.cwd();
 
@@ -66,11 +76,11 @@ export default function pulseLang(options = {}) {
     },
 
     /**
-     * Transform .pulse files to JavaScript
+     * Transform .pls/.pulse files to JavaScript
      */
     async transform(code, id) {
-      // Only process .pulse files
-      if (!id.endsWith('.pulse')) {
+      // Only process .pls or .pulse files
+      if (!id.endsWith('.pls') && !id.endsWith('.pulse')) {
         return null;
       }
 
@@ -83,15 +93,17 @@ export default function pulseLang(options = {}) {
           console.log(`[vite-plugin-pulse] Compiling ${id}`);
         }
 
-        // Parse Pulse source
-        const parser = new Parser(code);
-        const ast = parser.parseProgram();
+        // Compile using unified pipeline (IR backend default)
+        let js = await compileFile(id, {
+          sourcemap: false, // Vite handles source maps
+          strictAST: false,
+          strictSemantic: false,
+          strictTypes: false,
+          legacyBackend: false // Use IR backend
+        });
 
-        // Generate JavaScript
-        let js = emitProgram(ast);
-
-        // Fix runtime import paths
-        js = fixRuntimeImports(js, id, projectRoot);
+        // Normalize runtime import specifiers for bundling
+        js = normalizeRuntimeImportSpecifiers(js, id, projectRoot);
 
         if (debug) {
           console.log('[vite-plugin-pulse] Generated code:');
@@ -118,10 +130,10 @@ export default function pulseLang(options = {}) {
     },
 
     /**
-     * Handle HMR for .pulse files
+     * Handle HMR for .pls/.pulse files
      */
     handleHotUpdate({ file, server }) {
-      if (file.endsWith('.pulse')) {
+      if (file.endsWith('.pls') || file.endsWith('.pulse')) {
         // Get the module from the module graph
         const module = server.moduleGraph.getModuleById(file);
         if (!module) {

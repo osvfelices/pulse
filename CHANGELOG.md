@@ -2,6 +2,295 @@
 
 All notable changes to Pulse will be documented in this file.
 
+## [3.1.0] - Unreleased
+
+Development cycle for Pulse 3.1.
+
+### Fixed (L11 Security Audit)
+
+- **P0-1: Debugger wall-clock timeout breaks determinism**
+  - `lib/runtime/debugger.js`: Disabled wall-clock setTimeout by default
+  - Auto-resume now opt-in via `PULSE_DEBUGGER_WALL_CLOCK_TIMEOUT=1` environment variable
+  - Debugger remains paused indefinitely until resume() is called (deterministic)
+
+- **P0-3: std/math random functions break determinism**
+  - `lib/std/math.js`: Implemented Mulberry32 seeded PRNG
+  - New functions: `seedRandom(seed)`, `randomSeeded()`, `randomIntSeeded(min, max)`, `resetPRNG()`
+  - Deprecated `random()` and `randomInt()` now throw by default
+  - Override with `PULSE_ALLOW_NONDETERMINISTIC_RANDOM=1` (not recommended)
+
+- **P0-2: std/fs blocking operations documentation**
+  - `lib/std/fs.js`: Added comprehensive determinism warning header
+  - Documented when synchronous I/O is acceptable vs. problematic
+  - Added `PULSE_WARN_BLOCKING_FS=1` for runtime warnings
+  - Clear guidance: use for config files, avoid for large files/network FS
+
+- **std/async retry() uses wall-clock setTimeout**
+  - `lib/std/async.js`: Changed retry() to use scheduler sleep (logical time)
+  - Retries now execute in deterministic logical time, not wall-clock
+
+- **P1-4: std/async parallel() doesn't stop on first error**
+  - `lib/std/async.js`: parallel() now stops scheduling new tasks on first failure
+  - Fail-fast behavior: pending tasks are not started after error
+  - Already-running tasks complete but results are discarded
+
+- **P0-NEW-1: PRNG state now scheduler-local (fixes multi-scheduler determinism)**
+  - `lib/runtime/scheduler-deterministic.js`: Added `prngState` field to scheduler instance
+  - `lib/std/math.js`: PRNG functions now use scheduler-local state instead of module global
+  - Each scheduler instance has independent PRNG state for true isolation
+  - Enables deterministic parallel test execution
+
+- **P0-NEW-2: retry() now validates scheduler context immediately**
+  - `lib/std/async.js`: Added `requireSchedulerContext()` check at function entry
+  - Clear error message when called outside Pulse scheduler context
+  - Prevents cryptic failures from schedulerSleep() deep in call stack
+
+### Breaking Changes
+
+- **std/math `random()` and `randomInt()` now throw by default**
+  - These functions used `Math.random()` which breaks determinism guarantees
+  - **Migration**: Replace with `seedRandom(seed)` + `randomSeeded()` or `randomIntSeeded(min, max)`
+  - **Override**: Set `PULSE_ALLOW_NONDETERMINISTIC_RANDOM=1` (not recommended, breaks determinism)
+
+- **std/math PRNG functions require scheduler context**
+  - `seedRandom()`, `randomSeeded()`, `randomIntSeeded()` now require active scheduler
+  - PRNG state is per-scheduler, not global
+  - **Migration**: Ensure these are called from within Pulse tasks or after scheduler initialization
+
+- **std/async `retry()` requires scheduler context**
+  - `retry()` now throws immediately if called outside Pulse scheduler
+  - **Migration**: Wrap retry calls in `spawn()` or use within Pulse runtime
+  - Error message clearly indicates the requirement
+
+### Added
+
+- **M15 Phase 1: Standard Library Scaffolding**
+  - Created `lib/std/` directory structure for standard library modules
+  - Implemented stub modules: fs, path, json, math, cli, async
+  - Added function signatures with JSDoc documentation
+  - Created placeholder test files in `tests/std/`
+  - Module exports: `std/fs`, `std/path`, `std/json`, `std/math`, `std/cli`, `std/async`
+  - Error classes for fs operations (FileNotFoundError, PermissionDeniedError, etc.)
+  - Error classes for json operations (JSONParseError, CircularReferenceError)
+  - Error classes for cli operations (UnknownFlagError, MissingRequiredArgumentError, InvalidValueError)
+
+- **M15 Phase 2: Core Modules Implementation**
+  - **std/path**: Cross-platform path manipulation with platform-aware separators
+    - `join()`, `normalize()`, `resolve()`: Path composition and resolution
+    - `relative()`: Compute relative paths between locations
+    - `dirname()`, `basename()`, `extname()`: Path decomposition
+    - `isAbsolute()`: Platform-aware absolute path detection
+    - Platform-specific `sep` and `delimiter` constants
+  - **std/json**: JSON parsing and serialization with error reporting
+    - `parse()`: Parse JSON with line/column error information
+    - `stringify()`: Serialize with circular reference detection
+    - Optional sorted keys for deterministic output
+    - Optional indentation for pretty-printing
+  - **std/math**: Mathematical functions and utilities
+    - Constants: PI, E, TAU
+    - Trigonometric: sin, cos, tan, asin, acos, atan, atan2
+    - Exponential: exp, log, log10, log2, pow, sqrt
+    - Rounding: floor, ceil, round, trunc
+    - Aggregation: min, max
+    - Utilities: `clamp()` for range limiting, `randomInt()` for integer generation
+  - Comprehensive test coverage: 80 tests across all three modules
+
+- **M15 Phase 3: CLI and Async Modules**
+  - **std/fs**: Synchronous filesystem operations with deterministic error handling
+    - File I/O: `readFile()`, `writeFile()`, `readFileBytes()`, `writeFileBytes()`
+    - Metadata: `exists()`, `stat()` with size, mtime, isFile, isDirectory
+    - Directories: `mkdir()`, `mkdirRecursive()`, `readDirectory()`
+    - File operations: `copyFile()`, `moveFile()`, `remove()`, `removeRecursive()`
+    - Error mapping: Node.js errors to stdlib error classes (FileNotFoundError, PermissionDeniedError, etc.)
+  - **std/cli**: Command-line argument parsing with schema validation
+    - `parseArgs()`: Parse argv with flags, options, and positional arguments
+    - Boolean flags: `--flag`, `-f` with defaults
+    - Value options: `--option=value`, `--option value`, `-o value` with type validation
+    - Type support: string, number, integer with automatic parsing
+    - Required argument validation with clear error messages
+    - Error classes: UnknownFlagError, MissingRequiredArgumentError, InvalidValueError
+  - **std/async**: Async utility functions with deterministic scheduling
+    - `retry()`: Exponential backoff retry with configurable attempts and delays
+    - `timeout()`: Promise timeout wrapper using withTimeout from runtime
+    - `delay()`: Sleep wrapper using deterministic scheduler
+    - `race()`: Deterministic promise race (first settled wins)
+    - `all()`: Wait for all promises, fail on first error
+    - `allSettled()`: Wait for all promises, collect all results
+    - `parallel()`: Run tasks with concurrency limit, preserve order
+  - Comprehensive test coverage: 80+ tests across all three modules
+
+- **M15 Phase 4: Standard Library Documentation**
+  - Complete documentation for all stdlib modules in `docs/std/`
+  - **docs/std/fs.md**: Filesystem operations reference with all 13 functions
+    - Overview, function signatures, error conditions, determinism guarantees, examples
+    - Documentation for readFile, writeFile, exists, stat, mkdir, copyFile, and more
+  - **docs/std/path.md**: Path manipulation utilities
+    - Cross-platform path handling (sep, delimiter constants)
+    - Path construction (join, resolve, normalize, relative)
+    - Path parsing (dirname, basename, extname, isAbsolute)
+  - **docs/std/json.md**: JSON processing
+    - parse() with detailed error reporting (line/column information)
+    - stringify() with sorted keys and indentation options
+    - Circular reference detection and error handling
+  - **docs/std/math.md**: Mathematical functions
+    - Constants (PI, E, TAU) and trigonometric functions
+    - Exponential/logarithmic functions (exp, log, pow, sqrt)
+    - Rounding functions (floor, ceil, round, trunc)
+    - Utilities (clamp, min, max, random, randomInt)
+  - **docs/std/cli.md**: Command-line argument parsing
+    - Schema-based parseArgs() with flags, options, positional arguments
+    - Type validation (string, number, integer)
+    - Error handling (UnknownFlagError, MissingRequiredArgumentError, InvalidValueError)
+  - **docs/std/async.md**: Asynchronous utilities
+    - retry() with exponential backoff configuration
+    - Promise aggregation (race, all, allSettled)
+    - Concurrency control with parallel()
+    - Determinism guarantees for scheduler-based operations
+  - Updated main guide (docs/guide.md) with Standard Library section
+  - Added stdlib module links to Further Reading section
+  - All documentation follows consistent structure: Overview, API reference, Errors, Determinism, Examples
+
+- **M13.1 Unified CLI**: Centralized compilation utilities in `lib/cli/`
+  - Single `pulse` command for run, build, test operations
+  - Unified compilation pipeline in `lib/cli/utils/compile.js`
+  - Support for both `.pls` and `.pulse` extensions
+  - Deterministic file resolution with `.pls` priority
+
+- **M14.1 Deterministic Async/Await**: Production-ready async/await with deterministic scheduling
+  - IR-level async function lowering with `__async_spawn` primitive
+  - PulsePromise: Promise-compatible wrapper over deterministic channels
+  - Async functions compile to synchronous functions returning PulsePromises
+  - Channel-based await with explicit scheduler control
+  - Module initialization with automatic `drain()` for top-level async
+  - Full integration with completion records (try/catch/finally)
+  - `spawn(asyncFn) + drain()` semantics: no deadlocks, deterministic task lifecycle
+
+- **M14.2 Select with Await Cases**: Advanced async coordination primitives
+  - `select { case x = await fn(): ... }` syntax for async rendezvous
+  - AsyncResult type for error propagation through channels
+  - Select returns `{caseIndex, value, ok}` with proper value extraction
+  - Deterministic dispatch: earliest ready channel wins, ties broken by case order
+  - Full backend support in both IR and legacy codegen
+  - Integration with scheduler microtask pumping for native Promise interop
+
+- **M14.2 Structured Concurrency**: Task groups and cancellation scopes
+  - `asyncGroup()` for scoped task management with automatic cleanup
+  - `group.spawn(fn)` spawns tasks within group lifecycle
+  - `group.wait()` waits for all tasks, cancels on first error
+  - Deterministic cancellation order: reverse spawn order
+  - `withTimeout(ms, fn)` and `withDeadline(ts, fn)` for timeout control
+  - CancelledError and TimeoutError for explicit cancellation signaling
+  - No task leaks: all spawned tasks either complete or are cancelled
+
+- **File Extension Migration**: `.pls` is now the primary source file extension
+  - Both `.pls` and `.pulse` supported for backward compatibility
+  - All tooling (CLI, vite-plugin, VS Code) recognizes both extensions
+  - `.pls` takes priority when both extensions exist
+  - All examples migrated to `.pls`
+
+- **M16 Phase 1: Snapshot Engine**
+  - Snapshot data structures: TaskSnapshot, ChannelSnapshot, SchedulerSnapshot, TimelineSnapshot
+  - SnapshotEngine: Deterministic capture of runtime state (tasks, channels, scheduler)
+  - SnapshotDiff: Incremental snapshot diffing for optimization
+  - Resource limits: Max 100k tasks, 10k channels, 100MB snapshot size
+  - JSON serialization/deserialization support
+  - Performance: <10ms capture for typical workloads
+  - All operations are read-only and preserve determinism
+  - 23 tests covering data structures, capture, diffing, performance
+
+- **M16 Phase 2: Inspector Read-Only API**
+  - Inspector class with enable/disable lifecycle management
+  - getTasks(), getTask(id): Read task state with proper error codes
+  - getChannels(), getChannel(id): Read channel state
+  - getSchedulerState(): Snapshot scheduler state (logical time, queues)
+  - getSupervisorTree(): Placeholder for future supervisor integration
+  - getSnapshot(): Full timeline snapshot using SnapshotEngine from Phase 1
+  - getStatistics(): Runtime statistics (gated by NODE_ENV=test or PULSE_DEBUG=1)
+  - Integration with SnapshotEngine for deterministic state capture
+  - Error codes: INSPECTOR_NOT_ENABLED, TASK_NOT_FOUND, CHANNEL_NOT_FOUND, STATS_NOT_AVAILABLE, SNAPSHOT_TOO_LARGE
+  - All operations preserve scheduler determinism (no microtask injection)
+  - Test coverage: read-api, snapshots, concurrency tests
+
+- **M16 Phase 3: Debugger Command Interface**
+  - DebugSession class with complete pause/resume functionality
+  - pause(), resume(): Control execution with promise-based coordination
+  - pauseExecution(): Pause with 30-second auto-resume timeout
+  - Step modes: stepOver(), stepInto(), stepOut() with correct depth semantics
+  - shouldBreak(file, line, depth): Breakpoint and stepping logic
+  - Stack frame inspection: getCurrentFrames(), getLocals(frameId), captureFrames()
+  - Breakpoint management: setBreakpoint(), clearBreakpoint(), clearAllBreakpoints(), getBreakpoints()
+  - Path normalization and traversal attack prevention in setBreakpoint()
+  - Error codes: DEBUGGER_NOT_ENABLED, DEBUGGER_ALREADY_PAUSED, DEBUGGER_NOT_PAUSED, INVALID_BREAKPOINT, BREAKPOINT_NOT_FOUND, INVALID_FRAME_ID, EVAL_NOT_SUPPORTED
+  - Preserves determinism: pause uses Promise mechanism, no microtask injection
+  - Test coverage: pause-resume (16 tests), stepping (21 tests), frames (17 tests), breakpoints (24 tests)
+
+- **M16 Phase 4: LSP Wiring**
+  - DebugLSPAPI class providing JSON-RPC 2.0 compatible endpoints
+  - JSON-RPC error code mapping: Pulse error codes to standard JSON-RPC errors (-32600 to -32603)
+  - handleDebugRequest(): JSON-RPC method router with parameter validation
+  - All pulse/debug/* endpoints: initialize, shutdown, breakpoint management, execution control, stepping, stack inspection, inspector queries
+  - Complete API documentation: docs/debug-protocol.md with all 24 endpoints documented
+  - Parameter validation for all endpoints with proper error responses
+  - Error mapping: DEBUGGER_NOT_ENABLED -> INVALID_REQUEST (-32600), INVALID_BREAKPOINT -> INVALID_PARAMS (-32602), etc.
+  - Debugger endpoints: pause, resume, stepOver, stepInto, stepOut, getFrames, getLocals, evaluate (not supported), getState
+  - Inspector endpoints: getSnapshot, getTasks, getTask, getChannels, getChannel, getSchedulerState, getSupervisors, getStatistics
+  - Test coverage: endpoints (35 tests), handler (44 tests)
+  - Zero modifications to scheduler or snapshot engine - pure LSP wiring layer
+
+- **M16 Phase 5: Tests & Validation**
+  - Determinism validation tests: 100-run tests verify identical execution order with debugger/inspector enabled
+  - Determinism tests cover: tasks, channels, breakpoints, inspector reads, complex workloads (100 tasks + 10 channels)
+  - Microtask count validation: Verify exactly 1 microtask per drain() call across all scenarios
+  - Microtask tests cover: debugger disabled (baseline), debugger enabled (no breakpoints), breakpoints set but not hit, pause/resume operations, varying workload sizes (10-1000 tasks)
+  - Performance benchmarks: Measure debugger overhead (<5% target), breakpoint check performance (O(1) verification), inspector query overhead
+  - Performance tests cover: 100-1000 tasks, channel operations, snapshot capture time, workload scaling
+  - Edge case coverage: pause/resume edge cases, breakpoint validation, stack frame errors, stepping modes, inspector errors, concurrent operations, resource limits, state consistency
+  - Edge case tests: 65+ tests covering timeout handling, invalid parameters, state transitions, error codes (ErrorCodes.*)
+  - Test infrastructure: Created tests/validation/ directory with 4 comprehensive test suites
+  - Zero modifications to runtime code - pure test additions preserving scheduler invariants
+
+- **M16 Phase 6: Documentation & Finalization**
+  - Complete API reference: docs/api/debugger.md documenting DebugSession, Inspector, and Snapshot types
+  - DebugSession API documentation: enable/disable, breakpoint management, execution control, stepping modes, stack inspection, state queries
+  - Inspector API documentation: enable/disable, task/channel queries, scheduler state, snapshot capture, statistics
+  - Snapshot types reference: TaskSnapshot, ChannelSnapshot, SchedulerSnapshot, TimelineSnapshot with serialization
+  - Error codes documentation: All debugger and inspector error codes with usage context
+  - Determinism guarantees: Zero microtask injection, read-only introspection, scheduler invariants preserved
+  - Performance characteristics: <5% debugger overhead, O(1) breakpoint checks, <10ms snapshot capture
+  - Integration guide: docs/debugger-integration.md with architecture overview, JSON-RPC basics, typical workflows
+  - LSP/JSON-RPC integration patterns: stdin/stdout transport, VS Code DAP mapping, client examples
+  - Practical workflow examples: initialize, set breakpoints, pause/resume, inspect state, step through code
+  - End-to-end examples: docs/debugger-examples.md with three concrete debugging scenarios
+  - Example 1: Simple debug session with producer-consumer tasks and channels
+  - Example 2: Inspecting concurrency bugs with breakpoints and runtime state queries
+  - Example 3: Using snapshots for offline analysis and bottleneck identification
+  - Best practices: When to use breakpoints vs inspector vs snapshots, performance tips, security considerations
+  - Common patterns: Conditional breakpoints, hit counting, state diffing, call stack navigation
+  - All documentation follows technical, factual style with no emojis or marketing language
+  - Zero runtime code changes - pure documentation additions
+
+### Changed
+
+- Primary file extension changed from `.pulse` to `.pls`
+- Async/await is now production-ready (no longer experimental)
+- Scheduler is authoritative event loop: no reliance on microtask queue races
+- `spawn()` pattern works correctly with async functions and `drain()`
+
+### Fixed
+
+- **M14.1 Spawn Closure Semantics**: IR Spawn instruction now uses `spawn(() => fn(args))` to match runtime signature
+- **M14.1 PulsePromise Scheduler Integration**: Scheduler receives from PulsePromise channels directly instead of `.then()` chains
+- **M14.2 Select Value Extraction**: Backend codegen removes incorrect `[0]` array indexing on AsyncResult
+- **M14.2 Async Value Unwrapping**: `__async_spawn` now awaits native Promises from IR-generated async functions
+
+### Architecture Guarantees
+
+- **Deterministic Execution**: Same inputs produce same task execution order across all runs
+- **No Microtask Races**: All async operations route through deterministic scheduler
+- **No Deadlocks**: `spawn(main) + drain()` completes correctly when main uses async/select
+- **Proper Cancellation**: Tasks cancelled in deterministic reverse-spawn order
+- **Resource Safety**: No task leaks, all spawned tasks tracked and cleaned up
+
 ## [3.0.0] - 2025-11-28
 
 Stable release of Pulse 3.0 with production-ready IR backend.
