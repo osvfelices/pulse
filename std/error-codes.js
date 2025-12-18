@@ -41,6 +41,16 @@ export const RuntimeErrors = {
   PULSE_RUNTIME_260: 'PULSE_RUNTIME_260',
   PULSE_RUNTIME_261: 'PULSE_RUNTIME_261',
 
+  // PulsePromise/AsyncGroup errors (262-269) - M14.4
+  PULSE_RUNTIME_262: 'PULSE_RUNTIME_262',
+  PULSE_RUNTIME_263: 'PULSE_RUNTIME_263',
+  PULSE_RUNTIME_264: 'PULSE_RUNTIME_264',
+  PULSE_RUNTIME_265: 'PULSE_RUNTIME_265',
+  PULSE_RUNTIME_266: 'PULSE_RUNTIME_266',
+  PULSE_RUNTIME_267: 'PULSE_RUNTIME_267',
+  PULSE_RUNTIME_268: 'PULSE_RUNTIME_268',
+  PULSE_RUNTIME_269: 'PULSE_RUNTIME_269',
+
   // Supervisor errors (270-279)
   PULSE_RUNTIME_270: 'PULSE_RUNTIME_270',
   PULSE_RUNTIME_271: 'PULSE_RUNTIME_271',
@@ -61,6 +71,9 @@ export const RuntimeErrors = {
   PULSE_RUNTIME_292: 'PULSE_RUNTIME_292',
   PULSE_RUNTIME_293: 'PULSE_RUNTIME_293',
   PULSE_RUNTIME_294: 'PULSE_RUNTIME_294',
+
+  // AsyncGroup timeout errors (295-299) - M14.3
+  PULSE_RUNTIME_298: 'PULSE_RUNTIME_298', // DeadlockTimeoutError
 
   // Package Manager errors (400-419)
   PULSE_PKG_400: 'PULSE_PKG_400',
@@ -198,6 +211,19 @@ export const ErrorCodes = {
   ASYNC_RACE_FAILED: RuntimeErrors.PULSE_RUNTIME_252,
   OPERATION_CANCELLED: RuntimeErrors.PULSE_RUNTIME_260,
   CANCELLATION_FAILED: RuntimeErrors.PULSE_RUNTIME_261,
+
+  // PulsePromise errors (M14.4)
+  PROMISE_ALREADY_SETTLED: RuntimeErrors.PULSE_RUNTIME_262,
+  PROMISE_NOT_REGISTERED: RuntimeErrors.PULSE_RUNTIME_263,
+  PROMISE_INVALID_STATE: RuntimeErrors.PULSE_RUNTIME_264,
+
+  // AsyncGroup errors (M14.4)
+  ASYNC_GROUP_SETTLED: RuntimeErrors.PULSE_RUNTIME_265,
+  ASYNC_GROUP_TASK_LIMIT: RuntimeErrors.PULSE_RUNTIME_266,
+  ASYNC_GROUP_CANCELLED: RuntimeErrors.PULSE_RUNTIME_267,
+  ASYNC_GROUP_WAIT_TWICE: RuntimeErrors.PULSE_RUNTIME_268,
+  ASYNC_GROUP_FAIL_FAST: RuntimeErrors.PULSE_RUNTIME_269,
+
   SUPERVISOR_CHILD_FAILED: RuntimeErrors.PULSE_RUNTIME_270,
   SUPERVISOR_MAX_RESTARTS: RuntimeErrors.PULSE_RUNTIME_271,
   SUPERVISOR_STOPPED: RuntimeErrors.PULSE_RUNTIME_272,
@@ -321,6 +347,18 @@ export const ErrorDescriptions = {
   [ErrorCodes.ASYNC_RACE_FAILED]: 'All async operations in race failed',
   [ErrorCodes.OPERATION_CANCELLED]: 'Operation was cancelled',
   [ErrorCodes.CANCELLATION_FAILED]: 'Failed to cancel operation',
+
+  // Runtime - PulsePromise (M14.4)
+  [ErrorCodes.PROMISE_ALREADY_SETTLED]: 'Promise is already settled (resolved or rejected)',
+  [ErrorCodes.PROMISE_NOT_REGISTERED]: 'Promise is not registered with scheduler',
+  [ErrorCodes.PROMISE_INVALID_STATE]: 'Promise is in an invalid state for this operation',
+
+  // Runtime - AsyncGroup (M14.4)
+  [ErrorCodes.ASYNC_GROUP_SETTLED]: 'Cannot spawn task in settled AsyncGroup',
+  [ErrorCodes.ASYNC_GROUP_TASK_LIMIT]: 'AsyncGroup task limit exceeded',
+  [ErrorCodes.ASYNC_GROUP_CANCELLED]: 'AsyncGroup was cancelled',
+  [ErrorCodes.ASYNC_GROUP_WAIT_TWICE]: 'Cannot call wait() twice on AsyncGroup',
+  [ErrorCodes.ASYNC_GROUP_FAIL_FAST]: 'AsyncGroup failed fast due to task error',
 
   // Runtime - Supervisor
   [ErrorCodes.SUPERVISOR_CHILD_FAILED]: 'Supervised child task failed',
