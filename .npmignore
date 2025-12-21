@@ -18,10 +18,31 @@ pre_release_audit/
 
 # Tests
 tests/
-test-*.js
-*.test.js
-*.spec.js
 baselines/
+
+# Test files in lib/
+lib/test-*.js
+lib/*/test-*.js
+lib/*/*/test-*.js
+lib/*/*.test.js
+lib/*/*/*.test.js
+lib/*/run-tests.sh
+lib/*/run-type-tests.sh
+
+# Semantic test files
+lib/semantic/test-*.js
+
+# AST test files
+lib/ast/test-*.js
+lib/ast/run-tests.sh
+
+# IR test files
+lib/ir/test-*.js
+lib/ir/run-tests.sh
+
+# Runtime test files
+lib/runtime/test-*.js
+lib/runtime/run-type-tests.sh
 
 # Build artifacts
 *.log
