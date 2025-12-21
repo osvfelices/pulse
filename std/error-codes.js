@@ -75,6 +75,10 @@ export const RuntimeErrors = {
   // AsyncGroup timeout errors (295-299) - M14.3
   PULSE_RUNTIME_298: 'PULSE_RUNTIME_298', // DeadlockTimeoutError
 
+  // Supervisor hierarchy errors (296-297) - M14.2
+  PULSE_RUNTIME_296: 'PULSE_RUNTIME_296', // SupervisorExhaustedError
+  PULSE_RUNTIME_297: 'PULSE_RUNTIME_297', // SupervisorCircularError
+
   // Package Manager errors (400-419)
   PULSE_PKG_400: 'PULSE_PKG_400',
   PULSE_PKG_401: 'PULSE_PKG_401',
@@ -227,6 +231,8 @@ export const ErrorCodes = {
   SUPERVISOR_CHILD_FAILED: RuntimeErrors.PULSE_RUNTIME_270,
   SUPERVISOR_MAX_RESTARTS: RuntimeErrors.PULSE_RUNTIME_271,
   SUPERVISOR_STOPPED: RuntimeErrors.PULSE_RUNTIME_272,
+  SUPERVISOR_EXHAUSTED: RuntimeErrors.PULSE_RUNTIME_296,
+  SUPERVISOR_CIRCULAR: RuntimeErrors.PULSE_RUNTIME_297,
   DEBUGGER_NOT_ENABLED: RuntimeErrors.PULSE_RUNTIME_280,
   DEBUGGER_ALREADY_PAUSED: RuntimeErrors.PULSE_RUNTIME_281,
   DEBUGGER_NOT_PAUSED: RuntimeErrors.PULSE_RUNTIME_282,
@@ -364,6 +370,8 @@ export const ErrorDescriptions = {
   [ErrorCodes.SUPERVISOR_CHILD_FAILED]: 'Supervised child task failed',
   [ErrorCodes.SUPERVISOR_MAX_RESTARTS]: 'Child exceeded maximum restart limit',
   [ErrorCodes.SUPERVISOR_STOPPED]: 'Supervisor is stopped',
+  [ErrorCodes.SUPERVISOR_EXHAUSTED]: 'Supervisor restart limit exhausted, propagating to parent',
+  [ErrorCodes.SUPERVISOR_CIRCULAR]: 'Circular supervisor hierarchy detected',
 
   // Runtime - Debugger
   [ErrorCodes.DEBUGGER_NOT_ENABLED]: 'Debugger is not enabled',

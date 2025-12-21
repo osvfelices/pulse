@@ -1,0 +1,74 @@
+import { signal } from 'pulselang/runtime/reactivity'
+
+// Crypto market data with signals for reactive updates
+const CRYPTO_LIST = [
+  { symbol: 'BTC', name: 'Bitcoin', basePrice: 83106.05, baseChange1h: 0.21, baseChange24h: 2.34, baseChange7d: 12.45, volume: 23456789012, marketCap: 1234567890123 },
+  { symbol: 'ETH', name: 'Ethereum', basePrice: 1899.82, baseChange1h: -0.15, baseChange24h: -1.82, baseChange7d: 8.92, volume: 12345678901, marketCap: 234567890123 },
+  { symbol: 'USDT', name: 'Tether', basePrice: 1.00, baseChange1h: 0.01, baseChange24h: 0.02, baseChange7d: 0.05, volume: 34567890123, marketCap: 345678901234 },
+  { symbol: 'XRP', name: 'XRP', basePrice: 2.31, baseChange1h: 1.23, baseChange24h: 5.67, baseChange7d: 18.34, volume: 5678901234, marketCap: 123456789012 },
+  { symbol: 'BNB', name: 'BNB', basePrice: 578.94, baseChange1h: 0.45, baseChange24h: 3.21, baseChange7d: 9.87, volume: 3456789012, marketCap: 87654321098 },
+  { symbol: 'SOL', name: 'Solana', basePrice: 155.23, baseChange1h: -0.32, baseChange24h: 4.56, baseChange7d: 15.67, volume: 2345678901, marketCap: 67890123456 },
+  { symbol: 'USDC', name: 'USD Coin', basePrice: 1.00, baseChange1h: 0.00, baseChange24h: 0.01, baseChange7d: 0.02, volume: 6789012345, marketCap: 234567890123 },
+  { symbol: 'DOGE', name: 'Dogecoin', basePrice: 0.12, baseChange1h: 0.89, baseChange24h: 6.78, baseChange7d: 23.45, volume: 1234567890, marketCap: 12345678901 },
+  { symbol: 'ADA', name: 'Cardano', basePrice: 0.57, baseChange1h: -0.23, baseChange24h: 1.92, baseChange7d: 7.34, volume: 2345678901, marketCap: 19876543210 },
+  { symbol: 'TRX', name: 'TRON', basePrice: 0.08, baseChange1h: 0.12, baseChange24h: 2.34, baseChange7d: 5.67, volume: 3456789012, marketCap: 7654321098 },
+  { symbol: 'AVAX', name: 'Avalanche', basePrice: 35.67, baseChange1h: -0.45, baseChange24h: -2.13, baseChange7d: 4.56, volume: 1234567890, marketCap: 13456789012 },
+  { symbol: 'MATIC', name: 'Polygon', basePrice: 0.89, baseChange1h: 0.34, baseChange24h: 3.45, baseChange7d: 11.23, volume: 987654321, marketCap: 8765432109 },
+  { symbol: 'DOT', name: 'Polkadot', basePrice: 6.78, baseChange1h: -0.12, baseChange24h: 1.23, baseChange7d: 6.78, volume: 876543210, marketCap: 9876543210 },
+  { symbol: 'LINK', name: 'Chainlink', basePrice: 14.56, baseChange1h: 0.67, baseChange24h: 4.32, baseChange7d: 9.87, volume: 765432109, marketCap: 8765432109 },
+  { symbol: 'UNI', name: 'Uniswap', basePrice: 8.23, baseChange1h: -0.34, baseChange24h: 2.11, baseChange7d: 8.45, volume: 654321098, marketCap: 6543210987 }
+]
+
+// Create signals for each crypto's price and change values
+export const cryptoSignals = {}
+
+for (const crypto of CRYPTO_LIST) {
+  const [price, setPrice] = signal(crypto.basePrice)
+  const [change1h, setChange1h] = signal(crypto.baseChange1h)
+  const [change24h, setChange24h] = signal(crypto.baseChange24h)
+  const [change7d, setChange7d] = signal(crypto.baseChange7d)
+
+  cryptoSignals[crypto.symbol] = {
+    symbol: crypto.symbol,
+    name: crypto.name,
+    price,
+    setPrice,
+    change1h,
+    setChange1h,
+    change24h,
+    setChange24h,
+    change7d,
+    setChange7d,
+    volume: crypto.volume,
+    marketCap: crypto.marketCap,
+    basePrice: crypto.basePrice,
+    baseChange1h: crypto.baseChange1h,
+    baseChange24h: crypto.baseChange24h,
+    baseChange7d: crypto.baseChange7d
+  }
+}
+
+// Export list of all crypto symbols in order
+export const cryptoSymbols = CRYPTO_LIST.map(c => c.symbol)
+
+// Simulate price updates
+export fn startPriceUpdates() {
+  setInterval(() => {
+    for (const symbol of cryptoSymbols) {
+      const crypto = cryptoSignals[symbol]
+
+      // Add small random fluctuation to price (±0.5%)
+      const fluctuation = (Math.random() - 0.5) * 0.01
+      const newPrice = crypto.basePrice * (1 + fluctuation)
+      crypto.setPrice(newPrice)
+
+      // Update 1h change slightly
+      const change1hFluctuation = (Math.random() - 0.5) * 0.1
+      crypto.setChange1h(crypto.baseChange1h + change1hFluctuation)
+
+      // Update 24h change slightly
+      const change24hFluctuation = (Math.random() - 0.5) * 0.2
+      crypto.setChange24h(crypto.baseChange24h + change24hFluctuation)
+    }
+  }, 2000) // Update every 2 seconds
+}

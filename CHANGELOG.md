@@ -2,7 +2,7 @@
 
 All notable changes to Pulse will be documented in this file.
 
-## [3.1.0] - Unreleased
+## [3.1.0] - 2025-12-21
 
 Development cycle for Pulse 3.1.
 
