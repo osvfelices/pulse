@@ -155,9 +155,11 @@ fn worker(id) {
 const task1 = spawn(() => worker(1));
 const task2 = spawn(() => worker(2));
 
-// Wait for completion
-const result1 = task1.completionPromise;
-const result2 = task2.completionPromise;
+// Wait for completion (in async context)
+await task1.promise;
+await task2.promise;
+const result1 = task1.result;
+const result2 = task2.result;
 ```
 
 ### Channels

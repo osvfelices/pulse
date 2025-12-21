@@ -162,8 +162,8 @@ const task = spawn(async () => {
 });
 
 // Wait for completion
-const result = await task.completionPromise;
-console.log(result); // 'done'
+await task.promise;
+console.log(task.result); // 'done'
 ```
 
 ### HTTP Server with Scheduler Pool
@@ -178,10 +178,10 @@ const server = createServerWithScheduler(async (req, res) => {
     return `Processed ${req.url}`;
   });
 
-  const result = await task.completionPromise;
+  await task.promise;
 
   res.writeHead(200, { 'Content-Type': 'text/plain' });
-  res.end(result);
+  res.end(task.result);
 }, {
   maxPoolSize: 100,      // Max 100 concurrent requests
   maxQueueSize: 50,      // Max 50 queued when pool full
@@ -277,7 +277,7 @@ const parent = spawn(async () => {
 });
 
 // When parent completes, child is automatically cancelled
-await parent.completionPromise;
+await parent.promise;
 ```
 
 ### Graceful Shutdown
@@ -433,7 +433,8 @@ const task: Task<number> = spawn(async () => {
   return 42;
 });
 
-const result: number = await task.completionPromise;
+await task.promise;
+const result: number = task.result;
 
 // Generic channel types
 const ch = new Channel<string>(5);
