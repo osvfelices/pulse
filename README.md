@@ -6,6 +6,12 @@
 
 A programming language with CSP-style concurrency, structured concurrency, and cooperative scheduling.
 
+| Status | Stability | Versioning |
+|--------|-----------|------------|
+| Production-ready runtime | 15 public API exports frozen since 2.0 | [VERSIONING.md](VERSIONING.md) |
+
+**Roadmap to Language 1.0**: See [What's Missing for Language 1.0](#whats-missing-for-language-10) below.
+
 ## What is Pulse?
 
 Pulse is a programming language built for concurrent systems programming with:
@@ -544,6 +550,19 @@ Contributions welcome. The codebase is organized as:
 - `tests/` - Test suite
 - `examples/` - Example programs
 - `docs/` - Documentation
+
+## What's Missing for Language 1.0
+
+Language 1.0 will be declared when these are complete:
+
+- **Language Specification**: Formal grammar and semantics document
+- **std/http and std/db**: Production-ready standard library modules
+- **LSP**: Feature-complete Language Server Protocol implementation
+- **Source Maps**: Full debugging support with source map generation
+- **Package Story**: Official package manager and registry
+- **Governance**: Contribution guidelines and RFC process
+
+See [VERSIONING.md](VERSIONING.md) for versioning policy.
 
 ## License
 

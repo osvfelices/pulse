@@ -191,7 +191,9 @@ Ready to start? Check out the [Getting Started Guide](guide.html) to write your 
 
 ## What's New in 3.1
 
-**Current version: v3.1.0**
+**Current version: v3.1.0** (toolchain/runtime)
+
+> Language 1.0 will be declared when the specification and developer experience are frozen. See [VERSIONING.md](https://github.com/osvfelices/pulse/blob/main/VERSIONING.md).
 
 ### M14 Runtime Upgrades
 - **M14.1**: RingBuffer-backed channels with O(1) operations
@@ -230,5 +232,6 @@ Pulse is open source.
 
 - GitHub: [github.com/osvfelices/pulse](https://github.com/osvfelices/pulse)
 - Documentation: [https://osvfelices.github.io/pulse/](https://osvfelices.github.io/pulse/)
+- Versioning: [VERSIONING.md](https://github.com/osvfelices/pulse/blob/main/VERSIONING.md)
 - License: MIT
-- Version: 3.1.0
+- Version: 3.1.0 (toolchain/runtime)

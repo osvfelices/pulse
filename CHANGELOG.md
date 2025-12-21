@@ -2,11 +2,22 @@
 
 All notable changes to Pulse will be documented in this file.
 
+> **Note**: 3.x versions track the toolchain and runtime. Language 1.0 will be declared when the specification and developer experience are frozen. See [VERSIONING.md](VERSIONING.md).
+
 ## [3.1.0] - 2025-12-21
 
-Development cycle for Pulse 3.1.
+Production release with M14 runtime upgrades, M15 standard library, and M16 debugger/inspector.
 
-### Fixed (L11 Security Audit)
+### Runtime
+
+#### M14 Runtime Upgrades
+
+- **M14.1 Deterministic Async/Await**: IR-level async function lowering with `__async_spawn` primitive
+- **M14.2 Select with Await Cases**: `select { case x = await fn(): ... }` syntax
+- **M14.2 Structured Concurrency**: `asyncGroup()` with automatic cleanup, `withTimeout()`, `withDeadline()`
+- **M14.5 Select Engine v2**: First-winner determinism, cancel-safe semantics, eager cleanup
+
+#### Security Fixes (L11 Audit)
 
 - **P0-1: Debugger wall-clock timeout breaks determinism**
   - `lib/runtime/debugger.js`: Disabled wall-clock setTimeout by default
