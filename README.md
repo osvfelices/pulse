@@ -6,11 +6,11 @@
 
 A programming language with CSP-style concurrency, structured concurrency, and cooperative scheduling.
 
-| Status | Stability | Versioning |
-|--------|-----------|------------|
-| Production-ready runtime | 15 public API exports frozen since 2.0 | [VERSIONING.md](VERSIONING.md) |
+| Status | Versioning |
+|--------|------------|
+| [docs/STATUS.md](docs/STATUS.md) | [VERSIONING.md](VERSIONING.md) |
 
-**Roadmap to Language 1.0**: See [What's Missing for Language 1.0](#whats-missing-for-language-10) below.
+**Language 1.0**: Not yet declared. See [What's Missing for Language 1.0](#whats-missing-for-language-10).
 
 ## What is Pulse?
 
@@ -21,7 +21,7 @@ Pulse is a programming language built for concurrent systems programming with:
 - **Cooperative scheduler** - Deterministic task execution with predictable behavior
 - **Optional type system** - Gradual typing with `--strict-types` flag
 - **JavaScript interop** - Compiles to JavaScript, imports from npm seamlessly
-- **Advanced compiler** - Multi-stage IR-based backend with optimization passes
+- **IR-based compiler** - Multi-stage pipeline with dead code elimination and constant folding
 
 Pulse 3.1 includes a new compiler architecture with intermediate representation (IR), semantic analysis, and optional static type checking.
 
@@ -445,31 +445,26 @@ const [value, ok] = await ch.recv(); // value: string, ok: boolean
 
 ## Production Patterns
 
-Pulse Runtime includes production-ready patterns built on core primitives:
+The runtime provides building blocks for production patterns:
 
-- **Rate Limiter** - Token bucket with burst capacity
-- **Circuit Breaker** - Fault isolation with CLOSED/OPEN/HALF_OPEN states
-- **Worker Pool** - Bounded concurrency control
-- **Request Deduplication** - Singleflight pattern to prevent duplicate work
-- **Retry Logic** - Exponential backoff with jitter
-
-See pattern documentation for usage examples.
+- **Retry Logic** - Exponential backoff with jitter (std/async)
+- **Timeouts** - Logical-time based via selectWithTimeout
+- **Backpressure** - Bounded channels with admission control
+- **Graceful Shutdown** - Built into HTTP integration
 
 ## Examples
 
 The `examples/` directory contains runnable programs:
 
-- `production-server/` - Complete production server with graceful shutdown and health checks
-- `observability-demo.js` - Metrics endpoint and monitoring
-- `resource-management-demo.js` - Admission control and load shedding
-- Pattern examples in `lib/runtime/patterns/`
+- `hello.pls` - Basic Pulse syntax
+- `production-server/` - HTTP server with graceful shutdown
+- `observability-demo.js` - Metrics endpoint
 
 Run examples:
 
 ```bash
+pulse run examples/hello.pls
 node examples/production-server/server.js
-node examples/observability-demo.js
-node examples/resource-management-demo.js
 ```
 
 ## Performance
@@ -498,20 +493,17 @@ Performance characteristics:
 
 ## Testing
 
-Run the full test suite:
+Run the verification suite:
 
 ```bash
 npm test
 ```
 
-All tests (42/42) pass:
-
-- Deterministic scheduler tests
-- Channel tests (buffered, unbuffered, iteration)
-- Select tests (multiple channels, timeouts)
-- HTTP integration tests (pool, timeout, abort)
-- Error path tests (cleanup, cancellation)
-- Graceful shutdown tests
+Current status:
+- Backend equivalence: 36/36 tests passing
+- Runtime imports: verified
+- Type checking: verified
+- Legacy backend fallback: verified
 
 ## Documentation
 
@@ -542,11 +534,9 @@ Pulse Runtime 2.0 follows these principles:
 
 Contributions welcome. The codebase is organized as:
 
-- `lib/runtime/` - Core scheduler, channels, select, HTTP integration
-- `lib/runtime/observability/` - Metrics collection and exporters
-- `lib/runtime/resources/` - Resource management (admission control, load shedding)
-- `lib/runtime/patterns/` - Production patterns
-- `benchmarks/` - Performance benchmarks
+- `lib/` - Compiler (lexer, parser, semantic, IR, codegen)
+- `lib/runtime/` - Scheduler, channels, select, signals
+- `lib/std/` - Standard library modules
 - `tests/` - Test suite
 - `examples/` - Example programs
 - `docs/` - Documentation

@@ -71,6 +71,7 @@ scripts/verify-lang-release.sh
 
 # Internal planning documents
 ROADMAP.md
+ROADMAP-2026.md
 RUNTIME-2.0.md
 pre_release_audit/
 docs/M16-*.md
