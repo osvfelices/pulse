@@ -2,7 +2,7 @@
   <img src="pulse.svg" alt="Pulse" width="200"/>
 </p>
 
-# Pulse 3.0
+# Pulse 3.1
 
 A programming language with CSP-style concurrency, structured concurrency, and cooperative scheduling.
 
@@ -17,7 +17,7 @@ Pulse is a programming language built for concurrent systems programming with:
 - **JavaScript interop** - Compiles to JavaScript, imports from npm seamlessly
 - **Advanced compiler** - Multi-stage IR-based backend with optimization passes
 
-Pulse 3.0 includes a new compiler architecture with intermediate representation (IR), semantic analysis, and optional static type checking.
+Pulse 3.1 includes a new compiler architecture with intermediate representation (IR), semantic analysis, and optional static type checking.
 
 ## When to Use This
 
@@ -56,7 +56,26 @@ npm install pulselang
 
 Requires Node.js 18 or higher.
 
-## New in Pulse 3.0
+## New in Pulse 3.1
+
+### M14 Runtime Upgrades
+
+**Channel System (M14.1)**:
+- RingBuffer-backed channels with O(1) push/shift operations
+- Power-of-two sizing for fast modulo via bitmask
+
+**Supervisor Trees (M14.2)**:
+- Restart strategies: one_for_one, one_for_all, rest_for_one
+- Automatic child restart with configurable intensity/period
+
+**Structured Concurrency v2 (M14.3)**:
+- AsyncGroup with waitWithTimeout using logical time
+- Two-phase cancellation marking
+
+**Select Engine v2 (M14.5)**:
+- First-winner determinism (lowest ready index wins)
+- Cancel-safe semantics with eager cleanup of losing waiters
+- No Promise.race, no timers, pure logical-time operation
 
 ### Compiler Architecture
 
@@ -64,7 +83,7 @@ Requires Node.js 18 or higher.
 - Lexer → Parser → AST → Semantic Analysis → Type Checking → IR → Optimization → Backend
 
 **Intermediate Representation (IR)**:
-- IR-based backend (default in 3.0.0)
+- IR-based backend (default in 3.1.0)
 - SSA-form register-based IR with control flow graph
 - Dead code elimination and constant folding optimizations
 - Full validation pass for IR correctness

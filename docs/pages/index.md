@@ -189,10 +189,17 @@ Designed for low-overhead updates, FIFO channels, and stable memory under load. 
 
 Ready to start? Check out the [Getting Started Guide](guide.html) to write your first Pulse program, or explore the [API Reference](api.html) to learn about the standard library.
 
-## What's New in 3.0
+## What's New in 3.1
 
-**Current version: v3.0.0**
+**Current version: v3.1.0**
 
+### M14 Runtime Upgrades
+- **M14.1**: RingBuffer-backed channels with O(1) operations
+- **M14.2**: Supervisor trees (one_for_one, one_for_all, rest_for_one)
+- **M14.3**: Structured concurrency v2 with AsyncGroup and waitWithTimeout
+- **M14.5**: Select Engine v2 with deterministic first-winner semantics
+
+### Compiler Features
 - IR-based compiler backend (default)
 - Optional type system with `--strict-types`
 - Semantic analysis with scope tracking
@@ -224,4 +231,4 @@ Pulse is open source.
 - GitHub: [github.com/osvfelices/pulse](https://github.com/osvfelices/pulse)
 - Documentation: [https://osvfelices.github.io/pulse/](https://osvfelices.github.io/pulse/)
 - License: MIT
-- Version: 3.0.0
+- Version: 3.1.0

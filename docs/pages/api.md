@@ -1,6 +1,6 @@
 # API Reference
 
-Complete reference for the Pulse v3.0.0 standard library.
+Complete reference for the Pulse v3.1.0 standard library.
 
 ## Async (std/async)
 
