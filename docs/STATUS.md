@@ -47,7 +47,7 @@ Pulse 3.1.0 is the **toolchain and runtime version**. It includes:
 
 ## What's Missing for Language 1.0
 
-- [ ] Language specification published (SPEC-v0.1 is draft)
+- [ ] Language specification published (SPEC-v0.2 is current draft)
 - [ ] Grammar frozen (no syntax changes)
 - [ ] std/http and std/db production-ready
 - [ ] LSP feature-complete
@@ -67,5 +67,5 @@ Full test suite runs via `npm test`.
 ## Links
 
 - [VERSIONING.md](../VERSIONING.md) - Version policy
-- [SPEC-v0.1.md](SPEC-v0.1.md) - Language specification draft
+- [SPEC-v0.2.md](SPEC-v0.2.md) - Language specification (current draft)
 - [CHANGELOG.md](../CHANGELOG.md) - Release history
