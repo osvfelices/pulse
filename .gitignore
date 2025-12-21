@@ -78,7 +78,9 @@ docs/M16-*.md
 docs/3.1-roadmap/
 tools/vscode-pulse/
 tools/pulse-vscode/
-tests/
+# Most tests are internal, but grammar tests are part of SPEC
+tests/*
+!tests/grammar/
 
 # Internal development files
 benchmarks/

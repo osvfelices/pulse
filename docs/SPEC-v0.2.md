@@ -563,9 +563,369 @@ An implementation claiming Pulse Language 1.0 conformance MUST:
 
 ## 13. Appendix: Grammar
 
-**TODO**: Formal grammar (BNF or equivalent) to be added in SPEC-v1.0.
+This appendix defines the complete lexical and syntactic grammar of Pulse using Extended Backus-Naur Form (EBNF).
 
-This section is reserved for the complete lexical and syntactic grammar of Pulse.
+**Notation**:
+- `'...'` = terminal (literal token)
+- `Name` = non-terminal
+- `[ x ]` = optional
+- `{ x }` = zero or more
+- `( x | y )` = alternation
+- `(* ... *)` = comment
+
+---
+
+### 13.1 Lexical Grammar
+
+```ebnf
+(* Whitespace and Comments *)
+Whitespace     = ? any character matching /\s/ ? ;
+LineComment    = '//' { ? any character except newline ? } ;
+
+(* Identifiers *)
+Identifier     = IdentStart { IdentCont } ;
+IdentStart     = 'A'..'Z' | 'a'..'z' | '_' ;
+IdentCont      = IdentStart | '0'..'9' ;
+
+(* Keywords - these identifiers are reserved *)
+Keyword        = 'import' | 'from' | 'as' | 'fn' | 'let' | 'const' | 'return'
+               | 'if' | 'else' | 'for' | 'while' | 'contract' | 'export' | 'view'
+               | 'true' | 'false' | 'null' | 'in' | 'of' | 'try' | 'catch'
+               | 'finally' | 'throw' | 'break' | 'continue' | 'switch' | 'case'
+               | 'default' | 'typeof' | 'instanceof' | 'delete' | 'async' | 'await'
+               | 'class' | 'extends' | 'new' | 'spawn' | 'yield' | 'select' | 'go' ;
+
+(* Literals *)
+NumberLiteral  = Digit { Digit | '_' | '.' } ;
+Digit          = '0'..'9' ;
+
+StringLiteral  = DoubleString | SingleString | TemplateString ;
+DoubleString   = '"' { StringChar | EscapeSeq } '"' ;
+SingleString   = "'" { StringChar | EscapeSeq } "'" ;
+TemplateString = '`' { StringChar | EscapeSeq } '`' ;
+StringChar     = ? any character except quote or backslash ? ;
+EscapeSeq      = '\' ? any character ? ;
+
+BooleanLiteral = 'true' | 'false' ;
+NullLiteral    = 'null' ;
+
+(* Punctuators *)
+Punctuator     = '...' | '==' | '!=' | '<=' | '>=' | '&&' | '||'
+               | '+=' | '-=' | '*=' | '/=' | '%=' | '++' | '--'
+               | '=>' | '?.' | '??'
+               | '{' | '}' | '(' | ')' | '[' | ']' | '=' | ','
+               | ':' | ';' | '.' | '+' | '-' | '*' | '/' | '<'
+               | '>' | '!' | '%' | '&' | '|' | '?' ;
+```
+
+---
+
+### 13.2 Syntactic Grammar
+
+#### Program Structure
+
+```ebnf
+Program        = { Statement } ;
+```
+
+#### Statements
+
+```ebnf
+Statement      = ImportDecl
+               | ExportDecl
+               | FunctionDecl
+               | VariableDecl
+               | ClassDecl
+               | ContractDecl
+               | ViewDecl
+               | IfStatement
+               | ForStatement
+               | WhileStatement
+               | TryStatement
+               | SwitchStatement
+               | ReturnStatement
+               | ThrowStatement
+               | BreakStatement
+               | ContinueStatement
+               | BlockStatement
+               | ExpressionStatement ;
+
+BlockStatement = '{' { Statement } '}' ;
+
+ReturnStatement    = 'return' [ Expression ] [ ';' ] ;
+ThrowStatement     = 'throw' Expression [ ';' ] ;
+BreakStatement     = 'break' [ ';' ] ;
+ContinueStatement  = 'continue' [ ';' ] ;
+
+ExpressionStatement = Expression [ ';' ] ;
+```
+
+#### Import Declaration
+
+```ebnf
+ImportDecl     = 'import' ImportClause 'from' StringLiteral [ ';' ]
+               | 'import' StringLiteral [ ';' ] ;
+
+ImportClause   = NamespaceImport
+               | NamedImports
+               | DefaultImport [ ',' NamedImports ] ;
+
+NamespaceImport = '*' 'as' Identifier ;
+NamedImports    = '{' [ ImportSpecifier { ',' ImportSpecifier } [ ',' ] ] '}' ;
+ImportSpecifier = ImportName [ 'as' ImportName ] ;
+ImportName      = Identifier | Keyword ;  (* keywords allowed as import names *)
+DefaultImport   = Identifier ;
+```
+
+#### Export Declaration
+
+```ebnf
+ExportDecl     = 'export' 'default' AssignmentExpr [ ';' ]
+               | 'export' '*' [ 'as' Identifier ] 'from' StringLiteral [ ';' ]
+               | 'export' NamedExports [ 'from' StringLiteral ] [ ';' ]
+               | 'export' FunctionDecl
+               | 'export' ClassDecl
+               | 'export' VariableDecl [ ';' ] ;
+
+NamedExports   = '{' [ ExportSpecifier { ',' ExportSpecifier } [ ',' ] ] '}' ;
+ExportSpecifier = Identifier [ 'as' Identifier ] ;
+```
+
+#### Function Declaration
+
+```ebnf
+FunctionDecl   = [ 'async' ] 'fn' [ Identifier ] '(' [ ParameterList ] ')' [ ':' TypeAnnotation ] BlockStatement ;
+
+ParameterList  = Parameter { ',' Parameter } [ ',' ] ;
+Parameter      = RestParameter | NormalParameter ;
+RestParameter  = '...' Identifier ;
+NormalParameter = Identifier [ ':' TypeAnnotation ] [ '=' AssignmentExpr ] ;
+```
+
+#### Variable Declaration
+
+```ebnf
+VariableDecl   = ( 'const' | 'let' ) BindingPattern [ ':' TypeAnnotation ] [ '=' Expression ] ;
+
+BindingPattern = Identifier
+               | ArrayPattern
+               | ObjectPattern ;
+
+ArrayPattern   = '[' [ ArrayPatternElement { ',' ArrayPatternElement } [ ',' ] ] ']' ;
+ArrayPatternElement = Identifier | RestElement ;
+RestElement    = '...' Identifier ;
+
+ObjectPattern  = '{' [ PropertyPattern { ',' PropertyPattern } [ ',' ] ] '}' ;
+PropertyPattern = Identifier [ ':' Identifier ] ;
+```
+
+#### Class Declaration
+
+```ebnf
+ClassDecl      = 'class' Identifier [ 'extends' Identifier ] '{' { MethodDef } '}' ;
+MethodDef      = [ 'async' ] Identifier '(' [ ParameterList ] ')' BlockStatement ;
+```
+
+#### Control Flow Statements
+
+```ebnf
+IfStatement    = 'if' '(' Expression ')' BlockOrStatement [ 'else' ( IfStatement | BlockOrStatement ) ] ;
+BlockOrStatement = BlockStatement | Statement ;
+
+ForStatement   = 'for' [ 'await' ] '(' ForInit ')' BlockOrStatement ;
+ForInit        = VariableDecl 'of' Expression     (* for-of *)
+               | VariableDecl 'in' Expression     (* for-in *)
+               | ForCStyle ;
+ForCStyle      = ( VariableDecl | ExpressionStatement ) ';' Expression ';' Expression ;
+
+WhileStatement = 'while' '(' Expression ')' BlockOrStatement ;
+
+TryStatement   = 'try' BlockStatement [ CatchClause ] [ FinallyClause ] ;
+CatchClause    = 'catch' '(' Identifier ')' BlockStatement ;
+FinallyClause  = 'finally' BlockStatement ;
+
+SwitchStatement = 'switch' '(' Expression ')' '{' { SwitchCase } '}' ;
+SwitchCase     = 'case' Expression ':' { Statement }
+               | 'default' ':' { Statement } ;
+```
+
+#### Domain-Specific Declarations
+
+```ebnf
+ContractDecl   = 'contract' Identifier '{' [ ContractField { ',' ContractField } [ ',' ] ] '}' ;
+ContractField  = Identifier ':' Identifier ;
+
+ViewDecl       = 'view' Identifier '(' [ ParameterList ] ')' BlockStatement ;
+```
+
+#### Type Annotations
+
+```ebnf
+TypeAnnotation = Identifier [ '<' TypeAnnotation '>' ] ;
+```
+
+**NOTE**: Type annotations are optional. When present, they are checked only if `--strict-types` is enabled.
+
+---
+
+### 13.3 Expression Grammar
+
+Expressions are listed from lowest to highest precedence.
+
+```ebnf
+Expression     = AssignmentExpr ;
+
+(* Precedence 1: Assignment - right associative *)
+AssignmentExpr = ArrowExpr ( '=' | '+=' | '-=' | '*=' | '/=' | '%=' ) AssignmentExpr
+               | ArrowExpr ;
+
+(* Precedence 2: Arrow function *)
+ArrowExpr      = [ 'async' ] ArrowParams '=>' ArrowBody
+               | NullishExpr ;
+ArrowParams    = Identifier
+               | '(' [ ArrowParamList ] ')' ;
+ArrowParamList = ArrowParam { ',' ArrowParam } [ ',' ] ;
+ArrowParam     = [ '...' ] Identifier [ '=' TernaryExpr ] ;
+ArrowBody      = BlockStatement | AssignmentExpr ;
+
+(* Precedence 3: Nullish coalescing - left associative *)
+NullishExpr    = TernaryExpr { '??' TernaryExpr } ;
+
+(* Precedence 4: Ternary - right associative *)
+TernaryExpr    = OrExpr [ '?' OrExpr ':' TernaryExpr ] ;
+
+(* Precedence 5: Logical OR - left associative *)
+OrExpr         = AndExpr { '||' AndExpr } ;
+
+(* Precedence 6: Logical AND - left associative *)
+AndExpr        = EqualityExpr { '&&' EqualityExpr } ;
+
+(* Precedence 7: Equality - left associative *)
+EqualityExpr   = CompareExpr { ( '==' | '!=' ) CompareExpr } ;
+
+(* Precedence 8: Comparison - left associative *)
+CompareExpr    = AddExpr { ( '<' | '>' | '<=' | '>=' | 'instanceof' | 'in' ) AddExpr } ;
+
+(* Precedence 9: Additive - left associative *)
+AddExpr        = MulExpr { ( '+' | '-' ) MulExpr } ;
+
+(* Precedence 10: Multiplicative - left associative *)
+MulExpr        = UnaryExpr { ( '*' | '/' | '%' ) UnaryExpr } ;
+
+(* Precedence 11: Unary prefix *)
+UnaryExpr      = ( '!' | '-' ) UnaryExpr
+               | ( '++' | '--' ) UnaryExpr
+               | ( 'typeof' | 'delete' | 'await' ) UnaryExpr
+               | ( 'spawn' | 'go' ) ArrowExpr
+               | YieldExpr
+               | NewExpr
+               | PostfixExpr ;
+
+YieldExpr      = 'yield' [ ArrowExpr ] ;
+NewExpr        = 'new' PrimaryExpr [ '(' [ ArgumentList ] ')' ] PostfixChain ;
+
+(* Precedence 12: Postfix *)
+PostfixExpr    = PrimaryExpr PostfixChain ;
+PostfixChain   = { MemberAccess | CallExpr | IndexExpr | PostfixOp } ;
+MemberAccess   = ( '.' | '?.' ) PropertyName ;
+CallExpr       = '(' [ ArgumentList ] ')' ;
+IndexExpr      = '[' Expression ']' ;
+PostfixOp      = '++' | '--' ;
+
+PropertyName   = Identifier | Keyword ;  (* keywords allowed as property names *)
+ArgumentList   = Expression { ',' Expression } [ ',' ] ;
+
+(* Precedence 13: Primary *)
+PrimaryExpr    = Identifier
+               | NumberLiteral
+               | StringLiteral
+               | BooleanLiteral
+               | NullLiteral
+               | ArrayLiteral
+               | ObjectLiteral
+               | FunctionExpr
+               | SelectExpr
+               | ImportExpr
+               | ParenExpr ;
+
+ArrayLiteral   = '[' [ ArrayElement { ',' ArrayElement } [ ',' ] ] ']' ;
+ArrayElement   = SpreadElement | Expression ;
+SpreadElement  = '...' Expression ;
+
+ObjectLiteral  = '{' [ Property { ',' Property } [ ',' ] ] '}' ;
+Property       = SpreadProperty | ComputedProperty | NormalProperty | ShorthandProperty ;
+SpreadProperty = '...' Expression ;
+ComputedProperty = '[' Expression ']' ':' Expression ;
+NormalProperty = ( Identifier | StringLiteral ) ':' Expression ;
+ShorthandProperty = Identifier ;
+
+FunctionExpr   = [ 'async' ] 'fn' [ Identifier ] '(' [ ParameterList ] ')' [ ':' TypeAnnotation ] BlockStatement ;
+
+ParenExpr      = '(' Expression ')' ;
+
+ImportExpr     = 'import' '(' Expression ')' ;
+```
+
+---
+
+### 13.4 Select Expression
+
+```ebnf
+SelectExpr     = 'select' '{' { SelectCase } [ DefaultCase ] '}' ;
+
+SelectCase     = 'case' SelectOp ':' { Statement } ;
+SelectOp       = 'recv' Expression
+               | 'send' Expression Expression
+               | Identifier '=' 'await' Expression ;
+
+DefaultCase    = 'default' ':' { Statement } ;
+```
+
+**NOTE**: `recv` and `send` are pseudo-keywords; they are only recognized in this context and can be used as identifiers elsewhere.
+
+---
+
+### 13.5 Operator Precedence Summary
+
+| Level | Operators | Associativity |
+|-------|-----------|---------------|
+| 1 | `= += -= *= /= %=` | Right |
+| 2 | `=>` (arrow) | Right |
+| 3 | `??` | Left |
+| 4 | `? :` (ternary) | Right |
+| 5 | `\|\|` | Left |
+| 6 | `&&` | Left |
+| 7 | `== !=` | Left |
+| 8 | `< > <= >= instanceof in` | Left |
+| 9 | `+ -` | Left |
+| 10 | `* / %` | Left |
+| 11 | `! - ++ -- typeof delete await spawn go yield new` | Prefix |
+| 12 | `++ --` | Postfix |
+| 13 | `. ?. [] ()` | Left |
+
+---
+
+### 13.6 Grammar Notes
+
+1. **Semicolon Insertion**: Semicolons are optional. The parser accepts statements with or without trailing semicolons.
+
+2. **Keywords as Names**: Keywords may be used as property names (`obj.catch`) and import names (`import { select }`).
+
+3. **Trailing Commas**: Allowed in array literals, object literals, function parameters, import/export specifiers.
+
+4. **`for await`**: The `await` modifier is only valid with `for...of`, not `for...in` or C-style `for`.
+
+5. **`go` Keyword**: Alias for `spawn`. Both produce identical AST nodes.
+
+6. **`recv`/`send` in Select**: These are not reserved keywords; they are contextual keywords recognized only within select expressions.
+
+7. **Type Annotations**: Optional syntax for gradual typing. No semantic effect unless `--strict-types` is enabled.
+
+8. **`contract` and `view`**: Domain-specific constructs. Their semantics are **UNSPECIFIED** in this version.
+
+9. **Rest Parameter Position**: The current parser allows rest parameters (`...name`) in any position within parameter lists, not just as the final parameter. This is a parser quirk; implementations SHOULD place rest parameters last for compatibility with future versions.
+
+10. **Nested Ternary**: Nested ternary expressions require parentheses for clarity: `a ? (b ? c : d) : e`. Without parentheses, parsing may be ambiguous.
 
 ---
 
