@@ -30,11 +30,9 @@ Each source file is a compilation unit that MAY contain:
 
 ### 2.2 Entry Point
 
-A Pulse program MUST have an entry point. The entry point is:
-1. A function named `main` if one exists, OR
-2. The first top-level statement in the primary source file
+A Pulse program executes top-level statements in source order. There is no required `main` function convention.
 
-Top-level async operations MUST be wrapped in a task via `spawn()` and drained via `drain()`.
+Top-level async operations MUST be wrapped in a task via `spawn()` and completed via `drain()`.
 
 ### 2.3 Module System
 
@@ -65,8 +63,8 @@ A Pulse program executes within a **scheduler**. The scheduler:
 
 Logical time:
 - Starts at 0 when the scheduler is created
-- Advances when all ready tasks have yielded and sleeps are pending
-- MUST advance by the minimum delta to wake the next sleeping task
+- MUST increment by 1 on each task execution step (when no pending spawns exist)
+- MUST jump to the wake time of the earliest sleeping task when no ready tasks exist
 
 ### 3.3 Task Execution Order
 
@@ -101,7 +99,7 @@ A task MUST be in exactly one of these states:
 | PENDING | In ready queue, waiting to execute |
 | RUNNING | Currently executing |
 | SLEEPING | Waiting for logical time to advance |
-| COMPLETED | Execution finished successfully |
+| COMPLETED | Execution finished (success or error) |
 | CANCELLED | Execution terminated by cancellation |
 
 ### 4.2 Task Creation
@@ -112,6 +110,13 @@ A task MUST be in exactly one of these states:
 - The task MUST be placed in the ready queue
 - The task MUST NOT execute until the current task yields
 - `spawn()` MUST return a task handle
+
+The task handle has the following properties:
+- `id`: Unique monotonic task identifier (number)
+- `state`: Current task state (string)
+- `result`: Result value (after successful completion, or `null`)
+- `error`: Error value (after error completion, or `null`)
+- `cancel()`: Method to request cancellation
 
 Options:
 - `priority`: One of HIGH (0), NORMAL (1), LOW (2). Default: NORMAL
@@ -126,7 +131,7 @@ A task completes when:
 On completion, the task:
 - MUST be removed from all queues
 - MUST transition to COMPLETED or CANCELLED state
-- MUST resolve its completion promise
+- MUST store result in `task.result` (success) or error in `task.error` (error)
 
 ### 4.4 Task Cancellation
 
@@ -157,7 +162,9 @@ A cancelled task:
 
 ### 5.1 Channel Creation
 
-`channel(capacity)` creates a new channel.
+`new Channel(capacity)` creates a new channel.
+
+The convenience function `channel(capacity)` is equivalent to `new Channel(capacity)`.
 
 - `capacity` MUST be a non-negative integer
 - `capacity = 0` creates an unbuffered (synchronous) channel
@@ -170,6 +177,7 @@ A channel has:
 - A send queue (FIFO queue of waiting senders)
 - A receive queue (FIFO queue of waiting receivers)
 - A closed flag
+- An `id` property (unique monotonic identifier)
 
 ### 5.3 Send Operation
 
@@ -199,7 +207,18 @@ Return value: `[value, ok]` where:
 - `value` is the received value (or `undefined` if closed)
 - `ok` is `true` if value was received, `false` if channel is closed
 
-### 5.5 Close Operation
+### 5.5 Non-blocking Operations
+
+`channel.trySend(value)` attempts to send without blocking.
+- Returns `true` if sent successfully
+- Returns `false` if would block or channel is closed
+
+`channel.tryRecv()` attempts to receive without blocking.
+- Returns `[value, true, true]` if received successfully
+- Returns `[undefined, false, false]` if channel is closed
+- Returns `[undefined, false, true]` if would block
+
+### 5.6 Close Operation
 
 `channel.close()` closes the channel.
 
@@ -210,7 +229,7 @@ Close MUST:
 
 Close MUST be idempotent. Subsequent calls MUST have no effect.
 
-### 5.6 Buffering Rules
+### 5.7 Buffering Rules
 
 For buffered channels:
 - Send MUST NOT block if buffer has space
@@ -221,6 +240,14 @@ For unbuffered channels (capacity = 0):
 - Send MUST block until a receiver is ready
 - Receive MUST block until a sender is ready
 - This is called a "rendezvous"
+
+### 5.8 Async Iteration
+
+Channels MUST implement `Symbol.asyncIterator`.
+
+`for await (const value of channel)` MUST:
+- Yield each received value until channel is closed
+- Complete iteration when `recv()` returns `[_, false]`
 
 ---
 
@@ -291,13 +318,12 @@ The following error types are defined:
 |-------|-----------|
 | `CancelledError` | Task was cancelled |
 | `SendOnClosedChannelError` | Attempted send on closed channel |
-| `ReceiveOnClosedChannelError` | Attempted recv on closed, empty channel (optional) |
 
 ### 7.2 Error Propagation in Tasks
 
 Uncaught exceptions in tasks:
 - MUST cause the task to enter error completion
-- MUST be stored in the task's error field
+- MUST be stored in `task.error`
 - MUST NOT propagate to parent tasks automatically
 
 Structured error propagation (parent-child relationships) is **unspecified** in this version.
@@ -310,7 +336,6 @@ Send on closed channel:
 
 Receive on closed, empty channel:
 - MUST return `[undefined, false]`
-- MAY throw `ReceiveOnClosedChannelError` (implementation-defined)
 
 ---
 
@@ -343,7 +368,17 @@ When a task is cancelled:
 
 ## 9. Determinism Guarantees
 
-### 9.1 Guaranteed Deterministic
+### 9.1 Language Guarantees
+
+The following invariants are guaranteed:
+
+1. **Logical time step**: Increments by 1 per task execution step
+2. **Task ID monotonicity**: Task IDs are monotonically increasing
+3. **Channel ID monotonicity**: Channel IDs are monotonically increasing
+4. **Rendezvous ordering**: Receiver completes before sender in unbuffered channels
+5. **Select first-wins**: Lowest ready case index wins when multiple are ready
+
+### 9.2 Guaranteed Deterministic
 
 The following are REQUIRED to be deterministic:
 
@@ -353,7 +388,7 @@ The following are REQUIRED to be deterministic:
 4. **Sleep ordering**: Same sleep durations produce same wake order
 5. **Logical time**: Same program produces same logical time sequence
 
-### 9.2 Not Guaranteed Deterministic
+### 9.3 Not Guaranteed Deterministic
 
 The following are explicitly NOT deterministic:
 
@@ -363,7 +398,7 @@ The following are explicitly NOT deterministic:
 4. **Date.now()**: Use logical time instead
 5. **Process environment**: May vary between runs
 
-### 9.3 Determinism Requirements
+### 9.4 Determinism Requirements
 
 For a program to be deterministic, it MUST:
 - Use only Pulse scheduling primitives (no setTimeout, setImmediate)
@@ -378,13 +413,16 @@ For a program to be deterministic, it MUST:
 The following behaviors are explicitly unspecified in this version:
 
 1. **Module resolution**: How imports are resolved
-2. **Error formatting**: Error message text
-3. **Debugging hooks**: Breakpoints, stepping, inspection
-4. **Memory limits**: Maximum tasks, channels, buffer sizes
-5. **Structured concurrency**: Parent-child task relationships
-6. **Supervisor trees**: Restart strategies
-7. **Timeouts**: Built-in timeout mechanisms
-8. **Type system**: Static type checking
+2. **Error message text**: Error formatting and wording
+3. **ID starting values**: Initial values for task/channel IDs (only monotonicity is guaranteed)
+4. **Debugging hooks**: Breakpoints, stepping, inspection
+5. **Memory limits**: Maximum tasks, channels, buffer sizes
+6. **Structured concurrency**: Parent-child task relationships
+7. **Supervisor trees**: Restart strategies
+8. **Timeouts**: Built-in timeout mechanisms
+9. **Type system**: Static type checking
+10. **Snapshot format**: Runtime state serialization
+11. **PulsePromise internals**: Async/await lowering implementation
 
 These may be specified in future versions.
 
@@ -392,12 +430,15 @@ These may be specified in future versions.
 
 ## 11. Appendix: Error Codes
 
-| Code | Error |
-|------|-------|
-| `PULSE_RUNTIME_100` | Task cancelled |
-| `PULSE_RUNTIME_200` | Send on closed channel |
-| `PULSE_RUNTIME_201` | Receive on closed channel |
-| `PULSE_RUNTIME_300` | Select requires non-empty cases |
+| Code | Name | Description |
+|------|------|-------------|
+| `PULSE_RUNTIME_220` | SEND_ON_CLOSED_CHANNEL | Send attempted on closed channel |
+| `PULSE_RUNTIME_221` | RECV_ON_CLOSED_CHANNEL | Receive attempted on closed channel |
+| `PULSE_RUNTIME_240` | SELECT_NO_CASES | Select called with empty cases array |
+| `PULSE_RUNTIME_250` | TIMEOUT | Operation timed out |
+| `PULSE_RUNTIME_260` | OPERATION_CANCELLED | Operation was cancelled |
+
+Note: `CancelledError` does not have an associated code; it is identified by its error name.
 
 ---
 
@@ -414,6 +455,7 @@ An implementation claiming Pulse Language 1.0 conformance MUST:
 - [ ] Implement first-wins select semantics
 - [ ] Implement eager cleanup in select
 - [ ] Implement cooperative cancellation
+- [ ] Implement `Symbol.asyncIterator` on channels
 - [ ] Pass the 100-run determinism test suite
 
 ---
